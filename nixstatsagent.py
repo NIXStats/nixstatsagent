@@ -229,7 +229,7 @@ class Agent():
                     else:
                         connection = httplib.HTTPSConnection('api.nixstats.com')
                         connection.request('PUT', '/v2/server/poll',
-                             bz2.compress(str(json.dumps(data)) + "\n"),
+                             bz2.compress(str(json.dumps(self.collection)) + "\n"),
                              headers=headers)
                         response = connection.getresponse()
                         logging.info('%s', response)
