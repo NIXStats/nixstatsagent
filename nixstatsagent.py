@@ -113,22 +113,21 @@ class Agent():
             ts = time.time()
             process = subprocess.Popen((sys.executable, task), 
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            returncode = None
             interval = self.config.getint('execution', 'interval')
             ttl = self.config.getint(name, 'ttl')
             ticks = ttl / interval or 1
-            for _ in range(ticks):
-                logging.info('%s:tick', threading.currentThread())
-                returncode = process.poll()
-                if returncode is not None:
-                    break
+            process.poll()
+            while process.returncode is None and ticks > 0:
+                logging.info('%s:tick:%i', threading.currentThread(), ticks)
                 time.sleep(interval)
-            if returncode is None:
+                ticks -= 1
+                process.poll()
+            if process.returncode is None:
                 logging.error('%s:kill:%i', threading.currentThread(), process.pid)
-                os.kill(process.pid, signal.SIGKILL)
+                os.kill(process.pid, signal.SIGTERM)
             stdout, stderr = process.communicate()
-            if returncode != 0 or stderr:
-                logging.error('%s:%s:%s:%s', threading.currentThread(), task, returncode, stderr)
+            if process.returncode != 0 or stderr:
+                logging.error('%s:%s:%s:%s', threading.currentThread(), task, process.returncode, stderr)
             payload = pickle.loads(stdout) if stdout else None
             self.metrics.put({
                 'ts': ts, 
