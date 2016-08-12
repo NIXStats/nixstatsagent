@@ -1,10 +1,13 @@
+#!/usr/bin/env python
+
 import psutil
+import pickle
+import sys
 
+memory = {}
 
-def run(config):
-    memory = {}
+mem = psutil.virtual_memory()
+for name in mem._fields:
+    memory[name] = getattr(mem, name)
 
-    mem = psutil.virtual_memory()
-    for name in mem._fields:
-        memory[name] = getattr(mem, name)
-    return memory
+pickle.dump(memory, sys.stdout)
