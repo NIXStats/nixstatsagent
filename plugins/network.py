@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+
+import pickle
+import sys
 import psutil
 
-
-def run(config):
-    return psutil.net_io_counters(pernic=True)
+pickle.dump(psutil.net_io_counters(pernic=True), sys.stdout)
