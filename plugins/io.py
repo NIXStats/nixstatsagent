@@ -17,10 +17,10 @@
 #
 
 import signal
-import string
 import subprocess
 import sys
 import os
+import pickle
 
 __version__ = '0.0.3'
 __author__ = 'denis.zhdanov@gmail.com'
@@ -242,7 +242,7 @@ def diskstats_parse(dev=None):
     return result
 
 
-def run(config):
+def run():
     if(os.path.isfile("/proc/diskstats")):
         return diskstats_parse()
     elif(os.path.isfile("/usr/bin/iostat")):
@@ -252,3 +252,6 @@ def run(config):
             return ds
     else:
         return False
+
+
+pickle.dump(run(), sys.stdout)
