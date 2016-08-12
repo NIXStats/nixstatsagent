@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+
+import pickle
+import sys
 import os
 
-
-def run(config):
-    return os.getloadavg()
+pickle.dump(os.getloadavg(), sys.stdout)
