@@ -6,7 +6,7 @@ import sys
 import psutil
 
 name = 'cpu'
-results = {name: {}}
+results = {}
 data = psutil.cpu_times_percent(interval=1, percpu=True)
 cpu_number = -1
 for cpu in data:
