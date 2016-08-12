@@ -15,6 +15,7 @@ import Queue
 import signal
 import StringIO
 import subprocess
+import sys
 import time
 import threading
 
@@ -110,7 +111,7 @@ class Agent():
             logging.info('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
             ts = time.time()
-            process = subprocess.Popen((task,), 
+            process = subprocess.Popen((sys.executable, task), 
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             returncode = None
             interval = self.config.getint('execution', 'interval')
