@@ -3,6 +3,7 @@
 # by Al Nikolov <root@toor.fi.eu.org>
 
 
+import atexit
 import bz2
 import ConfigParser
 import glob
@@ -23,7 +24,6 @@ import threading
 def run_agent():
     Agent().run()
 
-
 def _plugin_name(filename):
     basename = os.path.basename(filename)
     return os.path.splitext(basename)[0]
@@ -33,6 +33,7 @@ class Agent():
     
     execute = Queue.Queue()
     metrics = Queue.Queue()
+    shutdown = False
 
     def __init__(self):
         """
@@ -53,7 +54,7 @@ class Agent():
             'max_data_span': 60,
             'max_data_age': 60 * 10,
             'logging_level': logging.WARNING,
-            'threads': 8,
+            'threads': 100,
             'ttl': 60,
             'interval': 60,
             'plugins': 'plugins',
@@ -108,6 +109,9 @@ class Agent():
         """
         logging.info('%s', threading.currentThread())
         while True:
+            if self.shutdown:
+                logging.info('%s:shutdown', threading.currentThread())
+                break
             logging.info('%s:queue:%i', threading.currentThread(), self.execute.qsize())
             try:
                 task = self.execute.get_nowait()
@@ -147,14 +151,13 @@ class Agent():
         """
         Add task to the execution queue
         """
-        logging.info('%s', threading.currentThread())
+        logging.info('%s:scheduling:%s', threading.currentThread(), task)
         self.execute.put(task)
         if self.config.getint('execution', 'threads') > \
                 threading.activeCount() and  \
                 self.execute.qsize() > 0:
             logging.info('%s:new_execution_worker_thread', threading.currentThread())
-            thread = threading.Thread(target=self._execution, name='execution')
-            thread.daemon = True
+            thread = threading.Thread(target=self._execution)
             thread.start()
         else:
             logging.warning('%s:threads_capped', threading.currentThread())
@@ -184,9 +187,9 @@ class Agent():
         """
         logging.info('_metrics_worker_init')
         self.data = Queue.Queue()
-        self._metrics_worker_thread = threading.Thread(
-            target=self._metrics, name='mertics')
-        self._metrics_worker_thread.daemon = True
+        thread = threading.Thread(target=self._metrics)
+        thread.daemon = True
+        thread.start()
         
     def _data(self):
         """
@@ -194,6 +197,9 @@ class Agent():
         """
         logging.info('%s', threading.currentThread())
         while True:
+            if self.shutdown:
+                logging.info('%s:shutdown', threading.currentThread())
+                break
             logging.info('%s:queue:%i', threading.currentThread(), self.data.qsize())
             while self.data.qsize():
                 self.collection.append(self.data.get_nowait())
@@ -245,9 +251,7 @@ class Agent():
         """
         logging.info('_data_worker_init')
         self.collection = []
-        self._data_worker_thread = threading.Thread(
-            target=self._data, name='data')
-        self._data_worker_thread.daemon = True
+        threading.Thread(target=self._data).start()
 
     def  _dump_config(self):
         """
@@ -262,13 +266,26 @@ class Agent():
         Start all the worker threads
         """
         logging.info('Agent main loop')
-        self._data_worker_thread.start()
-        self._metrics_worker_thread.start()
+        interval = self.config.getint('agent', 'interval')
         for plugin in self.plugins:
             logging.info('%s:initial_execution', plugin)
             self._schedule_worker(plugin)
-        while True:
-            time.sleep(self.config.getint('agent', 'interval'))
+        try:
+            while True:
+                logging.info('%i threads', threading.activeCount())
+                time.sleep(interval)
+        except KeyboardInterrupt:
+            while True:
+                wait_for = [thread 
+                    for thread in threading.enumerate() 
+                        if not thread.isDaemon() and 
+                           not isinstance(thread, threading._MainThread)]
+                logging.info('Shutdown, waiting for %i threads to exit', len(wait_for))
+                if len(wait_for) == 0:
+                    logging.info('Remaining threads: %s', threading.enumerate())
+                    sys.exit(0)
+                self.shutdown = True
+                time.sleep(interval)
 
 
 if __name__ == '__main__':
