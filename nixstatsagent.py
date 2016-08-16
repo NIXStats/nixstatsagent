@@ -31,6 +31,9 @@ def _plugin_name(filename):
 
 class Agent():
     
+    execute = Queue.Queue()
+    metrics = Queue.Queue()
+
     def __init__(self):
         """
         Initialize internal strictures
@@ -38,7 +41,6 @@ class Agent():
         self._config_init()
         self._logging_init()
         self._plugins_init()
-        self._execution_workers_init()
         self._metrics_worker_init()
         self._data_worker_init()
         self._dump_config()
@@ -107,7 +109,11 @@ class Agent():
         logging.info('%s', threading.currentThread())
         while True:
             logging.info('%s:queue:%i', threading.currentThread(), self.execute.qsize())
-            task = self.execute.get()
+            try:
+                task = self.execute.get_nowait()
+            except Queue.Empty:
+                logging.info('%s:empty', threading.currentThread())
+                break
             logging.info('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
             ts = time.time()
@@ -137,28 +143,21 @@ class Agent():
             })
             self.execute.task_done()
 
-    def _execution_workers_init(self):
-        """
-        Initialize execution worker threads, their queues and initial tasks
-        """
-        logging.info('_execution_workers_init')
-        self.execute = Queue.Queue()
-        self.metrics = Queue.Queue()
-        self._execution_worker_threads = []
-        for _ in range(self.config.getint('execution', 'threads')):
-            thread = threading.Thread(target=self._execution, name='execution')
-            thread.daemon = True
-            self._execution_worker_threads.append(thread)
-        for plugin in self.plugins:
-            logging.info('%s:initial', plugin)
-            self.execute.put(plugin)
-            
     def _schedule_worker(self, task):
         """
         Add task to the execution queue
         """
         logging.info('%s', threading.currentThread())
         self.execute.put(task)
+        if self.config.getint('execution', 'threads') > \
+                threading.activeCount() and  \
+                self.execute.qsize() > 0:
+            logging.info('%s:new_execution_worker_thread', threading.currentThread())
+            thread = threading.Thread(target=self._execution, name='execution')
+            thread.daemon = True
+            thread.start()
+        else:
+            logging.warning('%s:threads_capped', threading.currentThread())
             
     def _metrics(self):
         """
@@ -265,8 +264,9 @@ class Agent():
         logging.info('Agent main loop')
         self._data_worker_thread.start()
         self._metrics_worker_thread.start()
-        for thread in self._execution_worker_threads:
-            thread.start()
+        for plugin in self.plugins:
+            logging.info('%s:initial_execution', plugin)
+            self._schedule_worker(plugin)
         while True:
             time.sleep(self.config.getint('agent', 'interval'))
 
