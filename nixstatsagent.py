@@ -3,7 +3,6 @@
 # by Al Nikolov <root@toor.fi.eu.org>
 
 
-import atexit
 import bz2
 import ConfigParser
 import glob
