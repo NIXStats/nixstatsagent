@@ -281,8 +281,8 @@ class Agent():
                         if not thread.isDaemon() and 
                            not isinstance(thread, threading._MainThread)]
                 logging.info('Shutdown, waiting for %i threads to exit', len(wait_for))
+                logging.info('Remaining threads: %s', threading.enumerate())
                 if len(wait_for) == 0:
-                    logging.info('Remaining threads: %s', threading.enumerate())
                     sys.exit(0)
                 self.shutdown = True
                 time.sleep(interval)
