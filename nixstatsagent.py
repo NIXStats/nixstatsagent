@@ -53,7 +53,7 @@ class Agent():
             'max_data_span': 60,
             'max_data_age': 60 * 10,
             'logging_level': logging.WARNING,
-            'threads': 8,
+            'threads': 100,
             'ttl': 60,
             'interval': 60,
             'plugins': 'plugins',
@@ -147,7 +147,7 @@ class Agent():
         """
         Add task to the execution queue
         """
-        logging.info('%s', threading.currentThread())
+        logging.info('%s:scheduling:%s', threading.currentThread(), task)
         self.execute.put(task)
         if self.config.getint('execution', 'threads') > \
                 threading.activeCount() and  \
@@ -268,6 +268,7 @@ class Agent():
             logging.info('%s:initial_execution', plugin)
             self._schedule_worker(plugin)
         while True:
+            logging.info('%i threads', threading.activeCount())
             time.sleep(self.config.getint('agent', 'interval'))
 
 
