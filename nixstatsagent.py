@@ -122,7 +122,8 @@ class Agent():
             name = _plugin_name(task)
             ts = time.time()
             process = subprocess.Popen((sys.executable, task), 
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                universal_newlines=True)
             interval = self.config.getint('execution', 'interval')
             ttl = self.config.getint(name, 'ttl')
             ticks = ttl / interval or 1
