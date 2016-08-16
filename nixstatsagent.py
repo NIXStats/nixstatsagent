@@ -153,14 +153,19 @@ class Agent():
         """
         logging.info('%s:scheduling:%s', threading.currentThread(), task)
         self.execute.put(task)
-        if self.config.getint('execution', 'threads') > \
-                threading.activeCount() and  \
+        cap = self.config.getint('execution', 'threads')
+        if cap >= threading.activeCount() and  \
                 self.execute.qsize() > 0:
             logging.info('%s:new_execution_worker_thread', threading.currentThread())
             thread = threading.Thread(target=self._execution)
             thread.start()
         else:
             logging.warning('%s:threads_capped', threading.currentThread())
+            self.metrics.put({
+                'ts': time.time(),
+                'name': 'agent_internal',
+                'payload': {'threads_capping': cap}
+            })
             
     def _metrics(self):
         """
@@ -170,14 +175,15 @@ class Agent():
         while True:
             metrics = self.metrics.get()
             logging.info('%s:metrics:%s', threading.currentThread(), metrics)
-            plugin = metrics['task']
             name = metrics['name']
-            interval = self.config.getint(name, 'interval')
-            timer = threading.Timer(interval=interval, 
-                function=self._schedule_worker, args=(plugin,))
-            timer.name = plugin
-            timer.daemon = True
-            timer.start()
+            plugin = metrics.get('task')
+            if plugin:
+                interval = self.config.getint(name, 'interval')
+                timer = threading.Timer(interval=interval, 
+                    function=self._schedule_worker, args=(plugin,))
+                timer.name = plugin
+                timer.daemon = True
+                timer.start()
             self.data.put(metrics)
             self.metrics.task_done()
         
