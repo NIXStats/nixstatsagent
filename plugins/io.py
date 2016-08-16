@@ -20,6 +20,7 @@ import signal
 import subprocess
 import sys
 import os
+import psutil
 import pickle
 
 __version__ = '0.0.3'
@@ -251,7 +252,13 @@ def run():
         if ds:
             return ds
     else:
-        return False
-
+        results = {}
+        diskdata = psutil.disk_io_counters(perdisk=True)
+        for device,values in diskdata.items():
+            device_stats = {}
+            for key_value in values._fields:
+                device_stats[key_value] = getattr(values, key_value)
+            results[device] = device_stats
+        return results
 
 pickle.dump(run(), sys.stdout)
