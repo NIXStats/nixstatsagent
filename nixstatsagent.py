@@ -64,7 +64,6 @@ class Agent():
         sections = [
             'agent',
             'execution',
-            'metrics',
             'data',
         ]
         config = ConfigParser.RawConfigParser(defaults)
