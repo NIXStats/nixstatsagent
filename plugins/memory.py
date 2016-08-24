@@ -4,10 +4,14 @@ import psutil
 import pickle
 import sys
 
-memory = {}
 
-mem = psutil.virtual_memory()
-for name in mem._fields:
-    memory[name] = getattr(mem, name)
+def run():
+    memory = {}
+    mem = psutil.virtual_memory()
+    for name in mem._fields:
+        memory[name] = getattr(mem, name)
+    return memory
 
-pickle.dump(memory, sys.stdout)
+
+if __name__ == '__main__':
+    pickle.dump(run(), sys.stdout)

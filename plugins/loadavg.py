@@ -4,4 +4,10 @@ import pickle
 import sys
 import os
 
-pickle.dump(os.getloadavg(), sys.stdout)
+
+def run():
+    return os.getloadavg()
+
+
+if __name__ == '__main__':
+    pickle.dump(run(), sys.stdout)

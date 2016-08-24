@@ -261,4 +261,6 @@ def run():
             results[device] = device_stats
         return results
 
-pickle.dump(run(), sys.stdout)
+
+if __name__ == '__main__':
+    pickle.dump(run(), sys.stdout)

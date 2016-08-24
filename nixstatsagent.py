@@ -7,6 +7,7 @@ import bz2
 import ConfigParser
 import glob
 import httplib
+import imp
 import json
 import logging
 import os
@@ -23,9 +24,12 @@ import threading
 def run_agent():
     Agent().run()
 
-def _plugin_name(filename):
-    basename = os.path.basename(filename)
-    return os.path.splitext(basename)[0]
+def _plugin_name(plugin):
+    if isinstance(plugin, basestring):
+        basename = os.path.basename(plugin)
+        return os.path.splitext(basename)[0]
+    else:
+        return plugin.__name__
 
 
 class Agent():
@@ -58,6 +62,7 @@ class Agent():
             'interval': 60,
             'plugins': 'plugins',
             'enabled': False,
+            'subprocess': False,
             'user': '',
             'server': '',
         }
@@ -92,15 +97,51 @@ class Agent():
         Discover the plugins
         """
         logging.info('_plugins_init')
-        plugins = glob.glob(os.path.join(
-            self.config.get('agent', 'plugins'), '*.py'))
+        path = self.config.get('agent', 'plugins')
+        filenames = glob.glob(os.path.join(path, '*.py'))
         self.plugins = []
-        for plugin in plugins:
-            name = _plugin_name(plugin)
+        for filename in filenames:
+            name = _plugin_name(filename)
             self._config_section_create(name)
-            if self.config.get(name, 'enabled'):
-                self.plugins.append(plugin)
+            if self.config.getboolean(name, 'enabled'):
+                if self.config.getboolean(name, 'subprocess'):
+                    self.plugins.append(filename)
+                else:
+                    fp, pathname, description = \
+                        imp.find_module(name, [path])
+                    if fp:
+                        self.plugins.append(
+                            imp.load_module(
+                                name, fp, pathname, description))
+                    else:
+                        logging.error('import_plugin:%s:', name)
         
+    def _subprocess_execution(self, task):
+        """
+        Execute /task/ in a subprocess
+        """
+        process = subprocess.Popen((sys.executable, task), 
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            universal_newlines=True)
+        logging.info('%s:process:%i', threading.currentThread(), process.pid)
+        interval = self.config.getint('execution', 'interval')
+        name = _plugin_name(task)
+        ttl = self.config.getint(name, 'ttl')
+        ticks = ttl / interval or 1
+        process.poll()
+        while process.returncode is None and ticks > 0:
+            logging.info('%s:tick:%i', threading.currentThread(), ticks)
+            time.sleep(interval)
+            ticks -= 1
+            process.poll()
+        if process.returncode is None:
+            logging.error('%s:kill:%i', threading.currentThread(), process.pid)
+            os.kill(process.pid, signal.SIGTERM)
+        stdout, stderr = process.communicate()
+        if process.returncode != 0 or stderr:
+            logging.error('%s:%s:%s:%s', threading.currentThread(), task, process.returncode, stderr)
+        return pickle.loads(stdout) if stdout else None
+
     def _execution(self):
         """
         Take queued execution requests, execute plugins and queue the results
@@ -119,25 +160,10 @@ class Agent():
             logging.info('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
             ts = time.time()
-            process = subprocess.Popen((sys.executable, task), 
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                universal_newlines=True)
-            interval = self.config.getint('execution', 'interval')
-            ttl = self.config.getint(name, 'ttl')
-            ticks = ttl / interval or 1
-            process.poll()
-            while process.returncode is None and ticks > 0:
-                logging.info('%s:tick:%i', threading.currentThread(), ticks)
-                time.sleep(interval)
-                ticks -= 1
-                process.poll()
-            if process.returncode is None:
-                logging.error('%s:kill:%i', threading.currentThread(), process.pid)
-                os.kill(process.pid, signal.SIGTERM)
-            stdout, stderr = process.communicate()
-            if process.returncode != 0 or stderr:
-                logging.error('%s:%s:%s:%s', threading.currentThread(), task, process.returncode, stderr)
-            payload = pickle.loads(stdout) if stdout else None
+            if isinstance(task, basestring):
+                payload = self._subprocess_execution(task)
+            else:
+                payload = task.run()
             self.metrics.put({
                 'ts': ts, 
                 'task': task,
@@ -248,18 +274,22 @@ class Agent():
         try:
             while True:
                 logging.info('%i threads', threading.activeCount())
-                metrics = self.metrics.get()
-                name = metrics['name']
-                plugin = metrics.get('task')
-                if plugin:
-                    interval = self.config.getint(name, 'interval')
-                    timer = threading.Timer(interval=interval, 
-                        function=self._schedule_worker, args=(plugin,))
-                    timer.name = plugin
-                    timer.daemon = True
-                    timer.start()
-                self.data.put(metrics)
-                self.metrics.task_done()
+                while self.metrics.qsize():
+                    metrics = self.metrics.get_nowait()
+                    if metrics:
+                        name = metrics['name']
+                        logging.info('metrics:%s', name)
+                        plugin = metrics.get('task')
+                        if plugin:
+                            interval = self.config.getint(name, 'interval')
+                            timer = threading.Timer(interval=interval, 
+                                function=self._schedule_worker, 
+                                args=(plugin,))
+                            timer.name = plugin
+                            timer.daemon = True
+                            timer.start()
+                        self.data.put(metrics)
+                        self.metrics.task_done()
                 time.sleep(interval)
         except KeyboardInterrupt:
             while True:
@@ -273,7 +303,7 @@ class Agent():
                     sys.exit(0)
                 self.shutdown = True
                 time.sleep(interval)
-
+            
 
 if __name__ == '__main__':
     run_agent()

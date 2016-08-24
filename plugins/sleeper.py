@@ -4,4 +4,9 @@
 import time
 
 
-time.sleep(60 * 60 * 24)
+def run():
+    time.sleep(60 * 60 * 24)
+
+
+if __name__ == '__main__':
+    run()

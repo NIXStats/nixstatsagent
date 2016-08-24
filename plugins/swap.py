@@ -7,3 +7,7 @@ def run(config):
     for name in mem._fields:
         swap[name] = getattr(mem, name)
     return swap
+
+
+if __name__ == '__main__':
+    pickle.dump(run(), sys.stdout)

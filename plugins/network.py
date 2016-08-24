@@ -4,4 +4,11 @@ import pickle
 import sys
 import psutil
 
-pickle.dump(psutil.net_io_counters(pernic=True), sys.stdout)
+
+def run():
+    return psutil.net_io_counters(pernic=True)
+
+
+if __name__ == '__main__':
+    pickle.dump(run(), sys.stdout)
+

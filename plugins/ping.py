@@ -74,3 +74,8 @@ def run(config):
         data['ping'] = collect_ping(config['collectors']['ping']['hosts'])
 
     return data['ping']
+
+
+
+if __name__ == '__main__':
+    pickle.dump(run(), sys.stdout)
