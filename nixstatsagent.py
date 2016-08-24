@@ -32,6 +32,7 @@ class Agent():
     
     execute = Queue.Queue()
     metrics = Queue.Queue()
+    data = Queue.Queue()
     shutdown = False
 
     def __init__(self):
@@ -41,7 +42,6 @@ class Agent():
         self._config_init()
         self._logging_init()
         self._plugins_init()
-        self._metrics_worker_init()
         self._data_worker_init()
         self._dump_config()
 
@@ -166,37 +166,7 @@ class Agent():
                 'name': 'agent_internal',
                 'payload': {'threads_capping': cap}
             })
-            
-    def _metrics(self):
-        """
-        Take execution results to data collection and reschedule execution
-        """
-        logging.info('%s', threading.currentThread())
-        while True:
-            metrics = self.metrics.get()
-            logging.info('%s:metrics:%s', threading.currentThread(), metrics)
-            name = metrics['name']
-            plugin = metrics.get('task')
-            if plugin:
-                interval = self.config.getint(name, 'interval')
-                timer = threading.Timer(interval=interval, 
-                    function=self._schedule_worker, args=(plugin,))
-                timer.name = plugin
-                timer.daemon = True
-                timer.start()
-            self.data.put(metrics)
-            self.metrics.task_done()
-        
-    def _metrics_worker_init(self):
-        """
-        Initialize metrics worker thread
-        """
-        logging.info('_metrics_worker_init')
-        self.data = Queue.Queue()
-        thread = threading.Thread(target=self._metrics)
-        thread.daemon = True
-        thread.start()
-        
+       
     def _data(self):
         """
         Take and collect data, send and clean if needed
@@ -279,6 +249,18 @@ class Agent():
         try:
             while True:
                 logging.info('%i threads', threading.activeCount())
+                metrics = self.metrics.get()
+                name = metrics['name']
+                plugin = metrics.get('task')
+                if plugin:
+                    interval = self.config.getint(name, 'interval')
+                    timer = threading.Timer(interval=interval, 
+                        function=self._schedule_worker, args=(plugin,))
+                    timer.name = plugin
+                    timer.daemon = True
+                    timer.start()
+                self.data.put(metrics)
+                self.metrics.task_done()
                 time.sleep(interval)
         except KeyboardInterrupt:
             while True:
