@@ -16,12 +16,14 @@
 #   - by Kuba Kończyk <jakamkon at users.sourceforge.net>
 #
 
+import os
 import signal
 import subprocess
 import sys
-import os
+
 import psutil
-import pickle
+
+import plugins
 
 __version__ = '0.0.3'
 __author__ = 'denis.zhdanov@gmail.com'
@@ -243,24 +245,28 @@ def diskstats_parse(dev=None):
     return result
 
 
-def run():
-    if(os.path.isfile("/proc/diskstats")):
-        return diskstats_parse()
-    elif(os.path.isfile("/usr/bin/iostat")):
-        iostat = IOStat()
-        ds = iostat.get_diskstats()
-        if ds:
-            return ds
-    else:
-        results = {}
-        diskdata = psutil.disk_io_counters(perdisk=True)
-        for device,values in diskdata.items():
-            device_stats = {}
-            for key_value in values._fields:
-                device_stats[key_value] = getattr(values, key_value)
-            results[device] = device_stats
-        return results
+class Plugin(plugins.BasePlugin):
+
+
+    def run(self, *unused):
+        if(os.path.isfile("/proc/diskstats")):
+            return diskstats_parse()
+        elif(os.path.isfile("/usr/bin/iostat")):
+            iostat = IOStat()
+            ds = iostat.get_diskstats()
+            if ds:
+                return ds
+        else:
+            results = {}
+            diskdata = psutil.disk_io_counters(perdisk=True)
+            for device,values in diskdata.items():
+                device_stats = {}
+                for key_value in values._fields:
+                    device_stats[key_value] = getattr(values, key_value)
+                results[device] = device_stats
+            return results
 
 
 if __name__ == '__main__':
-    pickle.dump(run(), sys.stdout)
+    Plugin().execute()
+    

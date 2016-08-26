@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-import pickle
-import sys
-import platform
-import os
-import psutil
 import netifaces
+import os
+import platform
 from subprocess import Popen, PIPE
+import sys
+
+import psutil
+
+import plugins
 
 
 def systemCommand(Command, newlines=True):
@@ -51,41 +53,44 @@ def ip_addresses():
     return ip_list
 
 
-def run():
-    systeminfo = {}
-    cpu = {}
-    if(os.path.isfile("/proc/cpuinfo")):
-        with open('/proc/cpuinfo') as f:
-            for line in f:
-                # Ignore the blank line separating the information between
-                # details about two processing units
-                if line.strip():
-                    if "model name" == line.rstrip('\n').split(':')[0].strip():
-                        cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
-                    if "processor" == line.rstrip('\n').split(':')[0].strip():
-                        cpu['count'] = line.rstrip('\n').split(':')[1].strip()
-    else:
-        cpu['brand'] = "Unknown CPU"
-        cpu['count'] = 0
-    mem = psutil.virtual_memory()
-    if sys.platform == "linux" or sys.platform == "linux2":
-        systeminfo['os'] = str(' '.join(platform.linux_distribution()))
-    elif sys.platform == "darwin":
-        systeminfo['os'] = "Mac OS %s" % platform.mac_ver()[0]
-        cpu['brand'] = str(systemCommand('sysctl machdep.cpu.brand_string', False)[0]).split(': ')[1]
-        cpu['count'] = systemCommand('sysctl hw.ncpu')
-    elif sys.platform == "freebsd10":
-        systeminfo['os'] = "FreeBSD %s" % platform.release()
-        cpu['brand'] = str(systemCommand('sysctl hw.model', False)[0]).split(': ')[1]
-        cpu['count'] = systemCommand('sysctl hw.ncpu')
-    elif sys.platform == "win32":
-        systeminfo['os'] = str(platform.uname())
-    systeminfo['cpu'] = cpu['brand']
-    systeminfo['cores'] = cpu['count']
-    systeminfo['memory'] = mem.total
-    systeminfo['ip_addresses'] = ip_addresses()
-    return systeminfo
+class Plugin(plugins.BasePlugin):
+
+
+    def run(self, *unused):
+        systeminfo = {}
+        cpu = {}
+        if(os.path.isfile("/proc/cpuinfo")):
+            with open('/proc/cpuinfo') as f:
+                for line in f:
+                    # Ignore the blank line separating the information between
+                    # details about two processing units
+                    if line.strip():
+                        if "model name" == line.rstrip('\n').split(':')[0].strip():
+                            cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
+                        if "processor" == line.rstrip('\n').split(':')[0].strip():
+                            cpu['count'] = line.rstrip('\n').split(':')[1].strip()
+        else:
+            cpu['brand'] = "Unknown CPU"
+            cpu['count'] = 0
+        mem = psutil.virtual_memory()
+        if sys.platform == "linux" or sys.platform == "linux2":
+            systeminfo['os'] = str(' '.join(platform.linux_distribution()))
+        elif sys.platform == "darwin":
+            systeminfo['os'] = "Mac OS %s" % platform.mac_ver()[0]
+            cpu['brand'] = str(systemCommand('sysctl machdep.cpu.brand_string', False)[0]).split(': ')[1]
+            cpu['count'] = systemCommand('sysctl hw.ncpu')
+        elif sys.platform == "freebsd10":
+            systeminfo['os'] = "FreeBSD %s" % platform.release()
+            cpu['brand'] = str(systemCommand('sysctl hw.model', False)[0]).split(': ')[1]
+            cpu['count'] = systemCommand('sysctl hw.ncpu')
+        elif sys.platform == "win32":
+            systeminfo['os'] = str(platform.uname())
+        systeminfo['cpu'] = cpu['brand']
+        systeminfo['cores'] = cpu['count']
+        systeminfo['memory'] = mem.total
+        systeminfo['ip_addresses'] = ip_addresses()
+        return systeminfo
 
 
 if __name__ == '__main__':
-    pickle.dump(run(), sys.stdout)
+    Plugin().execute()

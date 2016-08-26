@@ -21,6 +21,8 @@ import time
 import threading
 
 
+ini_file = os.path.abspath('nixstats.ini')
+
 def run_agent():
     Agent().run()
 
@@ -61,8 +63,8 @@ class Agent():
             'ttl': 60,
             'interval': 60,
             'plugins': 'plugins',
-            'enabled': False,
-            'subprocess': False,
+            'enabled': 'no',
+            'subprocess': 'no',
             'user': '',
             'server': '',
         }
@@ -72,7 +74,7 @@ class Agent():
             'data',
         ]
         config = ConfigParser.RawConfigParser(defaults)
-        config.read('nixstats.ini')
+        config.read(ini_file)
         self.config = config
         for section in sections:
             self._config_section_create(section)
@@ -99,28 +101,38 @@ class Agent():
         logging.info('_plugins_init')
         path = self.config.get('agent', 'plugins')
         filenames = glob.glob(os.path.join(path, '*.py'))
+        sys.path.insert(0, path)
         self.plugins = []
         for filename in filenames:
             name = _plugin_name(filename)
+            if name == 'plugins':
+                continue
             self._config_section_create(name)
             if self.config.getboolean(name, 'enabled'):
                 if self.config.getboolean(name, 'subprocess'):
                     self.plugins.append(filename)
                 else:
                     fp, pathname, description = \
-                        imp.find_module(name, [path])
-                    if fp:
-                        self.plugins.append(
-                            imp.load_module(
-                                name, fp, pathname, description))
+                        imp.find_module(name)
+                    module = None
+                    try:
+                        module = imp.load_module(
+                                    name, fp, pathname, description)
+                    finally:
+                        # Since we may exit via an exception, close fp explicitly.
+                        if fp:
+                            fp.close()
+                    if module:
+                        self.plugins.append(module)
                     else:
-                        logging.error('import_plugin:%s:', name)
+                        logging.error('import_plugin:%s:%s', name, sys.exc_type)
+
         
     def _subprocess_execution(self, task):
         """
         Execute /task/ in a subprocess
         """
-        process = subprocess.Popen((sys.executable, task), 
+        process = subprocess.Popen((sys.executable, task, ini_file), 
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             universal_newlines=True)
         logging.info('%s:process:%i', threading.currentThread(), process.pid)
@@ -163,7 +175,7 @@ class Agent():
             if isinstance(task, basestring):
                 payload = self._subprocess_execution(task)
             else:
-                payload = task.run()
+                payload = task.Plugin().run(self.config)
             self.metrics.put({
                 'ts': ts, 
                 'task': task,

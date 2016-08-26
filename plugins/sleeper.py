@@ -3,10 +3,15 @@
 
 import time
 
+import plugins
 
-def run():
-    time.sleep(60 * 60 * 24)
+
+class Plugin(plugins.BasePlugin):
+
+    
+    def run(self, *unused):
+        time.sleep(60 * 60 * 24)
 
 
 if __name__ == '__main__':
-    run()
+    Plugin().run()

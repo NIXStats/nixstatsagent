@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys
-from subprocess import Popen, PIPE
+
+
 import re
+from subprocess import Popen, PIPE
+import sys
+
+import plugins
 
 
 def _get_match_groups(ping_output, regex):
@@ -63,19 +67,19 @@ def collect_ping(hostname):
     return {'avgping': response, 'host': hostname}
 
 
-def run(config):
-    data = {}
-    my_hosts = config['collectors']['ping']['hosts']
-    if type(my_hosts) is list:
+
+class Plugin(plugins.BasePlugin):
+
+
+    def run(self, config):
+        data = {}
+        my_hosts = config.get('ping', 'hosts').split(',')
         data['ping'] = []
         for host in my_hosts:
             data['ping'].append(collect_ping(host))
-    else:
-        data['ping'] = collect_ping(config['collectors']['ping']['hosts'])
-
-    return data['ping']
+        return data['ping']
 
 
 
 if __name__ == '__main__':
-    pickle.dump(run(), sys.stdout)
+    Plugin().execute()
