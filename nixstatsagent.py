@@ -17,8 +17,9 @@ import signal
 import StringIO
 import subprocess
 import sys
-import time
 import threading
+import time
+import types
 
 
 ini_file = os.path.abspath('nixstats.ini')
@@ -242,7 +243,7 @@ class Agent():
                     }
                     clean = False
                     if not server and not user:
-                        logging.info('Empty server/user, but need to send: %s', self.collection)
+                        logging.info('Empty server/user, but need to send: %s', json.dumps(self.collection))
                         clean = True
                     else:
                         connection = httplib.HTTPSConnection('api.nixstats.com')
@@ -300,6 +301,8 @@ class Agent():
                             timer.name = plugin
                             timer.daemon = True
                             timer.start()
+                            if isinstance(plugin, types.ModuleType):
+                                metrics['task'] = plugin.__file__
                         self.data.put(metrics)
                         self.metrics.task_done()
                 time.sleep(interval)
