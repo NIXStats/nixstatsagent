@@ -164,11 +164,10 @@ class Agent():
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
-            logging.info('%s:queue:%i', threading.currentThread(), self.execute.qsize())
+            logging.info('%s:exec_queue:%i', threading.currentThread(), self.execute.qsize())
             try:
                 task = self.execute.get_nowait()
             except Queue.Empty:
-                logging.info('%s:empty', threading.currentThread())
                 break
             logging.info('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
@@ -189,16 +188,16 @@ class Agent():
         """
         Add task to the execution queue
         """
-        logging.info('%s:scheduling:%s', threading.currentThread(), task)
+        logging.info('scheduling:%s', task)
         self.execute.put(task)
         cap = self.config.getint('execution', 'threads')
         if cap >= threading.activeCount() and  \
                 self.execute.qsize() > 0:
-            logging.info('%s:new_execution_worker_thread', threading.currentThread())
             thread = threading.Thread(target=self._execution)
             thread.start()
+            logging.info('new_execution_worker_thread:%s', thread)
         else:
-            logging.warning('%s:threads_capped', threading.currentThread())
+            logging.warning('threads_capped')
             self.metrics.put({
                 'ts': time.time(),
                 'name': 'agent_internal',
@@ -210,17 +209,17 @@ class Agent():
         Take and collect data, send and clean if needed
         """
         logging.info('%s', threading.currentThread())
+        collection = []
         while True:
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
-            logging.info('%s:queue:%i', threading.currentThread(), self.data.qsize())
+            logging.info('%s:data_queue:%i:collection:%i', threading.currentThread(), self.data.qsize(), len(collection))
             while self.data.qsize():
-                self.collection.append(self.data.get_nowait())
-            logging.info('%s:collection:%i', threading.currentThread(), len(self.collection))
-            if self.collection:
-                first_ts = min((e['ts'] for e in self.collection))
-                last_ts = max((e['ts'] for e in self.collection))
+                collection.append(self.data.get_nowait())
+            if collection:
+                first_ts = min((e['ts'] for e in collection))
+                last_ts = max((e['ts'] for e in collection))
                 now = time.time()
                 max_age = self.config.getint('agent', 'max_data_age')
                 max_span = self.config.getint('agent', 'max_data_span')
@@ -243,12 +242,12 @@ class Agent():
                     }
                     clean = False
                     if not server and not user:
-                        logging.info('Empty server/user, but need to send: %s', json.dumps(self.collection))
+                        logging.info('Empty server/user, but need to send: %s', json.dumps(collection))
                         clean = True
                     else:
                         connection = httplib.HTTPSConnection('api.nixstats.com')
                         connection.request('PUT', '/v2/server/poll',
-                             bz2.compress(str(json.dumps(self.collection)) + "\n"),
+                             bz2.compress(str(json.dumps(collection)) + "\n"),
                              headers=headers)
                         response = connection.getresponse()
                         logging.info('%s', response)
@@ -256,7 +255,7 @@ class Agent():
                         if response.status == 200:
                             clean = True 
                     if clean:
-                        self.collection = []
+                        collection = []
             time.sleep(self.config.getint('data', 'interval'))
     
     def _data_worker_init(self):
@@ -264,7 +263,6 @@ class Agent():
         Initialize data worker thread
         """
         logging.info('_data_worker_init')
-        self.collection = []
         threading.Thread(target=self._data).start()
 
     def  _dump_config(self):
@@ -282,30 +280,26 @@ class Agent():
         logging.info('Agent main loop')
         interval = self.config.getint('agent', 'interval')
         for plugin in self.plugins:
-            logging.info('%s:initial_execution', plugin)
             self._schedule_worker(plugin)
         try:
             while True:
                 logging.info('%i threads', threading.activeCount())
-                while self.metrics.qsize():
-                    metrics = self.metrics.get_nowait()
-                    if metrics:
-                        name = metrics['name']
-                        logging.info('metrics:%s', name)
-                        plugin = metrics.get('task')
-                        if plugin:
-                            interval = self.config.getint(name, 'interval')
-                            timer = threading.Timer(interval=interval, 
-                                function=self._schedule_worker, 
-                                args=(plugin,))
-                            timer.name = plugin
-                            timer.daemon = True
-                            timer.start()
-                            if isinstance(plugin, types.ModuleType):
-                                metrics['task'] = plugin.__file__
-                        self.data.put(metrics)
-                        self.metrics.task_done()
-                time.sleep(interval)
+                metrics = self.metrics.get()
+                name = metrics['name']
+                logging.info('metrics:%s', name)
+                plugin = metrics.get('task')
+                if plugin:
+                    interval = self.config.getint(name, 'interval')
+                    timer = threading.Timer(interval=interval, 
+                        function=self._schedule_worker, 
+                        args=(plugin,))
+                    timer.daemon = True
+                    timer.start()
+                    logging.info('new_timer:%s', timer)
+                    if isinstance(plugin, types.ModuleType):
+                        metrics['task'] = plugin.__file__
+                self.data.put(metrics)
+                self.metrics.task_done()
         except KeyboardInterrupt:
             while True:
                 wait_for = [thread 
