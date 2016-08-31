@@ -301,6 +301,7 @@ class Agent():
                 self.data.put(metrics)
                 self.metrics.task_done()
         except KeyboardInterrupt:
+            logging.warning(sys.exc_type)
             while True:
                 wait_for = [thread 
                     for thread in threading.enumerate() 
