@@ -103,7 +103,7 @@ class Agent():
         path = self.config.get('agent', 'plugins')
         filenames = glob.glob(os.path.join(path, '*.py'))
         sys.path.insert(0, path)
-        self.plugins = []
+        self.schedule = {}
         for filename in filenames:
             name = _plugin_name(filename)
             if name == 'plugins':
@@ -111,7 +111,7 @@ class Agent():
             self._config_section_create(name)
             if self.config.getboolean(name, 'enabled'):
                 if self.config.getboolean(name, 'subprocess'):
-                    self.plugins.append(filename)
+                    self.schedule[filename] = 0
                 else:
                     fp, pathname, description = \
                         imp.find_module(name)
@@ -124,7 +124,7 @@ class Agent():
                         if fp:
                             fp.close()
                     if module:
-                        self.plugins.append(module)
+                        self.schedule[module] = 0
                     else:
                         logging.error('import_plugin:%s:%s', name, sys.exc_type)
 
@@ -159,7 +159,6 @@ class Agent():
         """
         Take queued execution requests, execute plugins and queue the results
         """
-        logging.info('%s', threading.currentThread())
         while True:
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
@@ -175,7 +174,11 @@ class Agent():
             if isinstance(task, basestring):
                 payload = self._subprocess_execution(task)
             else:
-                payload = task.Plugin().run(self.config)
+                try:
+                    payload = task.Plugin().run(self.config)
+                except:
+                    logging.exception('plugin_exception')
+                    payload = { 'exception': str(sys.exc_info()[0]) }
             self.metrics.put({
                 'ts': ts, 
                 'task': task,
@@ -185,26 +188,6 @@ class Agent():
             self.execute.task_done()
             self.hire.release()
 
-    def _schedule_worker(self, task):
-        """
-        Add task to the execution queue
-        """
-        logging.info('scheduling:%s', task)
-        self.execute.put(task)
-        if self.hire.acquire(False):
-            thread = threading.Thread(target=self._execution)
-            thread.start()
-            logging.info('new_execution_worker_thread:%s', thread)
-        else:
-            logging.warning('threads_capped')
-            self.metrics.put({
-                'ts': time.time(),
-                'name': 'agent_internal',
-                'payload': {
-                    'threads_capping': 
-                        self.config.getint('execution', 'threads')}
-            })
-       
     def _data(self):
         """
         Take and collect data, send and clean if needed
@@ -243,6 +226,7 @@ class Agent():
                                 self.config.get('agent', 'server')),
                     }
                     clean = False
+                    logging.info('collection:%s', collection)
                     if not server and not user:
                         logging.info('Empty server/user, but need to send: %s', json.dumps(collection))
                         clean = True
@@ -280,32 +264,50 @@ class Agent():
         Start all the worker threads
         """
         logging.info('Agent main loop')
+        interval = self.config.getint('agent', 'interval')
         self.hire = threading.Semaphore(
             self.config.getint('execution', 'threads'))
-        interval = self.config.getint('agent', 'interval')
-        for plugin in self.plugins:
-            self._schedule_worker(plugin)
         try:
             while True:
+                now = time.time()
                 logging.info('%i threads', threading.activeCount())
-                metrics = self.metrics.get(True, 365 * 24 * 60 * 60)
-                name = metrics['name']
-                logging.info('metrics:%s', name)
-                plugin = metrics.get('task')
-                if plugin:
-                    interval = self.config.getint(name, 'interval')
-                    timer = threading.Timer(interval=interval, 
-                        function=self._schedule_worker, 
-                        args=(plugin,))
-                    timer.daemon = True
-                    timer.start()
-                    logging.info('new_timer:%s', timer)
-                    if isinstance(plugin, types.ModuleType):
-                        metrics['task'] = plugin.__file__
-                self.data.put(metrics)
-                self.metrics.task_done()
+                while self.metrics.qsize():
+                    metrics = self.metrics.get_nowait()
+                    name = metrics['name']
+                    logging.info('metrics:%s', name)
+                    plugin = metrics.get('task')
+                    if plugin:
+                        self.schedule[plugin] = \
+                            now + self.config.getint(name, 'interval')
+                        if isinstance(plugin, types.ModuleType):
+                            metrics['task'] = plugin.__file__
+                    self.data.put(metrics)
+                    self.metrics.task_done()
+                execute = [what
+                    for what, when in self.schedule.items() 
+                        if when <= now
+                ]
+                for name in execute:
+                    logging.info('scheduling:%s', name)
+                    del self.schedule[name]
+                    self.execute.put(name)
+                    if self.hire.acquire(False):
+                        thread = threading.Thread(target=self._execution)
+                        thread.start()
+                        logging.info('new_execution_worker_thread:%s', thread)
+                    else:
+                        logging.warning('threads_capped')
+                        self.metrics.put({
+                            'ts': now,
+                            'name': 'agent_internal',
+                            'payload': {
+                                'threads_capping': 
+                                    self.config.getint('execution', 'threads')}
+                        })
+                
+                time.sleep(interval)
         except KeyboardInterrupt:
-            logging.warning(sys.exc_type)
+            logging.warning(sys.exc_info()[0])
             while True:
                 wait_for = [thread 
                     for thread in threading.enumerate() 
