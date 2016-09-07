@@ -191,8 +191,7 @@ class Agent():
         logging.info('scheduling:%s', task)
         self.execute.put(task)
         cap = self.config.getint('execution', 'threads')
-        if cap >= threading.activeCount() and  \
-                self.execute.qsize() > 0:
+        if cap >= threading.activeCount():
             thread = threading.Thread(target=self._execution)
             thread.start()
             logging.info('new_execution_worker_thread:%s', thread)
