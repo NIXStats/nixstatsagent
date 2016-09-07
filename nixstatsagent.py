@@ -288,7 +288,7 @@ class Agent():
         try:
             while True:
                 logging.info('%i threads', threading.activeCount())
-                metrics = self.metrics.get()
+                metrics = self.metrics.get(True, 365 * 24 * 60 * 60)
                 name = metrics['name']
                 logging.info('metrics:%s', name)
                 plugin = metrics.get('task')
