@@ -183,6 +183,7 @@ class Agent():
                 'payload': payload,
             })
             self.execute.task_done()
+            self.hire.release()
 
     def _schedule_worker(self, task):
         """
@@ -190,8 +191,7 @@ class Agent():
         """
         logging.info('scheduling:%s', task)
         self.execute.put(task)
-        cap = self.config.getint('execution', 'threads')
-        if cap >= threading.activeCount():
+        if self.hire.acquire(False):
             thread = threading.Thread(target=self._execution)
             thread.start()
             logging.info('new_execution_worker_thread:%s', thread)
@@ -200,7 +200,9 @@ class Agent():
             self.metrics.put({
                 'ts': time.time(),
                 'name': 'agent_internal',
-                'payload': {'threads_capping': cap}
+                'payload': {
+                    'threads_capping': 
+                        self.config.getint('execution', 'threads')}
             })
        
     def _data(self):
@@ -278,6 +280,8 @@ class Agent():
         Start all the worker threads
         """
         logging.info('Agent main loop')
+        self.hire = threading.Semaphore(
+            self.config.getint('execution', 'threads'))
         interval = self.config.getint('agent', 'interval')
         for plugin in self.plugins:
             self._schedule_worker(plugin)
