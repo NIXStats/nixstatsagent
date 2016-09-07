@@ -216,6 +216,7 @@ class Agent():
             logging.info('%s:data_queue:%i:collection:%i', threading.currentThread(), self.data.qsize(), len(collection))
             while self.data.qsize():
                 collection.append(self.data.get_nowait())
+                self.data.task_done()
             if collection:
                 first_ts = min((e['ts'] for e in collection))
                 last_ts = max((e['ts'] for e in collection))
