@@ -1,0 +1,16 @@
+Template: nixstatsagent/user
+Type: string
+_Description: NixStats API user name:
+ Type your user name at NixStats.com.
+ .
+ Without this value set, the agent will be operating in the test mode 
+ (no data will be sent to NixStats)
+
+Template: nixstatsagent/server
+Type: string
+_Description: NixStats API server name:
+ Type your server name at NixStats.com
+ .
+ Without this value set, the agent will be operating in the test mode 
+ (no data will be sent to NixStats)
+
