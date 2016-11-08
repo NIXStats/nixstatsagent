@@ -32,7 +32,7 @@ setuptools.setup(
     license='BSD-3-Clause',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Environment :: No Input/Output (Daemon)'
+        'Environment :: No Input/Output (Daemon)',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
@@ -48,5 +48,9 @@ setuptools.setup(
             'nixstatsagent=nixstatsagent.nixstatsagent:run_agent',
         ],
     },
-    data_files=[('share/doc/nixstatsagent', ['nixstats-example.ini'])],    
+    data_files=[('share/doc/nixstatsagent', [
+        'nixstats-example.ini',
+        'LICENSE',
+        'README.rst',
+    ])],    
 )
