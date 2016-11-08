@@ -18,8 +18,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.rst')) as f:
     readme = f.read()
-with open(os.path.join(here, 'LICENSE')) as f:
-    license = f.read()
 
 setuptools.setup(
     name='nixstatsagent',
@@ -31,7 +29,7 @@ setuptools.setup(
     author_email='vincent@nixstats.com',
     maintainer='Al Nikolov',
     maintainer_email='root@toor.fi.eu.org',
-    license=license,
+    license='BSD-3-Clause',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: No Input/Output (Daemon)'
