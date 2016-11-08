@@ -1,0 +1,5 @@
+nixstatsagent (1.0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #843616).
+
+ -- Al Nikolov <clown@debian.org>  Mon, 05 Dec 2016 04:36:32 +0200

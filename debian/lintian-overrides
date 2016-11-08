@@ -1,0 +1,2 @@
+nixstatsagent: init.d-script-not-marked-as-conffile etc/init.d/nixstatsagent
+nixstatsagent: init.d-script-not-included-in-package etc/init.d/nixstatsagent

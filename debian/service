@@ -1,0 +1,12 @@
+[Unit]
+Description=NixStats agent
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/nixstatsagent
+
+[Exec]
+User=nobody
+
+[Install]
+WantedBy=multi-user.target

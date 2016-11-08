@@ -1,0 +1,26 @@
+#!/bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+db_input high nixstatsagent/user || :
+db_input high nixstatsagent/server || :
+db_go
+
+db_get nixstatsagent/user
+USER=$RET
+db_get nixstatsagent/server
+SERVER=$RET
+
+CONF=/etc/nixstats.ini
+if [ -f $CONF ]; then
+  cp -b $CONF $CONF.old
+  echo "Existing configuration is saved to $CONF.old"
+fi
+
+cat > $CONF <<EOF
+[DEFAULT]
+user = $USER
+server = $SERVER
+EOF
+
+echo "Configuration is updated. Restart nixstatsagent service"

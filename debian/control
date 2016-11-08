@@ -1,0 +1,27 @@
+Source: nixstatsagent
+Section: net
+Priority: extra
+Maintainer: Al Nikolov <clown@debian.org>
+Build-Depends: 
+ debhelper (>= 9),
+ python,
+ dh-python,
+ python-setuptools,
+ dh-systemd,
+ po-debconf
+Standards-Version: 3.9.8
+Homepage: https://github.com/vfuse/nixstatsagent
+Vcs-Git: https://github.com/vfuse/nixstatsagent.git
+Vcs-Browser: https://github.com/vfuse/nixstatsagent
+
+Package: nixstatsagent
+Architecture: any
+Depends: ${misc:Depends}, ${python:Depends}
+Description: NixStats agent
+ NixStats.com offers a web service of monitoring and displaying 
+ your server performance statistics, similarly to NodeQuery.
+ .
+ This software is an OS-agnostic agent compatible with Python >= 2.4. 
+ It’s been optimized to have a very small CPU footprint and comes with 
+ an extendable set of useful plugins.
+
