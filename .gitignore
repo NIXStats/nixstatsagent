@@ -3,7 +3,14 @@ nixstats.ini
 *~
 *.bak
 build
-debian
 dist
 nixstatsagent.egg-info
 README.html
+debian/files
+debian/debhelper-build-stamp
+debian/nixstatsagent.debhelper.log
+debian/nixstatsagent.postinst.debhelper
+debian/nixstatsagent.prerm.debhelper
+debian/nixstatsagent.substvars
+debian/nixstatsagent.postrm.debhelper
+debian/nixstatsagent/

@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: nixstatsagent\n"
+"Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
+"POT-Creation-Date: 2016-12-05 01:13+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "NixStats API user name:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "Type your user name at NixStats.com."
+msgstr ""
+
+#. Type: string
+#. Description
+#. Type: string
+#. Description
+#: ../templates:1001 ../templates:2001
+msgid ""
+"Without this value set, the agent will be operating in the test mode  (no "
+"data will be sent to NixStats)"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2001
+msgid "NixStats API server name:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2001
+msgid "Type your server name at NixStats.com"
+msgstr ""
