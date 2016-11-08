@@ -9,6 +9,7 @@ https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 '''
 
+import glob
 import os
 import setuptools
 
@@ -42,6 +43,7 @@ setuptools.setup(
         'Topic :: System :: Monitoring',
     ],
     keywords='nixstats system monitoring',
-    packages=setuptools.find_packages(),
     requires=['psutil'],
+    packages=setuptools.find_packages(),
+    data_files=[('share/doc/nixstatsagent', ['nixstats-example.ini'])],    
 )
