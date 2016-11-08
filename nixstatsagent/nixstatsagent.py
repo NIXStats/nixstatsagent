@@ -22,7 +22,10 @@ import time
 import types
 
 
-ini_file = os.path.abspath('nixstats.ini')
+ini_files = (
+    os.path.join('etc', 'nixstats.ini'),
+    os.path.abspath('nixstats.ini'),
+)
 
 def run_agent():
     Agent().run()
@@ -75,7 +78,7 @@ class Agent():
             'data',
         ]
         config = ConfigParser.RawConfigParser(defaults)
-        config.read(ini_file)
+        config.read(ini_files)
         self.config = config
         for section in sections:
             self._config_section_create(section)
