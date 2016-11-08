@@ -43,5 +43,10 @@ setuptools.setup(
     keywords='nixstats system monitoring',
     requires=['psutil'],
     packages=setuptools.find_packages(),
+    entry_points={
+        'console_scripts': [
+            'nixstatsagent=nixstatsagent.nixstatsagent:run_agent',
+        ],
+    },
     data_files=[('share/doc/nixstatsagent', ['nixstats-example.ini'])],    
 )
