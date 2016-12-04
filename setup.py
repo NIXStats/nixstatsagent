@@ -14,7 +14,7 @@ with open(os.path.join(here, 'README.rst')) as f:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.0.0',
+    version='1.0.1',
     description='NixStats agent',
     long_description=readme,
     url='https://github.com/vfuse/nixstatsagent',
