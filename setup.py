@@ -37,7 +37,7 @@ setuptools.setup(
         'Topic :: System :: Monitoring',
     ],
     keywords='nixstats system monitoring agent',
-    requires=['psutil'],
+    install_requires=['psutil'],
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
