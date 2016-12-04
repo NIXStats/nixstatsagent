@@ -2,13 +2,6 @@
 
 # by Al Nikolov <root@toor.fi.eu.org>
 
-'''
-A setuptools based setup module.
-See:
-https://packaging.python.org/en/latest/distributing.html
-https://github.com/pypa/sampleproject
-'''
-
 import glob
 import os
 import setuptools
@@ -38,9 +31,12 @@ setuptools.setup(
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 2.4',
+        'Programming Language :: Python :: 2.5',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         'Topic :: System :: Monitoring',
     ],
-    keywords='nixstats system monitoring',
+    keywords='nixstats system monitoring agent',
     requires=['psutil'],
     packages=setuptools.find_packages(),
     entry_points={
