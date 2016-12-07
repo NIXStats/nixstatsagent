@@ -25,17 +25,30 @@ Debian GNU/Linux
 The package is submitted and should appear soon in Debian and derivaives.
 See: https://ftp-master.debian.org/new/nixstatsagent_1.0.1-1.html
 
+Ubuntu 16.04
+Ubuntu 14.04
+Ubuntu 12.04
+Debian 8
+Debian 7
+Debian 6
+
 
 Fedora
 ======
 
-TBD: Fedora and derivatives.
+CentOS 7
+CentOS 6
+CentOS 5 
+Fedora 25 (low priority)
+Fedora 24 (low priority)
+Fedora 23 (low priority)
 
 
-Windows
+Windows 
 =======
 
-TBD.
+Windows 2016 (low priority)
+Windows 2012 (low priority)
 
 
 Python 2.4 environment
