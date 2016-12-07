@@ -60,7 +60,8 @@ class Plugin(plugins.BasePlugin):
         systeminfo = {}
         cpu = {}
         if(os.path.isfile("/proc/cpuinfo")):
-            with open('/proc/cpuinfo') as f:
+            f = open('/proc/cpuinfo')
+            if f:
                 for line in f:
                     # Ignore the blank line separating the information between
                     # details about two processing units

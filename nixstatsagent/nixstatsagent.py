@@ -8,7 +8,10 @@ import ConfigParser
 import glob
 import httplib
 import imp
-import json
+try:
+    import json as serialize
+except ImportError:
+    import simplejson as serialize
 import logging
 import os
 import pickle
@@ -38,7 +41,7 @@ def _plugin_name(plugin):
         return plugin.__name__
 
 
-class Agent():
+class Agent:
     
     execute = Queue.Queue()
     metrics = Queue.Queue()
@@ -156,7 +159,11 @@ class Agent():
         stdout, stderr = process.communicate()
         if process.returncode != 0 or stderr:
             logging.error('%s:%s:%s:%s', threading.currentThread(), task, process.returncode, stderr)
-        return pickle.loads(stdout) if stdout else None
+        if stdout:
+            ret = pickle.loads(stdout)
+        else:
+            ret = None
+        return ret
 
     def _execution(self):
         """
@@ -188,7 +195,6 @@ class Agent():
                 'name': name, 
                 'payload': payload,
             })
-            self.execute.task_done()
             self.hire.release()
 
     def _data(self):
@@ -204,7 +210,6 @@ class Agent():
             logging.info('%s:data_queue:%i:collection:%i', threading.currentThread(), self.data.qsize(), len(collection))
             while self.data.qsize():
                 collection.append(self.data.get_nowait())
-                self.data.task_done()
             if collection:
                 first_ts = min((e['ts'] for e in collection))
                 last_ts = max((e['ts'] for e in collection))
@@ -231,12 +236,12 @@ class Agent():
                     clean = False
                     logging.info('collection:%s', collection)
                     if not server and not user:
-                        logging.info('Empty server/user, but need to send: %s', json.dumps(collection))
+                        logging.info('Empty server/user, but need to send: %s', serialize.dumps(collection))
                         clean = True
                     else:
                         connection = httplib.HTTPSConnection('api.nixstats.com')
                         connection.request('PUT', '/v2/server/poll',
-                             bz2.compress(str(json.dumps(collection)) + "\n"),
+                             bz2.compress(str(serialize.dumps(collection)) + "\n"),
                              headers=headers)
                         response = connection.getresponse()
                         logging.info('%s', response)
@@ -285,7 +290,6 @@ class Agent():
                         if isinstance(plugin, types.ModuleType):
                             metrics['task'] = plugin.__file__
                     self.data.put(metrics)
-                    self.metrics.task_done()
                 execute = [what
                     for what, when in self.schedule.items() 
                         if when <= now

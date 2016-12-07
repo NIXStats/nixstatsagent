@@ -3,7 +3,7 @@ import pickle
 import sys
 
 
-class BasePlugin():
+class BasePlugin:
     """
     Abstract class for plugins
     """

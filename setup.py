@@ -12,10 +12,10 @@ import setuptools
 here = os.path.abspath(os.path.dirname(__file__))
 
 readme = open(os.path.join(here, 'README.rst')).read()
-if sys.version.startswith('2.4') or sys.version.startswith('2.5'):
-    dependency_links = ['https://pypi.python.org/pypi/psutil/2.1.3']
+if sys.version.startswith('2.4'):
+    install_requires=['psutil==2.1.3', 'netifaces==0.8', 'simplejson==2.1.0']
 else:
-    dependency_links = []
+    install_requires=['psutil', 'netifaces']
 
 setuptools.setup(
     name='nixstatsagent',
@@ -42,8 +42,7 @@ setuptools.setup(
         'Topic :: System :: Monitoring',
     ],
     keywords='nixstats system monitoring agent',
-    install_requires=['psutil'],
-    dependency_links=dependency_links,
+    install_requires=install_requires,
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
