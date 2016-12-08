@@ -25,12 +25,15 @@ Debian GNU/Linux
 The package is submitted and should appear soon in Debian and derivaives.
 See: https://ftp-master.debian.org/new/nixstatsagent_1.0.1-1.html
 
+Until then, use a 3rd-party repository at https://packagecloud.io/btbroot/nixstats/install#bash
+
 - Ubuntu 16.04 
 - Ubuntu 14.04 
 - Ubuntu 12.04 
-- Debian 8 
+- Debian 8
 - Debian 7 
-- Debian 6 
+- Debian 6
+- [x] Debian 9 (packagecloud)
 
 
 Fedora
