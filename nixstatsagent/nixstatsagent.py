@@ -74,6 +74,8 @@ class Agent:
             'subprocess': 'no',
             'user': '',
             'server': '',
+            'api_host': 'api.nixstats.com',
+            'api_path': '/v2/server/poll',
         }
         sections = [
             'agent',
@@ -239,8 +241,8 @@ class Agent:
                         logging.info('Empty server/user, but need to send: %s', serialize.dumps(collection))
                         clean = True
                     else:
-                        connection = httplib.HTTPSConnection('api.nixstats.com')
-                        connection.request('PUT', '/v2/server/poll',
+                        connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
+                        connection.request('PUT', self.config.get('data', 'api_path'),
                              bz2.compress(str(serialize.dumps(collection)) + "\n"),
                              headers=headers)
                         response = connection.getresponse()
