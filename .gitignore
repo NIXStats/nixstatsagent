@@ -1,2 +1,8 @@
 nixstats.ini
 *.pyc
+*~
+build
+debian
+dist
+nixstatsagent.egg-info
+README.html
