@@ -4,7 +4,7 @@ NixStats Agent
 NixStats.com is a web service of monitoring and displaying statistics of
 your server performance.
 
-This software is an OS-agnostic agent compatible with Python \>= 2.4.
+This software is an OS-agnostic agent compatible with Python 2.4, 2.5, 2.6 and 2.7.
 It's been optimized to have a small CPU consumption and comes with an
 extendable set of useful plugins.
 
