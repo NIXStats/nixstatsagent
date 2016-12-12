@@ -22,7 +22,7 @@ preferred) to the most generic ones.
 The package is existing in Debian Sid and should appear soon in other releases
 and derivaives. If your suite is already supported, simply do:
 
-```shell
+```
 apt-get install nixstatsagent
 ```
 
@@ -33,10 +33,10 @@ Current status:
 - [ ] Ubuntu 16.04
 - [ ] Ubuntu 14.04
 - [ ] Ubuntu 12.04
-- [ ] Debian 8
+- [x] Debian 8 (packagecloud:debian/jessie)
 - [ ] Debian 7
 - [ ] Debian 6
-- [x] Debian 9 (sid, packagecloud)
+- [x] Debian 9 (sid, packagecloud:debian/stretch)
 
 ### Fedora
 
@@ -58,7 +58,7 @@ As the binary packages are published on [PyPI](https://pypi.python.org/pypi),
 provided that you've obtained [pip](https://pip.pypa.io/en/latest/installing/),
 simply do:
 
-```shell
+```
 pip install nixstatsagent
 ```
 
@@ -68,7 +68,7 @@ As the source package is published on [PyPI](https://pypi.python.org/pypi),
 provided that you've obtained [setuptools](https://pypi.python.org/pypi/setuptools#installation-instructions),
 simply do:
 
-```shell
+```
 easy_install nixstatsagent
 ```
 
