@@ -11,7 +11,7 @@ import setuptools
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-readme = open(os.path.join(here, 'README.rst')).read()
+readme = open(os.path.join(here, 'README.md')).read()
 if sys.version.startswith('2.4'):
     install_requires=['psutil==2.1.3', 'netifaces==0.8', 'simplejson==2.1.0']
 else:
@@ -52,6 +52,6 @@ setuptools.setup(
     data_files=[('share/doc/nixstatsagent', [
         'nixstats-example.ini',
         'LICENSE',
-        'README.rst',
+        'README.md',
     ])],    
 )
