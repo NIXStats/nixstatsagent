@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nixstatsagent\n"
 "Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
-"POT-Creation-Date: 2016-12-05 01:13+0200\n"
+"POT-Creation-Date: 2016-12-12 09:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,33 +20,67 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:1001
-msgid "NixStats API user name:"
+msgid "User name:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:1001
-msgid "Type your user name at NixStats.com."
+msgid "Type your user name at NixStats.com or at your service provider."
 msgstr ""
 
 #. Type: string
 #. Description
-#. Type: string
-#. Description
-#: ../templates:1001 ../templates:2001
+#: ../templates:1001
 msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
-"data will be sent to NixStats)"
+"data will be sent to your service provider at all)."
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "NixStats API server name:"
+msgid "Server name:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Type your server name at NixStats.com"
+msgid "Type your server name at NixStats.com or at your service provider."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2001
+msgid ""
+"Without this value set, the agent will be operating in the test mode  (no "
+"data will be sent toyour service provider at all)."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:3001
+msgid "API host name:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:3001
+msgid ""
+"If you're using NixStats.com service, leave it empty. Or type your service "
+"provider's API host name."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:4001
+msgid "API path name:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:4001
+msgid ""
+"If you're using NixStats.com service, leave it empty. Or type your service "
+"provider's API path name."
 msgstr ""

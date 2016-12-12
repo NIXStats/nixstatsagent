@@ -2,14 +2,20 @@
 
 . /usr/share/debconf/confmodule
 
+db_input high nixstatsagent/api_host || :
+db_input high nixstatsagent/api_path || :
 db_input high nixstatsagent/user || :
 db_input high nixstatsagent/server || :
 db_go
 
+db_get nixstatsagent/api_host
+[ -n "$RET" ] && APIHOST="api_host = $RET"
+db_get nixstatsagent/api_path
+[ -n "$RET" ] && APIPATH="api_path = $RET"
 db_get nixstatsagent/user
-USER=$RET
+[ -n "$RET" ] && USER="user = $RET"
 db_get nixstatsagent/server
-SERVER=$RET
+[ -n "$RET" ] && SERVER="server = $RET"
 
 CONF=/etc/nixstats.ini
 if [ -f $CONF ]; then
@@ -19,8 +25,10 @@ fi
 
 cat > $CONF <<EOF
 [DEFAULT]
-user = $USER
-server = $SERVER
+$USER
+$SERVER
+$APIHOST
+$APIPATH
 EOF
 
 echo "Configuration is updated. Restart nixstatsagent service"

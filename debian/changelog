@@ -1,3 +1,13 @@
+nixstatsagent (1.1.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Add service configuration to debconf.
+  * Utilize hardcoded defaults when building configuration.
+  * Update project home URLs and description.
+  * Add more post-setuptools cleaning. 
+
+ -- Al Nikolov <clown@debian.org>  Mon, 12 Dec 2016 10:20:14 +0200
+
 nixstatsagent (1.0.1-1) unstable; urgency=low
 
   * Initial release (Closes: #843616).

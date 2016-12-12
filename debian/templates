@@ -1,16 +1,27 @@
 Template: nixstatsagent/user
 Type: string
-_Description: NixStats API user name:
- Type your user name at NixStats.com.
+_Description: User name:
+ Type your user name at NixStats.com or at your service provider.
  .
  Without this value set, the agent will be operating in the test mode 
- (no data will be sent to NixStats)
+ (no data will be sent to your service provider at all).
 
 Template: nixstatsagent/server
 Type: string
-_Description: NixStats API server name:
- Type your server name at NixStats.com
+_Description: Server name:
+ Type your server name at NixStats.com or at your service provider.
  .
  Without this value set, the agent will be operating in the test mode 
- (no data will be sent to NixStats)
+ (no data will be sent toyour service provider at all).
 
+Template: nixstatsagent/api_host
+Type: string
+_Description: API host name:
+ If you're using NixStats.com service, leave it empty. Or type your service
+ provider's API host name.
+
+Template: nixstatsagent/api_path
+Type: string
+_Description: API path name:
+ If you're using NixStats.com service, leave it empty. Or type your service
+ provider's API path name.
