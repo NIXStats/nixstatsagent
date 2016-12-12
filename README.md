@@ -8,6 +8,8 @@ This software is an OS-agnostic agent compatible with Python \>= 2.4.
 It's been optimized to have a small CPU consumption and comes with an
 extendable set of useful plugins.
 
+[![Build Status](https://travis-ci.org/NIXStats/nixstatsagent.svg?branch=master)](https://travis-ci.org/NIXStats/nixstatsagent)
+
 Installation
 ------------
 
