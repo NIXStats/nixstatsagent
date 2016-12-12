@@ -34,7 +34,7 @@ Current status:
 - [ ] Ubuntu 14.04
 - [ ] Ubuntu 12.04
 - [x] Debian 8 (packagecloud:debian/jessie)
-- [ ] Debian 7
+- [x] Debian 7 (packagecloud:debian/wheezy)
 - [ ] Debian 6
 - [x] Debian 9 (sid, packagecloud:debian/stretch)
 
