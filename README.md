@@ -28,13 +28,13 @@ Until then, use our [packagecloud repository](https://packagecloud.io/btbroot/ni
 
 Current status:
 
--   Ubuntu 16.04
--   Ubuntu 14.04
--   Ubuntu 12.04
--   Debian 8
--   Debian 7
--   Debian 6
--   [x] Debian 9 (sid, packagecloud)
+- [ ] Ubuntu 16.04
+- [ ] Ubuntu 14.04
+- [ ] Ubuntu 12.04
+- [ ] Debian 8
+- [ ] Debian 7
+- [ ] Debian 6
+- [x] Debian 9 (sid, packagecloud)
 
 ### Fedora
 
