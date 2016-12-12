@@ -1,7 +1,8 @@
-nixstatsagent (1.1.0-1~bpo8+1) jessie-backports; urgency=medium
+nixstatsagent (1.1.0-1~bpo7+1) wheezy-backports; urgency=medium
 
-  * Rebuild for jessie-backports.
+  * Rebuild for wheezy-backports.
   * Update gbp.conf
+  * Add build-dep on dpk-dev to make lintian happy.
 
  -- Al Nikolov <clown@debian.org>  Mon, 12 Dec 2016 10:27:54 +0200
 

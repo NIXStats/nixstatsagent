@@ -8,7 +8,8 @@ Build-Depends:
  dh-python,
  python-setuptools,
  dh-systemd,
- po-debconf
+ po-debconf,
+ dpkg-dev (>= 1.16.1~)
 Standards-Version: 3.9.8
 Homepage: https://github.com/NIXStats/nixstatsagent
 Vcs-Git: https://github.com/NIXStats/nixstatsagent.git
