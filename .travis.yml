@@ -1,5 +1,15 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
-install: true
+- '2.6'
+- '2.7'
+install: python setup.py install
+script: python setup.py sdist bdist_egg bdist_wheel
+deploy:
+  provider: pypi
+  user: btbroot
+  password:
+    secure: by+wKHR5IU8Rc4tyBSn2y8oH/Wz3nuw5NVSafpD+pLL+PjJ98AkYZFjVk7li79tu2OdhrpIR6+rHZSVcIP2EqyRMoxUgp45F158GYJmgpmY8Vi5NbNR0D/kP2qxMVTY3/J29bjns32RnjNU8PYumY0qg6kOZn/rh1LJHNasPcK2xrgAkTnplvHRS1IpFCoONN1hobg1a34CvvLic22KBPBAdOgAD8IxdVVbnrEpy7urxKld+ClJw3tvrqWgf17SNuYG+0vVr25fC/fcTESG17AiC/tw6i3IXrspJzR5dV+MGatWknokF4NaElXlDmf1wD1o2iY/8P4Xa9JTPLh56J5hvViAxBogafEuH566QgrufA6xXFSzS0+lkOkmYSK7kLWB9nEcDbVB8nMXt2RC7aLGzr0XZijeduhuADtO62mA9THgBEor56T/cSBi9fYYh9CC95glwTUN8UgDJ98+CcD8bVK1oFscMZgk/LqC6EMccOFJvi5zJshtd5y5/53XG/jqFUCvVPsW5XzA7r+9//l3RQeIcSfAQgkkpxb6bpoKctDwBGcjEMT0I8kwVtKJFjhw1Hfbbhg2QYyiRAhk0oaYGrHNxdYcf9te4BdtTqzoukHuJvx6NOjy7XyHh8C+SLhCbzkvMRHJVH92YhdsGsP1Lw6tFYzA/B75zwPhN/SM=
+  on:
+    tags: true
+    distributions: sdist bdist_egg bdist_wheel
+    repo: NIXStats/nixstatsagent
