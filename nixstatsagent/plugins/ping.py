@@ -61,11 +61,22 @@ def collect_ping(hostname):
             minping, avgping, maxping, jitter = matched
             response = avgping
     elif sys.platform == "win32":
-        response = system_command("ping "+hostname+" -n 1")
+        response = 0
+        try:
+            ping = Popen(["ping", "-n", "1 ", hostname], stdout=PIPE, stderr=PIPE)
+            out, error = ping.communicate()
+            if out:
+                try:
+                    response = int(re.findall(r"Average = (\d+)", out)[0])
+                except:
+                    pass
+            else:
+                response = 0
+        except CalledProcessError:
+            pass
     else:
         response = system_command("ping -W -c 1 " + hostname)
     return {'avgping': response, 'host': hostname}
-
 
 
 class Plugin(plugins.BasePlugin):
@@ -78,7 +89,6 @@ class Plugin(plugins.BasePlugin):
         for host in my_hosts:
             data['ping'].append(collect_ping(host))
         return data['ping']
-
 
 
 if __name__ == '__main__':
