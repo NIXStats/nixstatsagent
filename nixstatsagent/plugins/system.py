@@ -5,6 +5,7 @@ import os
 import platform
 from subprocess import Popen, PIPE
 import sys
+import time
 
 import psutil
 
@@ -85,10 +86,11 @@ class Plugin(plugins.BasePlugin):
             cpu['brand'] = str(systemCommand('sysctl hw.model', False)[0]).split(': ')[1]
             cpu['count'] = systemCommand('sysctl hw.ncpu')
         elif sys.platform == "win32":
-            systeminfo['os'] = str(platform.uname())
+            systeminfo['os'] = "{} {}".format(platform.uname()[0],platform.uname()[2])
         systeminfo['cpu'] = cpu['brand']
         systeminfo['cores'] = cpu['count']
         systeminfo['memory'] = mem.total
+        systeminfo['uptime'] = int(time.time()-psutil.boot_time())
         systeminfo['ip_addresses'] = ip_addresses()
         return systeminfo
 
