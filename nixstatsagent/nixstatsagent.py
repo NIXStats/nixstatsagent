@@ -26,7 +26,7 @@ import types
 
 
 ini_files = (
-    os.path.join('etc', 'nixstats.ini'),
+    os.path.join('/etc', 'nixstats.ini'),
     os.path.abspath('nixstats.ini'),
 )
 
