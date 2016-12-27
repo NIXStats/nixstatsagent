@@ -36,7 +36,8 @@ Current status:
 - [x] Debian 8 (packagecloud:debian/jessie)
 - [x] Debian 7 (packagecloud:debian/wheezy)
 - [ ] Debian 6
-- [x] Debian 9 (sid, packagecloud:debian/stretch)
+- [x] Debian 9 (sid, stretch, packagecloud:debian/stretch)
+- [x] Ubuntu 17.04 (zesty)
 
 ### Fedora
 
