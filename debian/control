@@ -16,7 +16,7 @@ Vcs-Browser: https://github.com/NIXStats/nixstatsagent
 
 Package: nixstatsagent
 Architecture: any
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: ${misc:Depends}, ${python:Depends}, python-pkg-resources
 Description: NixStats agent
  NixStats.com offers a web service of monitoring and displaying 
  your server performance statistics.

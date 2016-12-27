@@ -25,3 +25,9 @@ Type: string
 _Description: API path name:
  If you're using NixStats.com service, leave it empty. Or type your service
  provider's API path name.
+
+Template: nixstatsagent/server_auto
+Type: boolean
+_Description: Obtain the server name automatically?
+ If you're using NixStats.com service, you can obtain a new server name
+ automatically via API.
