@@ -1,33 +1,36 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Translation of nixstatagent debconf template to French
+# Copyright (C) 2016 Debian french l10n team
+# This file is distributed under the same license as the nixstatsagent package.
+# Translator:
+# Alban VIDAL <alban.vidal@zordhak.fr>, 2016
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: nixstatsagent\n"
 "Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
 "POT-Creation-Date: 2016-12-27 16:49+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2016-12-17 14:10+0100\n"
+"Last-Translator: Alban VIDAL <alban.vidal@zordhak.fr>\n"
+"Language-Team: French <debian-l10n-french@lists.debian.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.10\n"
 
 #. Type: string
 #. Description
 #: ../templates:1001
 msgid "User name:"
-msgstr ""
+msgstr "Nom d'utilisateur :"
 
 #. Type: string
 #. Description
 #: ../templates:1001
 msgid "Type your user name at NixStats.com or at your service provider."
 msgstr ""
+"Entrez votre nom d'utilisateur sur NixStats.com ou auprès de votre "
+"fournisseur de services."
 
 #. Type: string
 #. Description
@@ -36,18 +39,22 @@ msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
 "data will be sent to your service provider at all)."
 msgstr ""
+"Sans cette valeur, l'agent fonctionnera en mode test (aucune donnée ne sera "
+"envoyée à votre fournisseur de services)."
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid "Server name:"
-msgstr ""
+msgstr "Nom du serveur :"
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid "Type your server name at NixStats.com or at your service provider."
 msgstr ""
+"Entrez le nom de votre serveur sur NixStats.com ou auprès de votre "
+"fournisseur de services."
 
 #. Type: string
 #. Description
@@ -56,12 +63,14 @@ msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
 "data will be sent toyour service provider at all)."
 msgstr ""
+"Sans cette valeur, l'agent fonctionnera en mode test (aucune donnée ne sera "
+"envoyée à votre fournisseur de services)."
 
 #. Type: string
 #. Description
 #: ../templates:3001
 msgid "API host name:"
-msgstr ""
+msgstr "Nom d'hôte de l'API :"
 
 #. Type: string
 #. Description
@@ -70,12 +79,14 @@ msgid ""
 "If you're using NixStats.com service, leave it empty. Or type your service "
 "provider's API host name."
 msgstr ""
+"Si vous utilisez le service NixStats.com, laissez ce champ vide. Sinon "
+"entrez le nom d'hôte de l'API de votre fournisseur de services."
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "API path name:"
-msgstr ""
+msgstr "Chemin d'accès à l'API :"
 
 #. Type: string
 #. Description
@@ -84,6 +95,8 @@ msgid ""
 "If you're using NixStats.com service, leave it empty. Or type your service "
 "provider's API path name."
 msgstr ""
+"Si vous utilisez le service NixStats.com, laissez ce champ vide. Sinon "
+"entrez le nom du chemin d'accès à l'API de votre fournisseur de services."
 
 #. Type: boolean
 #. Description
@@ -94,7 +107,13 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:5001
+#, fuzzy
+#| msgid ""
+#| "If you're using NixStats.com service, leave it empty. Or type your "
+#| "service provider's API host name."
 msgid ""
 "If you're using NixStats.com service, you can obtain a new server name "
 "automatically via API."
 msgstr ""
+"Si vous utilisez le service NixStats.com, laissez ce champ vide. Sinon "
+"entrez le nom d'hôte de l'API de votre fournisseur de services."

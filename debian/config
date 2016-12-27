@@ -3,19 +3,28 @@
 . /usr/share/debconf/confmodule
 
 db_input high nixstatsagent/api_host || :
+db_get nixstatsagent/api_host
+[ -n "$RET" ] && APIHOST="$RET"
 db_input high nixstatsagent/api_path || :
+db_get nixstatsagent/api_path
+[ -n "$RET" ] && APIPATH="$RET"
 db_input high nixstatsagent/user || :
-db_input high nixstatsagent/server || :
+db_get nixstatsagent/user
+[ -n "$RET" ] && USERID="$RET"
+if [ -n "$USERID" ]; then
+    db_input high nixstatsagent/server_auto || :
+    db_get nixstatsagent/server_auto
+    [ -n "$RET" ] && SERVERAUTO="$RET"
+    if [ "$SERVERAUTO" = "true" ]; then
+        SERVER=$(nixstatshello "$USER")
+    else
+        db_input high nixstatsagent/server || :
+        db_get nixstatsagent/server
+        [ -n "$RET" ] && SERVER="$RET"
+    fi
+fi
 db_go
 
-db_get nixstatsagent/api_host
-[ -n "$RET" ] && APIHOST="api_host = $RET"
-db_get nixstatsagent/api_path
-[ -n "$RET" ] && APIPATH="api_path = $RET"
-db_get nixstatsagent/user
-[ -n "$RET" ] && USER="user = $RET"
-db_get nixstatsagent/server
-[ -n "$RET" ] && SERVER="server = $RET"
 
 CONF=/etc/nixstats.ini
 if [ -f $CONF ]; then
@@ -25,10 +34,10 @@ fi
 
 cat > $CONF <<EOF
 [DEFAULT]
-$USER
-$SERVER
-$APIHOST
-$APIPATH
+user = $USERID
+server = $SERVER
+api_host = $APIHOST
+api_path = $APIPATH
 EOF
 
 echo "Configuration is updated. Restart nixstatsagent service"

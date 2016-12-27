@@ -1,3 +1,17 @@
+nixstatsagent (1.1.2-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Add blank configuration file (Closes: #848920).
+  * Add automatic server configuration to debconf.
+  * Rework debconf config script.
+  * Add French debconf translation, courtesy of debian-l10n-french contributor
+    Alban VIDAL (Closes: #848703).
+  * Add German debconf translation, courtesy of Chris Leick (Closes: #849269).
+  * Add hello.py manpage.
+  * Add python-pkg-resources dependency.
+
+ -- Al Nikolov <clown@debian.org>  Tue, 27 Dec 2016 16:58:48 +0200
+
 nixstatsagent (1.1.0-1) unstable; urgency=medium
 
   * New upstream release.
