@@ -23,12 +23,32 @@ import sys
 import threading
 import time
 import types
+import urllib
+import urllib2
 
 
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
+    os.path.join('/etc', 'nixstats-token.ini'),
     os.path.abspath('nixstats.ini'),
+    os.path.abspath('nixstats-token.ini'),
 )
+
+def hello():
+    user_id = sys.argv[1]
+    token_filename = sys.argv[2] if len(sys.argv) > 2 else 'nixstats-token.ini'
+    server_id = urllib2.urlopen(
+        'https://api.nixstats.com/hello.php', 
+        data=urllib.urlencode(
+            {
+                'user': user_id, 
+                'hostname': os.uname()[1]
+            }
+        )
+    ).read()
+    print('Got server_id: {}'.format(server_id))
+    open(token_filename, 'w').\
+        write('[DEFAULT]\nuser={}\nserver={}\n'.format(user_id, server_id))
 
 def run_agent():
     Agent().run()
@@ -328,7 +348,10 @@ class Agent:
                     sys.exit(0)
                 self.shutdown = True
                 time.sleep(interval)
-            
 
 if __name__ == '__main__':
-    run_agent()
+    if len(sys.argv) > 1 and sys.argv[1] == 'hello':
+        del sys.argv[1]
+        hello()
+    else:
+        run_agent()

@@ -19,10 +19,10 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.1.2',
+    version='1.1.3',
     description='NixStats agent',
     long_description=readme,
-    url='https://github.com/vfuse/nixstatsagent',
+    url='https://github.com/NIXStats/nixstatsagent',
     author='NIXStats',
     author_email='vincent@nixstats.com',
     maintainer='Al Nikolov',
@@ -47,7 +47,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'nixstatsagent=nixstatsagent.nixstatsagent:run_agent',
-            'nixstatshello=nixstatsagent.hello'
+            'nixstatshello=nixstatsagent.nixstatsagent:hello',
         ],
     },
     data_files=[('share/doc/nixstatsagent', [
