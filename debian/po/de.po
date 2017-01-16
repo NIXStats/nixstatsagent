@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nixstatsagent 1.1.0-1\n"
 "Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
-"POT-Creation-Date: 2016-12-27 16:49+0200\n"
+"POT-Creation-Date: 2017-01-16 10:24+0300\n"
 "PO-Revision-Date: 2016-12-24 14:29+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -20,19 +20,25 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:1001
-msgid "User name:"
+#, fuzzy
+#| msgid "User name:"
+msgid "User ID:"
 msgstr "Benutzername:"
 
 #. Type: string
 #. Description
 #: ../templates:1001
-msgid "Type your user name at NixStats.com or at your service provider."
+#, fuzzy
+#| msgid "Type your user name at NixStats.com or at your service provider."
+msgid "Type your user ID at NixStats.com or at your service provider."
 msgstr ""
 "Geben Sie Ihren Benutzernamen bei NixStats.com oder Ihrem Dienstanbieter an."
 
 #. Type: string
 #. Description
-#: ../templates:1001
+#. Type: string
+#. Description
+#: ../templates:1001 ../templates:2001
 msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
 "data will be sent to your service provider at all)."
@@ -43,26 +49,27 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Server name:"
+#, fuzzy
+#| msgid "Server name:"
+msgid "Server ID:"
 msgstr "Servername:"
 
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Type your server name at NixStats.com or at your service provider."
+#, fuzzy
+#| msgid "Type your server name at NixStats.com or at your service provider."
+msgid "Type your server ID at NixStats.com or at your service provider."
 msgstr ""
 "Geben Sie Ihren Servernamen bei NixStats.com oder Ihrem Dienstanbieter an."
 
-# FIXME s/toyour/to your/
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid ""
-"Without this value set, the agent will be operating in the test mode  (no "
-"data will be sent toyour service provider at all)."
+"This setting will be ignored if you receive a server ID automatically, in  "
+"which case you may skip setting this value."
 msgstr ""
-"Ohne diesen Wert wird der Agent im Testmodus arbeiten (es werden überhaupt "
-"keine Daten an Ihren Dienstanbieter gesandt)."
 
 #. Type: string
 #. Description
@@ -73,9 +80,13 @@ msgstr "API-Rechnername:"
 #. Type: string
 #. Description
 #: ../templates:3001
+#, fuzzy
+#| msgid ""
+#| "If you're using NixStats.com service, leave it empty. Or type your "
+#| "service provider's API host name."
 msgid ""
-"If you're using NixStats.com service, leave it empty. Or type your service "
-"provider's API host name."
+"If you're using NixStats.com service, leave it empty. Otherwise type your  "
+"service provider's API host name."
 msgstr ""
 "Falls Sie den Dienst NixStats.com benutzen, lassen Sie dies leer. Oder geben "
 "Sie den API-Rechnernamen Ihres Dienstanbieters an."
@@ -89,9 +100,13 @@ msgstr "API-Pfadname:"
 #. Type: string
 #. Description
 #: ../templates:4001
+#, fuzzy
+#| msgid ""
+#| "If you're using NixStats.com service, leave it empty. Or type your "
+#| "service provider's API path name."
 msgid ""
-"If you're using NixStats.com service, leave it empty. Or type your service "
-"provider's API path name."
+"If you're using NixStats.com service, leave it empty. Otherwise type your  "
+"service provider's API path name."
 msgstr ""
 "Falls Sie den Dienst NixStats.com benutzen, lassen Sie dies leer. Oder geben "
 "Sie den API-Pfadnamen Ihres Dienstanbieters an."
@@ -99,7 +114,7 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:5001
-msgid "Obtain the server name automatically?"
+msgid "Obtain the new server ID automatically?"
 msgstr ""
 
 #. Type: boolean
@@ -110,8 +125,16 @@ msgstr ""
 #| "If you're using NixStats.com service, leave it empty. Or type your "
 #| "service provider's API host name."
 msgid ""
-"If you're using NixStats.com service, you can obtain a new server name "
-"automatically via API."
+"If you're using NixStats.com service, you can obtain a new server ID  "
+"automatically via NixStats.com API."
 msgstr ""
 "Falls Sie den Dienst NixStats.com benutzen, lassen Sie dies leer. Oder geben "
 "Sie den API-Rechnernamen Ihres Dienstanbieters an."
+
+# FIXME s/toyour/to your/
+#~ msgid ""
+#~ "Without this value set, the agent will be operating in the test mode  (no "
+#~ "data will be sent toyour service provider at all)."
+#~ msgstr ""
+#~ "Ohne diesen Wert wird der Agent im Testmodus arbeiten (es werden "
+#~ "überhaupt keine Daten an Ihren Dienstanbieter gesandt)."

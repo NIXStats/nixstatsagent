@@ -16,6 +16,10 @@ Files: debian/po/fr.po
 Copyright: 2016 Debian french l10n team
 License: BSD-3-Clause
 
+Files: debian/po/nl.po
+Copyright: 2016 Frans Spiesschaert <Frans.Spiesschaert@yucom.be>
+License: BSD-3-Clause
+
 License: BSD-3-Clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
