@@ -35,7 +35,7 @@ ini_files = (
     os.path.abspath('nixstats-token.ini'),
 )
 
-def hello():
+def hello(proto='https'):
     user_id = sys.argv[1]
     token_filename = sys.argv[2] if len(sys.argv) > 2 else 'nixstats-token.ini'
     try:
@@ -43,7 +43,7 @@ def hello():
     except AttributeError:
         hostname = socket.getfqdn()
     server_id = urllib2.urlopen(
-        'https://api.nixstats.com/hello.php', 
+        proto + '://api.nixstats.com/hello.php', 
         data=urllib.urlencode(
             {
                 'user': user_id, 
@@ -355,8 +355,12 @@ class Agent:
                 time.sleep(interval)
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'hello':
-        del sys.argv[1]
-        hello()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'hello':
+            del sys.argv[1]
+            hello()
+        elif sys.argv[1] == 'insecure-hello':
+            del sys.argv[1]
+            hello(proto='http')
     else:
         run_agent()
