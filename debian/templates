@@ -1,33 +1,37 @@
 Template: nixstatsagent/user
 Type: string
-_Description: User name:
- Type your user name at NixStats.com or at your service provider.
+_Description: User ID:
+ Type your user ID at NixStats.com or at your service provider.
  .
  Without this value set, the agent will be operating in the test mode 
  (no data will be sent to your service provider at all).
 
 Template: nixstatsagent/server
 Type: string
-_Description: Server name:
- Type your server name at NixStats.com or at your service provider.
+_Description: Server ID:
+ Type your server ID at NixStats.com or at your service provider.
  .
  Without this value set, the agent will be operating in the test mode 
- (no data will be sent toyour service provider at all).
+ (no data will be sent to your service provider at all).
+ .
+ This setting will be ignored if you receive a server ID automatically, in 
+ which case you may skip setting this value.
 
 Template: nixstatsagent/api_host
 Type: string
 _Description: API host name:
- If you're using NixStats.com service, leave it empty. Or type your service
- provider's API host name.
+ If you're using NixStats.com service, leave it empty. Otherwise type your 
+ service provider's API host name.
 
 Template: nixstatsagent/api_path
 Type: string
 _Description: API path name:
- If you're using NixStats.com service, leave it empty. Or type your service
- provider's API path name.
+ If you're using NixStats.com service, leave it empty. Otherwise type your 
+ service provider's API path name.
 
 Template: nixstatsagent/server_auto
 Type: boolean
-_Description: Obtain the server name automatically?
- If you're using NixStats.com service, you can obtain a new server name
- automatically via API.
+Default: true
+_Description: Obtain the new server ID automatically?
+ If you're using NixStats.com service, you can obtain a new server ID 
+ automatically via NixStats.com API.

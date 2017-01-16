@@ -2,4 +2,27 @@
 
 . /usr/share/debconf/confmodule
 
+TOKEN=/etc/nixstats-token.ini
+
+db_get nixstatsagent/api_host
+[ -n "$RET" ] && APIHOST="$RET"
+db_get nixstatsagent/api_path
+[ -n "$RET" ] && APIPATH="$RET"
+db_get nixstatsagent/user
+[ -n "$RET" ] && USERID="$RET"
+db_get nixstatsagent/server
+[ -n "$RET" ] && SERVERID="$RET"
+db_get nixstatsagent/server_auto
+[ -n "$RET" ] && SERVERAUTO="$RET"
+
+
+if [ "$SERVERAUTO" = "true" -a -n "$USERID" -a ! -f $TOKEN ]; then
+    if [ -z "$APIHOST" -a -z "$APIPATH" ]; then
+        nixstatshello "$USERID" $TOKEN
+    else
+        echo 'Generic "hello" is not implemented'
+    fi
+fi
+
 #DEBHELPER#
+

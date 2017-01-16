@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nixstatsagent\n"
 "Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
-"POT-Creation-Date: 2016-12-27 16:49+0200\n"
+"POT-Creation-Date: 2017-01-16 10:24+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,18 +20,20 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:1001
-msgid "User name:"
+msgid "User ID:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:1001
-msgid "Type your user name at NixStats.com or at your service provider."
+msgid "Type your user ID at NixStats.com or at your service provider."
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:1001
+#. Type: string
+#. Description
+#: ../templates:1001 ../templates:2001
 msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
 "data will be sent to your service provider at all)."
@@ -40,21 +42,21 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Server name:"
+msgid "Server ID:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:2001
-msgid "Type your server name at NixStats.com or at your service provider."
+msgid "Type your server ID at NixStats.com or at your service provider."
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid ""
-"Without this value set, the agent will be operating in the test mode  (no "
-"data will be sent toyour service provider at all)."
+"This setting will be ignored if you receive a server ID automatically, in  "
+"which case you may skip setting this value."
 msgstr ""
 
 #. Type: string
@@ -67,8 +69,8 @@ msgstr ""
 #. Description
 #: ../templates:3001
 msgid ""
-"If you're using NixStats.com service, leave it empty. Or type your service "
-"provider's API host name."
+"If you're using NixStats.com service, leave it empty. Otherwise type your  "
+"service provider's API host name."
 msgstr ""
 
 #. Type: string
@@ -81,20 +83,20 @@ msgstr ""
 #. Description
 #: ../templates:4001
 msgid ""
-"If you're using NixStats.com service, leave it empty. Or type your service "
-"provider's API path name."
+"If you're using NixStats.com service, leave it empty. Otherwise type your  "
+"service provider's API path name."
 msgstr ""
 
 #. Type: boolean
 #. Description
 #: ../templates:5001
-msgid "Obtain the server name automatically?"
+msgid "Obtain the new server ID automatically?"
 msgstr ""
 
 #. Type: boolean
 #. Description
 #: ../templates:5001
 msgid ""
-"If you're using NixStats.com service, you can obtain a new server name "
-"automatically via API."
+"If you're using NixStats.com service, you can obtain a new server ID  "
+"automatically via NixStats.com API."
 msgstr ""
