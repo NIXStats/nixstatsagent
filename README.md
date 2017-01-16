@@ -30,7 +30,7 @@ Until then, use our [packagecloud repository](https://packagecloud.io/btbroot/ni
 
 Current status:
 
-- [ ] Ubuntu 16.04
+- [x] Ubuntu 16.04.1 LTS (packagecloud:ubuntu/xenial)
 - [ ] Ubuntu 14.04
 - [ ] Ubuntu 12.04
 - [x] Debian 8 (packagecloud:debian/jessie)
