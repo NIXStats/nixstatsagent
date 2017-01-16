@@ -17,6 +17,7 @@ import os
 import pickle
 import Queue
 import signal
+import socket
 import StringIO
 import subprocess
 import sys
@@ -37,12 +38,16 @@ ini_files = (
 def hello():
     user_id = sys.argv[1]
     token_filename = sys.argv[2] if len(sys.argv) > 2 else 'nixstats-token.ini'
+    try:
+        hostname = os.uname()[1]
+    except AttributeError:
+        hostname = socket.getfqdn()
     server_id = urllib2.urlopen(
         'https://api.nixstats.com/hello.php', 
         data=urllib.urlencode(
             {
                 'user': user_id, 
-                'hostname': os.uname()[1]
+                'hostname': hostname
             }
         )
     ).read()
