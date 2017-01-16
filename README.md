@@ -31,8 +31,8 @@ Until then, use our [packagecloud repository](https://packagecloud.io/btbroot/ni
 Current status:
 
 - [x] Ubuntu 16.04.1 LTS (packagecloud:ubuntu/xenial)
-- [ ] Ubuntu 14.04
-- [ ] Ubuntu 12.04
+- [x] Ubuntu 14.04.5 LTS (packagecloud:ubuntu/trusty)
+- [x] Ubuntu 12.04.5 LTS (packagecloud:ubuntu/precise)
 - [x] Debian 8 (packagecloud:debian/jessie)
 - [x] Debian 7 (packagecloud:debian/wheezy)
 - [ ] Debian 6
