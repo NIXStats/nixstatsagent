@@ -14,10 +14,10 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, *unused):
         disk = {}
-        if sys.platform == "linux" or sys.platform == "linux2" or sys.platform == "darwin":
+        if sys.platform == "linux" or sys.platform == "linux2" or sys.platform == "darwin" or sys.platform == "freebsd11" or sys.platform == "freebsd10":
             disk['df'] = [s.split() for s in os.popen("df -Pl").read().splitlines()]
             disk['di'] = [s.split() for s in os.popen("df -iPl").read().splitlines()]
-        elif sys.platform == "win32":
+        elif:
             disk = {}
             disk['df-windows'] = []
             for part in psutil.disk_partitions(all=False):
