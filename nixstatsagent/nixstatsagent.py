@@ -31,6 +31,8 @@ import urllib2
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
     os.path.join('/etc', 'nixstats-token.ini'),
+    '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats.ini')),
+    '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini')),
     os.path.abspath('nixstats.ini'),
     os.path.abspath('nixstats-token.ini'),
 )
@@ -51,9 +53,9 @@ def hello(proto='https'):
             }
         )
     ).read()
-    print('Got server_id: {}'.format(server_id))
+    print('Got server_id: %s' % server_id)
     open(token_filename, 'w').\
-        write('[DEFAULT]\nuser={}\nserver={}\n'.format(user_id, server_id))
+        write('[DEFAULT]\nuser=%s\nserver=%s\n' % (user_id, server_id))
 
 def run_agent():
     Agent().run()
@@ -94,7 +96,7 @@ class Agent:
             'threads': 100,
             'ttl': 60,
             'interval': 60,
-            'plugins': 'plugins',
+            'plugins': '/'.join((os.path.dirname(os.path.abspath(__file__)), 'plugins')),
             'enabled': 'no',
             'subprocess': 'no',
             'user': '',
