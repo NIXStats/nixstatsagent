@@ -39,7 +39,7 @@ ini_files = (
 
 def hello(proto='https'):
     user_id = sys.argv[1]
-    token_filename = sys.argv[2] if len(sys.argv) > 2 else 'nixstats-token.ini'
+    token_filename = sys.argv[2] if len(sys.argv) > 2 else '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini'))
     try:
         hostname = os.uname()[1]
     except AttributeError:
