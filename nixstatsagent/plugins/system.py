@@ -81,7 +81,7 @@ class Plugin(plugins.BasePlugin):
             systeminfo['os'] = "Mac OS %s" % platform.mac_ver()[0]
             cpu['brand'] = str(systemCommand('sysctl machdep.cpu.brand_string', False)[0]).split(': ')[1]
             cpu['count'] = systemCommand('sysctl hw.ncpu')
-        elif sys.platform == "freebsd10":
+        elif sys.platform == "freebsd10" or sys.platform == "freebsd11":
             systeminfo['os'] = "FreeBSD %s" % platform.release()
             cpu['brand'] = str(systemCommand('sysctl hw.model', False)[0]).split(': ')[1]
             cpu['count'] = systemCommand('sysctl hw.ncpu')
