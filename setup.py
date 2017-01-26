@@ -19,7 +19,7 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.1.4',
+    version='1.1.6',
     description='NixStats agent',
     long_description=readme,
     url='https://github.com/NIXStats/nixstatsagent',
