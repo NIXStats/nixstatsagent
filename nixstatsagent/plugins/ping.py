@@ -45,9 +45,12 @@ def system_command(Command, newlines=True):
 def collect_ping(hostname):
     if sys.platform == "linux" or sys.platform == "linux2":
         response = str(system_command("ping -W 5 -c 1 " + hostname, False)[0])
-        matcher = re.compile(r'(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)')
-        minping, avgping, maxping, jitter = _get_match_groups(response, matcher)
-        response = avgping
+        try:
+            matcher = re.compile(r'(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)')
+            minping, avgping, maxping, jitter = _get_match_groups(response, matcher)
+            response = avgping
+        except:
+            response = 9999
     elif sys.platform == "darwin":
         # print system_command("ping -W 5 -c 2 " + hostname, False)
         response = str(system_command("ping -c 1 " + hostname, False)[0])
