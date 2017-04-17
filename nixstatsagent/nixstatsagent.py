@@ -2,7 +2,6 @@
 
 # by Al Nikolov <root@toor.fi.eu.org>
 
-
 import bz2
 import ConfigParser
 import glob
@@ -37,6 +36,7 @@ ini_files = (
     os.path.abspath('nixstats-token.ini'),
 )
 
+
 def hello(proto='https'):
     user_id = sys.argv[1]
     token_filename = sys.argv[2] if len(sys.argv) > 2 else '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini'))
@@ -45,10 +45,10 @@ def hello(proto='https'):
     except AttributeError:
         hostname = socket.getfqdn()
     server_id = urllib2.urlopen(
-        proto + '://api.nixstats.com/hello.php', 
+        proto + '://api.nixstats.com/hello.php',
         data=urllib.urlencode(
             {
-                'user': user_id, 
+                'user': user_id,
                 'hostname': hostname
             }
         )
@@ -57,8 +57,10 @@ def hello(proto='https'):
     open(token_filename, 'w').\
         write('[DEFAULT]\nuser=%s\nserver=%s\n' % (user_id, server_id))
 
+
 def run_agent():
     Agent().run()
+
 
 def _plugin_name(plugin):
     if isinstance(plugin, basestring):
@@ -69,7 +71,6 @@ def _plugin_name(plugin):
 
 
 class Agent:
-    
     execute = Queue.Queue()
     metrics = Queue.Queue()
     data = Queue.Queue()
@@ -84,6 +85,9 @@ class Agent:
         self._plugins_init()
         self._data_worker_init()
         self._dump_config()
+
+        # Cache for plugins so they can store values related to previous checks
+        self.plugins_cache = dict()
 
     def _config_init(self):
         """
@@ -152,8 +156,7 @@ class Agent:
                         imp.find_module(name)
                     module = None
                     try:
-                        module = imp.load_module(
-                                    name, fp, pathname, description)
+                        module = imp.load_module(name, fp, pathname, description)
                     finally:
                         # Since we may exit via an exception, close fp explicitly.
                         if fp:
@@ -163,12 +166,11 @@ class Agent:
                     else:
                         logging.error('import_plugin:%s:%s', name, sys.exc_type)
 
-        
     def _subprocess_execution(self, task):
         """
         Execute /task/ in a subprocess
         """
-        process = subprocess.Popen((sys.executable, task, ini_file), 
+        process = subprocess.Popen((sys.executable, task),
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             universal_newlines=True)
         logging.info('%s:process:%i', threading.currentThread(), process.pid)
@@ -214,14 +216,22 @@ class Agent:
                 payload = self._subprocess_execution(task)
             else:
                 try:
-                    payload = task.Plugin().run(self.config)
-                except:
+                    plugin = task.Plugin()
+
+                    # Setup cache for plugin instance
+                    self.plugins_cache.update({
+                        name: self.plugins_cache.get(name, [{}])
+                    })
+                    plugin.agent_cache = self.plugins_cache[name]
+
+                    payload = plugin.run(self.config)
+                except Exception:  # FIXME: Do you really need BaseException here instead?
                     logging.exception('plugin_exception')
-                    payload = { 'exception': str(sys.exc_info()[0]) }
+                    payload = {'exception': str(sys.exc_info()[0])}
             self.metrics.put({
-                'ts': ts, 
+                'ts': ts,
                 'task': task,
-                'name': name, 
+                'name': name,
                 'payload': payload,
             })
             self.hire.release()
@@ -270,17 +280,17 @@ class Agent:
                     else:
                         connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
                         connection.request('PUT', self.config.get('data', 'api_path'),
-                             bz2.compress(str(serialize.dumps(collection)) + "\n"),
-                             headers=headers)
+                                bz2.compress(str(serialize.dumps(collection)) + "\n"),
+                                headers=headers)
                         response = connection.getresponse()
                         logging.info('%s', response)
                         connection.close()
                         if response.status == 200:
-                            clean = True 
+                            clean = True
                     if clean:
                         collection = []
             time.sleep(self.config.getint('data', 'interval'))
-    
+
     def _data_worker_init(self):
         """
         Initialize data worker thread
@@ -288,7 +298,7 @@ class Agent:
         logging.info('_data_worker_init')
         threading.Thread(target=self._data).start()
 
-    def  _dump_config(self):
+    def _dump_config(self):
         """
         Dumps configuration object
         """
@@ -320,7 +330,7 @@ class Agent:
                             metrics['task'] = plugin.__file__
                     self.data.put(metrics)
                 execute = [what
-                    for what, when in self.schedule.items() 
+                    for what, when in self.schedule.items()
                         if when <= now
                 ]
                 for name in execute:
@@ -337,17 +347,17 @@ class Agent:
                             'ts': now,
                             'name': 'agent_internal',
                             'payload': {
-                                'threads_capping': 
+                                'threads_capping':
                                     self.config.getint('execution', 'threads')}
                         })
-                
+
                 time.sleep(interval)
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
             while True:
-                wait_for = [thread 
-                    for thread in threading.enumerate() 
-                        if not thread.isDaemon() and 
+                wait_for = [thread
+                    for thread in threading.enumerate()
+                        if not thread.isDaemon() and
                            not isinstance(thread, threading._MainThread)]
                 logging.info('Shutdown, waiting for %i threads to exit', len(wait_for))
                 logging.info('Remaining threads: %s', threading.enumerate())
@@ -355,6 +365,7 @@ class Agent:
                     sys.exit(0)
                 self.shutdown = True
                 time.sleep(interval)
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

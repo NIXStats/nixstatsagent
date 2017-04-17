@@ -2,10 +2,9 @@
 
 # by Al Nikolov <root@toor.fi.eu.org>
 
-import glob
+# import glob
 import os
 import sys
-
 import setuptools
 
 
@@ -13,9 +12,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 readme = open(os.path.join(here, 'README.md')).read()
 if sys.version.startswith('2.4'):
-    install_requires=['psutil==2.1.3', 'netifaces==0.8', 'simplejson==2.1.0']
+    install_requires = ['psutil==2.1.3', 'netifaces==0.8', 'simplejson==2.1.0']
 else:
-    install_requires=['psutil', 'netifaces']
+    install_requires = ['psutil', 'netifaces']
 
 setuptools.setup(
     name='nixstatsagent',
@@ -54,5 +53,5 @@ setuptools.setup(
         'nixstats-example.ini',
         'LICENSE',
         'README.md',
-    ])],    
+    ])],
 )
