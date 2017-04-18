@@ -37,6 +37,45 @@ ini_files = (
 )
 
 
+VERSION = (0, 1, 0)  # App version
+
+
+def version():
+    """
+    Return string with app version in a way like: Major.Minor.Subminor
+    """
+    return '.'.join(map(str, VERSION))
+
+
+def info():
+    """
+    Return string with info about nixstatsagent:
+        - version
+        - plugins enabled
+        - absolute path to plugin directory
+        - server id from configuration file
+    """
+    agent = Agent(dry_instance=True)
+    plugins_path = agent.config.get('agent', 'plugins')
+
+    # Collect enabled plugins
+    plugins_enabled = []
+    for filename in glob.glob(os.path.join(plugins_path, '*.py')):
+        name = _plugin_name(filename)
+        if name == 'plugins':
+            continue
+        agent._config_section_create(name)
+        if agent.config.getboolean(name, 'enabled'):
+            plugins_enabled.append(name)
+
+    return '\n'.join((
+        'Version: %s' % version(),
+        'Plugins enabled: %s' % ', '.join(plugins_enabled),
+        'Plugins directory: %s' % plugins_path,
+        'Server: %s' % agent.config.get('agent', 'server'),
+    ))
+
+
 def hello(proto='https'):
     user_id = sys.argv[1]
     token_filename = sys.argv[2] if len(sys.argv) > 2 else '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini'))
@@ -76,10 +115,14 @@ class Agent:
     data = Queue.Queue()
     shutdown = False
 
-    def __init__(self):
+    def __init__(self, dry_instance=False):
         """
         Initialize internal strictures
         """
+        if dry_instance:
+            self._config_init()
+            return
+
         self._config_init()
         self._logging_init()
         self._plugins_init()
@@ -139,9 +182,9 @@ class Agent:
         Discover the plugins
         """
         logging.info('_plugins_init')
-        path = self.config.get('agent', 'plugins')
-        filenames = glob.glob(os.path.join(path, '*.py'))
-        sys.path.insert(0, path)
+        plugins_path = self.config.get('agent', 'plugins')
+        filenames = glob.glob(os.path.join(plugins_path, '*.py'))
+        sys.path.insert(0, plugins_path)
         self.schedule = {}
         for filename in filenames:
             name = _plugin_name(filename)
@@ -370,11 +413,23 @@ class Agent:
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        if sys.argv[1] == 'hello':
+        if sys.argv[1].startswith('--'):
+            sys.argv[1] = sys.argv[1][2:]
+
+        if sys.argv[1] == 'info':
+            print >>sys.stderr, info()
+            sys.exit()
+        elif sys.argv[1] == 'version':
+            print >>sys.stderr, version()
+            sys.exit()
+        elif sys.argv[1] == 'hello':
             del sys.argv[1]
             hello()
         elif sys.argv[1] == 'insecure-hello':
             del sys.argv[1]
             hello(proto='http')
+        else:
+            print >>sys.stderr, 'Invalid option:', sys.argv[1]
+            sys.exit(1)
     else:
         run_agent()
