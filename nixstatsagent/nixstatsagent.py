@@ -223,6 +223,7 @@ class Agent:
                         name: self.plugins_cache.get(name, [{}])
                     })
                     plugin.agent_cache = self.plugins_cache[name]
+                    # print 'DEBUG: Agent self.plugins_cache: ', self.plugins_cache
 
                     payload = plugin.run(self.config)
                 except Exception:  # FIXME: Do you really need BaseException here instead?
