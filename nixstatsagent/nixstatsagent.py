@@ -27,6 +27,9 @@ import urllib
 import urllib2
 
 
+__version__ = '1.1.7'  # App version
+
+
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
     os.path.join('/etc', 'nixstats-token.ini'),
@@ -35,9 +38,6 @@ ini_files = (
     os.path.abspath('nixstats.ini'),
     os.path.abspath('nixstats-token.ini'),
 )
-
-
-__version__ = '1.1.7'  # App version
 
 
 def info():
@@ -413,7 +413,7 @@ if __name__ == '__main__':
             print >>sys.stderr, info()
             sys.exit()
         elif sys.argv[1] == 'version':
-            print >>sys.stderr, version()
+            print >>sys.stderr, __version__
             sys.exit()
         elif sys.argv[1] == 'hello':
             del sys.argv[1]
