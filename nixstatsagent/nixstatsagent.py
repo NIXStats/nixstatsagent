@@ -25,6 +25,7 @@ import time
 import types
 import urllib
 import urllib2
+import json
 
 
 __version__ = '1.1.7'  # App version
@@ -51,15 +52,7 @@ def info():
     agent = Agent(dry_instance=True)
     plugins_path = agent.config.get('agent', 'plugins')
 
-    # Collect enabled plugins
-    plugins_enabled = []
-    for filename in glob.glob(os.path.join(plugins_path, '*.py')):
-        name = _plugin_name(filename)
-        if name == 'plugins':
-            continue
-        agent._config_section_create(name)
-        if agent.config.getboolean(name, 'enabled'):
-            plugins_enabled.append(name)
+    plugins_enabled = agent._get_plugins(state='enabled')
 
     return '\n'.join((
         'Version: %s' % __version__,
@@ -102,6 +95,45 @@ def _plugin_name(plugin):
         return plugin.__name__
 
 
+def test_plugins(plugins=[]):
+    """
+    Test specified plugins and print their data output after single check
+    """
+    agent = Agent(dry_instance=True)
+    plugins_path = agent.config.get('agent', 'plugins')
+    if plugins_path not in sys.path:
+        sys.path.insert(0, plugins_path)
+
+    if not plugins:
+        plugins = agent._get_plugins(state='enabled')
+        print 'Check all enabled plugins: %s' % ', '.join(plugins)
+
+    for plugin_name in plugins:
+        print '%s:' % plugin_name
+
+        try:
+            fp, pathname, description = imp.find_module(plugin_name)
+        except Exception as e:
+            print 'Find error:', e
+            continue
+
+        try:
+            module = imp.load_module(plugin_name, fp, pathname, description)
+        except Exception as e:
+            print 'Load error:', e
+            continue
+        finally:
+            # Since we may exit via an exception, close fp explicitly.
+            if fp:
+                fp.close()
+
+        try:
+            payload = module.Plugin().run(agent.config)
+            print json.dumps(payload, indent=4, sort_keys=True)
+        except Exception as e:
+            print 'Execution error:', e
+
+
 class Agent:
     execute = Queue.Queue()
     metrics = Queue.Queue()
@@ -112,8 +144,12 @@ class Agent:
         """
         Initialize internal strictures
         """
+        self._config_init()
+
+        # Cache for plugins so they can store values related to previous checks
+        self.plugins_cache = {}
+
         if dry_instance:
-            self._config_init()
             return
 
         self._config_init()
@@ -121,9 +157,6 @@ class Agent:
         self._plugins_init()
         self._data_worker_init()
         self._dump_config()
-
-        # Cache for plugins so they can store values related to previous checks
-        self.plugins_cache = dict()
 
     def _config_init(self):
         """
@@ -177,7 +210,8 @@ class Agent:
         logging.info('_plugins_init')
         plugins_path = self.config.get('agent', 'plugins')
         filenames = glob.glob(os.path.join(plugins_path, '*.py'))
-        sys.path.insert(0, plugins_path)
+        if plugins_path not in sys.path:
+            sys.path.insert(0, plugins_path)
         self.schedule = {}
         for filename in filenames:
             name = _plugin_name(filename)
@@ -252,13 +286,12 @@ class Agent:
                 payload = self._subprocess_execution(task)
             else:
                 try:
-                    plugin = task.Plugin()
-
                     # Setup cache for plugin instance
                     self.plugins_cache.update({
-                        name: self.plugins_cache.get(name, [{}])
+                        name: self.plugins_cache.get(name, [])
                     })
-                    plugin.agent_cache = self.plugins_cache[name]
+
+                    plugin = task.Plugin(agent_cache=self.plugins_cache[name])
                     # print 'DEBUG: Agent self.plugins_cache: ', self.plugins_cache
 
                     payload = plugin.run(self.config)
@@ -343,6 +376,27 @@ class Agent:
         self.config.write(buf)
         logging.info('Config: %s', buf.getvalue())
 
+    def _get_plugins(self, state='enabled'):
+        """
+        Return list with plugins names
+        """
+        plugins_path = self.config.get('agent', 'plugins')
+        plugins = []
+        for filename in glob.glob(os.path.join(plugins_path, '*.py')):
+            plugin_name = _plugin_name(filename)
+            if plugin_name == 'plugins':
+                continue
+            self._config_section_create(plugin_name)
+
+            if state == 'enabled':
+                if self.config.getboolean(plugin_name, 'enabled'):
+                    plugins.append(plugin_name)
+            elif state == 'disabled':
+                if not self.config.getboolean(plugin_name, 'enabled'):
+                    plugins.append(plugin_name)
+
+        return plugins
+
     def run(self):
         """
         Start all the worker threads
@@ -366,9 +420,10 @@ class Agent:
                         if isinstance(plugin, types.ModuleType):
                             metrics['task'] = plugin.__file__
                     self.data.put(metrics)
-                execute = [what
+                execute = [
+                    what
                     for what, when in self.schedule.items()
-                        if when <= now
+                    if when <= now
                 ]
                 for name in execute:
                     logging.info('scheduling:%s', name)
@@ -410,10 +465,10 @@ if __name__ == '__main__':
             sys.argv[1] = sys.argv[1][2:]
 
         if sys.argv[1] == 'info':
-            print >>sys.stderr, info()
+            print info()
             sys.exit()
         elif sys.argv[1] == 'version':
-            print >>sys.stderr, __version__
+            print __version__
             sys.exit()
         elif sys.argv[1] == 'hello':
             del sys.argv[1]
@@ -421,6 +476,13 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'insecure-hello':
             del sys.argv[1]
             hello(proto='http')
+        elif sys.argv[1] == 'test':
+            # if len(sys.argv) < 3:
+            #     print >>sys.stderr, 'You have to specify at least one plugin name'
+            #     sys.exit(1)
+            # print 'Plugins single check results:'
+            test_plugins(sys.argv[2:])
+            sys.exit()
         else:
             print >>sys.stderr, 'Invalid option:', sys.argv[1]
             sys.exit(1)

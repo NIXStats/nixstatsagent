@@ -7,8 +7,13 @@ class BasePlugin:
     """
     Abstract class for plugins
     """
-
     name = ''
+
+    def __init__(self, agent_cache=[]):
+        if isinstance(agent_cache, list):
+            self.agent_cache = agent_cache
+        else:
+            raise TypeError('Type of agent_cache have to be list')
 
     def run(self, config=None):
         """
@@ -39,13 +44,15 @@ class BasePlugin:
     def set_agent_cache(self, cache):
         """
         Set agent cache value previously passed to this plugin instance.
-        To avoid errors self.agent_cache have to be set on agent side
-        after plugin instance initialization.
-        Minimally it should be set as [{}] (dict in list)
-        Agent will be able to see only changes in zero element of self.agent_cache
-        Do not manually override self.agent_cache, othervice cache will not be saved!
+        To enable caching existing agent_cache list have to be passed
+        to Plugin on initialization.
+        Minimally it should be list().
+        Agent will be able to see only changes in zero element of agent_cache, so
+        do not manually override self.agent_cache, othervice cache will not be saved!
 
-        If self.agent_cache does not exists or not a list
-        appropriate exception will be raised.
+        If self.agent_cache is not a list appropriate exception will be raised.
         """
-        self.agent_cache[0] = cache
+        try:
+            self.agent_cache[0] = cache
+        except IndexError:
+            self.agent_cache.append(cache)
