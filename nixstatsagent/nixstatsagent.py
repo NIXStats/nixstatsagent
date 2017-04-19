@@ -37,14 +37,15 @@ ini_files = (
 )
 
 
-VERSION = (0, 1, 0)  # App version
+__version__ = '1.1.7'  # App version
 
 
 def version():
     """
     Return string with app version in a way like: Major.Minor.Subminor
     """
-    return '.'.join(map(str, VERSION))
+    # return '.'.join(map(str, __version__))  # Generate string from tuple
+    return __version__
 
 
 def info():

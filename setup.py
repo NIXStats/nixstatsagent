@@ -2,6 +2,7 @@
 
 # by Al Nikolov <root@toor.fi.eu.org>
 
+from nixstatsagent.nixstatsagent import __version__
 # import glob
 import os
 import sys
@@ -18,7 +19,7 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.1.6',
+    version=__version__,
     description='NixStats agent',
     long_description=readme,
     url='https://github.com/NIXStats/nixstatsagent',
