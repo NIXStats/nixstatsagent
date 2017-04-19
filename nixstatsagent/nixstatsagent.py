@@ -40,14 +40,6 @@ ini_files = (
 __version__ = '1.1.7'  # App version
 
 
-def version():
-    """
-    Return string with app version in a way like: Major.Minor.Subminor
-    """
-    # return '.'.join(map(str, __version__))  # Generate string from tuple
-    return __version__
-
-
 def info():
     """
     Return string with info about nixstatsagent:
@@ -70,7 +62,7 @@ def info():
             plugins_enabled.append(name)
 
     return '\n'.join((
-        'Version: %s' % version(),
+        'Version: %s' % __version__,
         'Plugins enabled: %s' % ', '.join(plugins_enabled),
         'Plugins directory: %s' % plugins_path,
         'Server: %s' % agent.config.get('agent', 'server'),
