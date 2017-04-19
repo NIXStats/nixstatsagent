@@ -97,7 +97,8 @@ def _plugin_name(plugin):
 
 def test_plugins(plugins=[]):
     """
-    Test specified plugins and print their data output after single check
+    Test specified plugins and print their data output after single check.
+    If plugins list is empty test all enabled plugins.
     """
     agent = Agent(dry_instance=True)
     plugins_path = agent.config.get('agent', 'plugins')
