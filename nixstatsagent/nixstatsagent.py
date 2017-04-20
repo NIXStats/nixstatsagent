@@ -82,8 +82,8 @@ def hello(proto='https'):
         write('[DEFAULT]\nuser=%s\nserver=%s\n' % (user_id, server_id))
 
 
-def run_agent():
-    Agent().run()
+# def run_agent():
+#     Agent().run()
 
 
 def _plugin_name(plugin):
@@ -459,7 +459,7 @@ class Agent:
                 time.sleep(interval)
 
 
-if __name__ == '__main__':
+def main():
     if len(sys.argv) > 1:
         if sys.argv[1].startswith('--'):
             sys.argv[1] = sys.argv[1][2:]
@@ -487,4 +487,8 @@ if __name__ == '__main__':
             print >>sys.stderr, 'Invalid option:', sys.argv[1]
             sys.exit(1)
     else:
-        run_agent()
+        Agent().run()
+
+
+if __name__ == '__main__':
+    main()
