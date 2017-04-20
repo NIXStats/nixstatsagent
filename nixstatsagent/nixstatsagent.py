@@ -27,14 +27,15 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.7'  # App version
+__version__ = '1.1.9'  # App version
 
+__FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
     os.path.join('/etc', 'nixstats-token.ini'),
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nixstats.ini'),
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini'),
+    os.path.join(__FILEABSDIRNAME__, 'nixstats.ini'),
+    os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini'),
     os.path.abspath('nixstats.ini'),
     os.path.abspath('nixstats-token.ini'),
 )
@@ -63,19 +64,20 @@ def info():
 
 def hello(proto='https'):
     user_id = sys.argv[1]
-    token_filename = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini')
+    if len(sys.argv) > 2:
+        token_filename = sys.argv[2]
+    else:
+        os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini')
     try:
         hostname = os.uname()[1]
     except AttributeError:
         hostname = socket.getfqdn()
     server_id = urllib2.urlopen(
         proto + '://api.nixstats.com/hello.php',
-        data=urllib.urlencode(
-            {
+        data=urllib.urlencode({
                 'user': user_id,
                 'hostname': hostname
-            }
-        )
+        })
     ).read()
     print('Got server_id: %s' % server_id)
     open(token_filename, 'w').\
@@ -169,7 +171,7 @@ class Agent:
             'threads': 100,
             'ttl': 60,
             'interval': 60,
-            'plugins': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'plugins'),
+            'plugins': os.path.join(__FILEABSDIRNAME__, 'plugins'),
             'enabled': 'no',
             'subprocess': 'no',
             'user': '',
@@ -222,11 +224,11 @@ class Agent:
                 if self.config.getboolean(name, 'subprocess'):
                     self.schedule[filename] = 0
                 else:
-                    fp, pathname, description = \
-                        imp.find_module(name)
-                    module = None
+                    fp, pathname, description = imp.find_module(name)
                     try:
                         module = imp.load_module(name, fp, pathname, description)
+                    except Exception:
+                        module = None
                     finally:
                         # Since we may exit via an exception, close fp explicitly.
                         if fp:
@@ -259,7 +261,8 @@ class Agent:
             os.kill(process.pid, signal.SIGTERM)
         stdout, stderr = process.communicate()
         if process.returncode != 0 or stderr:
-            logging.error('%s:%s:%s:%s', threading.currentThread(), task, process.returncode, stderr)
+            logging.error('%s:%s:%s:%s', threading.currentThread(),
+                task, process.returncode, stderr)
         if stdout:
             ret = pickle.loads(stdout)
         else:
@@ -287,15 +290,15 @@ class Agent:
             else:
                 try:
                     # Setup cache for plugin instance
+                    # if name not in self.plugins_cache.iterkeys():
+                    #     self.plugins_cache[name] = []
                     self.plugins_cache.update({
                         name: self.plugins_cache.get(name, [])
                     })
 
                     plugin = task.Plugin(agent_cache=self.plugins_cache[name])
-                    # print 'DEBUG: Agent self.plugins_cache: ', self.plugins_cache
-
                     payload = plugin.run(self.config)
-                except Exception:  # FIXME: Do you really need BaseException here instead?
+                except Exception:
                     logging.exception('plugin_exception')
                     payload = {'exception': str(sys.exc_info()[0])}
             self.metrics.put({
@@ -316,7 +319,8 @@ class Agent:
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
-            logging.info('%s:data_queue:%i:collection:%i', threading.currentThread(), self.data.qsize(), len(collection))
+            logging.info('%s:data_queue:%i:collection:%i',
+                threading.currentThread(), self.data.qsize(), len(collection))
             while self.data.qsize():
                 collection.append(self.data.get_nowait())
             if collection:
@@ -340,17 +344,19 @@ class Agent:
                         "Authorization":
                             'ApiKey %s:%s' % (
                                 self.config.get('agent', 'user'),
-                                self.config.get('agent', 'server')),
+                                self.config.get('agent', 'server'),
+                            ),
                     }
                     clean = False
                     logging.info('collection:%s', collection)
                     if not server and not user:
-                        logging.info('Empty server/user, but need to send: %s', serialize.dumps(collection))
+                        logging.info('Empty server/user, but need to send: %s',
+                            json.dumps(collection))
                         clean = True
                     else:
                         connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
                         connection.request('PUT', self.config.get('data', 'api_path'),
-                                bz2.compress(str(serialize.dumps(collection)) + "\n"),
+                                bz2.compress(str(json.dumps(collection)) + "\n"),
                                 headers=headers)
                         response = connection.getresponse()
                         logging.info('%s', response)
@@ -477,10 +483,6 @@ def main():
             del sys.argv[1]
             hello(proto='http')
         elif sys.argv[1] == 'test':
-            # if len(sys.argv) < 3:
-            #     print >>sys.stderr, 'You have to specify at least one plugin name'
-            #     sys.exit(1)
-            # print 'Plugins single check results:'
             test_plugins(sys.argv[2:])
             sys.exit()
         else:

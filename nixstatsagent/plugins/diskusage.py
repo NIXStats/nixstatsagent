@@ -11,7 +11,7 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, *unused):
         disk = {}
-        if sys.platform == "linux" or sys.platform == "linux2" or sys.platform == "darwin" or sys.platform == "freebsd11" or sys.platform == "freebsd10":
+        if sys.platform in ("linux", "linux2", "darwin", "freebsd11", "freebsd10"):
             disk['df'] = [s.split() for s in os.popen("df -Pl").read().splitlines()]
             disk['di'] = [s.split() for s in os.popen("df -iPl").read().splitlines()]
         else:

@@ -12,13 +12,16 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
         '''
         Provides the following metrics (example):
-            "accepts_per_second": 42.2,
-            "active_connections": "207",
-            "handled_per_second": 42.1,
-            "reading": "0",
-            "requests_per_second": 42.0,
-            "waiting": "204",
-            "writing": "3"
+            "accepts": 588462,
+            "accepts_per_second": 0.0,
+            "active_connections": 192,
+            "handled": 588462,
+            "handled_per_second": 0.0,
+            "reading": 0,
+            "requests": 9637106,
+            "requests_per_second": 0.0,
+            "waiting": 189,
+            "writing": 3
 
         requests, accepts, handled are values since the start of nginx.
         *_per_second values calculated from them using cached values from previous call.

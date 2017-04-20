@@ -14,7 +14,7 @@ def systemCommand(Command, newlines=True):
     Output = ""
     Error = ""
     try:
-        # Output = subprocess.check_output(Command,stderr = subprocess.STDOUT,shell='True')
+        # Output = subprocess.check_output(Command, stderr = subprocess.STDOUT, shell='True')
         proc = Popen(Command.split(), stdout=PIPE)
         Output = proc.communicate()[0]
     except Exception:

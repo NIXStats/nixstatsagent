@@ -29,7 +29,8 @@ def procStats(pid):
                     proctimes = pidfile.readline()
                     process['name'] = proctimes.split(' ')[1].strip(')').strip('(')
                     # count total process used time
-                    process['ctime'] = float(int(proctimes.split(' ')[13]) + int(proctimes.split(' ')[14]))
+                    process['ctime'] = float(int(proctimes.split(' ')[13]) +
+                        int(proctimes.split(' ')[14]))
 
                 if os.path.exists('/proc/%s/io' % pid):
                     process['io'] = {}
@@ -42,7 +43,8 @@ def procStats(pid):
                     if f:
                         for line in f:
                             if line.split(':')[0] == 'Uid':
-                                process['username'] = pwd.getpwuid(int(line.split(':')[1].split('\t')[1])).pw_name
+                                process['username'] = pwd.getpwuid(
+                                    int(line.split(':')[1].split('\t')[1])).pw_name
                             if line.split(':')[0] == 'PPid':
                                 process['ppid'] = int(line.split(':')[1].split('\t')[1])
                             if line.split(':')[0] == 'VmSize':

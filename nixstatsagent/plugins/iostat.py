@@ -112,7 +112,8 @@ class IOStat(object):
             ''.join(options),
             self.interval,
             self.count,
-            ' '.join(self.disks))
+            ' '.join(self.disks),
+        )
 
         return subprocess.Popen(
             args,

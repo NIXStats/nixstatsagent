@@ -30,7 +30,7 @@ class Plugin(plugins.BasePlugin):
             for k, v in j.items():
                 results[k.replace(" ", "_")] = v
 
-            next_cache.update({'accepted_conn': int(results['accepted_conn'])})
+            next_cache['accepted_conn'] = int(results['accepted_conn'])
         except Exception:
             return False
 
