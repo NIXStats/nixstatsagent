@@ -1,35 +1,30 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
+
 import os
-import sys
 import psutil
 import plugins
 
 
 class Plugin(plugins.BasePlugin):
-    __name__ = 'diskusage'
+
 
     def run(self, *unused):
         disk = {}
-        if sys.platform == "linux" or sys.platform == "linux2" or sys.platform == "darwin" or sys.platform == "freebsd11" or sys.platform == "freebsd10":
-            disk['df'] = [s.split() for s in os.popen("df -Pl").read().splitlines()]
-            disk['di'] = [s.split() for s in os.popen("df -iPl").read().splitlines()]
-        else:
-            disk = {}
-            disk['df-windows'] = []
-            for part in psutil.disk_partitions(all=False):
-                if os.name == 'nt':
-                    if 'cdrom' in part.opts or part.fstype == '':
-                        # skip cd-rom drives with no disk in it; they may raise
-                        # ENOENT, pop-up a Windows GUI error for a non-ready
-                        # partition or just hang.
-                        continue
-                usage = psutil.disk_usage(part.mountpoint)
-                diskdata = {}
-                diskdata['info'] = part
-                for key in usage._fields:
-                    diskdata[key] = getattr(usage, key)
-                disk['df-windows'].append(diskdata)
+        disk['df-psutil'] = []
+        for part in psutil.disk_partitions(True):
+            if os.name == 'nt':
+                if 'cdrom' in part.opts or part.fstype == '':
+                    # skip cd-rom drives with no disk in it; they may raise
+                    # ENOENT, pop-up a Windows GUI error for a non-ready
+                    # partition or just hang.
+                    continue
+            usage = psutil.disk_usage(part.mountpoint)
+            diskdata = {}
+            diskdata['info'] = part
+            for key in usage._fields:
+                diskdata[key] = getattr(usage, key)
+            disk['df-psutil'].append(diskdata)
         return disk
 
 
