@@ -1,6 +1,7 @@
 nixstats.ini
 *.pyc
 *~
+*.bak
 build
 debian
 dist

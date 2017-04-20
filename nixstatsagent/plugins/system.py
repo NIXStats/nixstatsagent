@@ -1,14 +1,12 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 import netifaces
 import os
 import platform
 from subprocess import Popen, PIPE
 import sys
 import time
-
 import psutil
-
 import plugins
 
 
@@ -16,14 +14,14 @@ def systemCommand(Command, newlines=True):
     Output = ""
     Error = ""
     try:
-        #Output = subprocess.check_output(Command,stderr = subprocess.STDOUT,shell='True')
+        # Output = subprocess.check_output(Command,stderr = subprocess.STDOUT,shell='True')
         proc = Popen(Command.split(), stdout=PIPE)
         Output = proc.communicate()[0]
-    except:
+    except Exception:
         pass
 
     if Output:
-        if newlines == True:
+        if newlines is True:
             Stdout = Output.split("\n")
         else:
             Stdout = Output
@@ -34,7 +32,7 @@ def systemCommand(Command, newlines=True):
     else:
         Stderr = []
 
-    return (Stdout,Stderr)
+    return (Stdout, Stderr)
 
 
 def ip_addresses():
@@ -55,7 +53,7 @@ def ip_addresses():
 
 
 class Plugin(plugins.BasePlugin):
-
+    __name__ = 'system'
 
     def run(self, *unused):
         systeminfo = {}
@@ -86,7 +84,7 @@ class Plugin(plugins.BasePlugin):
             cpu['brand'] = str(systemCommand('sysctl hw.model', False)[0]).split(': ')[1]
             cpu['count'] = systemCommand('sysctl hw.ncpu')
         elif sys.platform == "win32":
-            systeminfo['os'] = "{} {}".format(platform.uname()[0],platform.uname()[2])
+            systeminfo['os'] = "{} {}".format(platform.uname()[0], platform.uname()[2])
         systeminfo['cpu'] = cpu['brand']
         systeminfo['cores'] = cpu['count']
         systeminfo['memory'] = mem.total

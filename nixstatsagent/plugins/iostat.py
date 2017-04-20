@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 #
 # collectd-iostat-python
 # ======================
@@ -20,9 +20,7 @@ import os
 import signal
 import subprocess
 import sys
-
 import psutil
-
 import plugins
 
 __version__ = '0.0.3'
@@ -49,7 +47,7 @@ class IOStat(object):
         self.disks = disks
 
     def parse_diskstats(self, input):
-        """
+        '''
         Parse iostat -d and -dx output.If there are more
         than one series of statistics, get the last one.
         By default parse statistics for all avaliable block devices.
@@ -69,7 +67,7 @@ class IOStat(object):
           rrqm/s  wrqm/s  r/s  w/s  rsec/s  wsec/s  rkB/s  wkB/s  avgrq-sz \
           avgqu-sz  await  svctm  %util
         See I{man iostat} for more details.
-        """
+        '''
         dstats = {}
         dsi = input.rfind('Device:')
         if dsi == -1:
@@ -88,9 +86,9 @@ class IOStat(object):
         return dstats
 
     def sum_dstats(self, stats, smetrics):
-        """
+        '''
         Compute the summary statistics for chosen metrics.
-        """
+        '''
         avg = {}
 
         for disk, metrics in stats.iteritems():
@@ -105,9 +103,9 @@ class IOStat(object):
         return avg
 
     def _run(self, options=None):
-        """
+        '''
         Run iostat command.
-        """
+        '''
         close_fds = 'posix' in sys.builtin_module_names
         args = '%s %s %s %s %s' % (
             self.path,
@@ -125,9 +123,9 @@ class IOStat(object):
 
     @staticmethod
     def _get_childs_data(child):
-        """
+        '''
         Return child's data when avaliable.
-        """
+        '''
         (stdout, stderr) = child.communicate()
         ecode = child.poll()
 
@@ -137,9 +135,9 @@ class IOStat(object):
         return stdout
 
     def get_diskstats(self):
-        """
+        '''
         Get all avaliable disks statistics that we can get.
-        """
+        '''
         dstats = self._run(options=['-kNd'])
         extdstats = self._run(options=['-kNdx'])
         dsd = self._get_childs_data(dstats)
@@ -199,11 +197,11 @@ class IOMon(object):
 
 
 def restore_sigchld():
-    """
+    '''
     Restore SIGCHLD handler for python <= v2.6
     It will BREAK exec plugin!!!
     See https://github.com/deniszh/collectd-iostat-python/issues/2 for details
-    """
+    '''
     if sys.version_info[0] == 2 and sys.version_info[1] <= 6:
         signal.signal(signal.SIGCHLD, signal.SIG_DFL)
 
@@ -221,7 +219,8 @@ def diskstats_parse(dev=None):
 
     lines = open(file_path, 'r').readlines()
     for line in lines:
-        if line == '': continue
+        if line == '':
+            continue
         split = line.split()
         if len(split) == len(columns_disk):
             columns = columns_disk
@@ -233,9 +232,10 @@ def diskstats_parse(dev=None):
 
         data = dict(zip(columns, split))
 
-        if "loop" in data['dev']: continue
+        if "loop" in data['dev']:
+            continue
 
-        if dev != None and dev != data['dev']:
+        if dev is not None and dev != data['dev']:
             continue
         for key in data:
             if key != 'dev':
@@ -246,7 +246,7 @@ def diskstats_parse(dev=None):
 
 
 class Plugin(plugins.BasePlugin):
-
+    __name__ = 'iostat'
 
     def run(self, *unused):
         if(os.path.isfile("/proc/diskstats")):
@@ -259,7 +259,7 @@ class Plugin(plugins.BasePlugin):
         else:
             results = {}
             diskdata = psutil.disk_io_counters(perdisk=True)
-            for device,values in diskdata.items():
+            for device, values in diskdata.items():
                 device_stats = {}
                 for key_value in values._fields:
                     device_stats[key_value] = getattr(values, key_value)
@@ -269,4 +269,3 @@ class Plugin(plugins.BasePlugin):
 
 if __name__ == '__main__':
     Plugin().execute()
-    

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 import urllib2
 import time
 import plugins
@@ -7,11 +7,12 @@ import json
 
 
 class Plugin(plugins.BasePlugin):
+    __name__ = 'phpfpm'
 
     def run(self, config):
-        """
+        '''
         php-fpm status page metrics
-        """
+        '''
         def ascii_encode_dict(data):
             ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
             return dict(map(ascii_encode, pair) for pair in data.items())

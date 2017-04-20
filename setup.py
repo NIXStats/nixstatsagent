@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 # by Al Nikolov <root@toor.fi.eu.org>
 
 from nixstatsagent.nixstatsagent import __version__
-# import glob
 import os
 import sys
 import setuptools

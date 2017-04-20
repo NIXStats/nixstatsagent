@@ -1,20 +1,17 @@
 #!/usr/bin/env python
-
-import netifaces
+# -*- coding: utf-8 -*-
 import os
-import platform
-from subprocess import Popen, PIPE
 import sys
-
-
 try:
     import pwd
 except ImportError:
     pass
-
 import psutil
-
 import plugins
+# import netifaces
+# import platform
+# from subprocess import Popen, PIPE
+
 
 def procStats(pid):
     process = {}
@@ -57,25 +54,29 @@ def procStats(pid):
                                 break
                 return process
 
+
 def getPids():
     return [int(x) for x in os.listdir(b'/proc') if x.isdigit()]
 
 
 class Plugin(plugins.BasePlugin):
-
+    __name__ = 'process'
 
     def run(self, *unused):
         process = []
         if sys.platform == "linux" or sys.platform == "linux2":
-            processlist = []
+            # processlist = []
             for pid in getPids():
                 proc = procStats(str(pid))
-                if proc != False:
+                if proc is not False:
                     process.append(proc)
         elif sys.platform == "darwin":
             for proc in psutil.process_iter():
                 try:
-                    pinfo = proc.as_dict(attrs=['pid', 'name', 'ppid', 'exe', 'cmdline', 'username', 'cpu_percent','memory_percent'])
+                    pinfo = proc.as_dict(attrs=[
+                        'pid', 'name', 'ppid', 'exe', 'cmdline', 'username',
+                        'cpu_percent', 'memory_percent',
+                    ])
                 except psutil.NoSuchProcess:
                     pass
                 else:
@@ -84,7 +85,10 @@ class Plugin(plugins.BasePlugin):
         else:
             for proc in psutil.process_iter():
                 try:
-                    pinfo = proc.as_dict(attrs=['pid', 'name', 'ppid', 'exe', 'cmdline', 'username', 'cpu_percent','memory_percent'])
+                    pinfo = proc.as_dict(attrs=[
+                        'pid', 'name', 'ppid', 'exe', 'cmdline', 'username',
+                        'cpu_percent', 'memory_percent',
+                    ])
                 except psutil.NoSuchProcess:
                     pass
                 else:

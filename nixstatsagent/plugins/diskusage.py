@@ -1,16 +1,13 @@
 #!/usr/bin/env python
-
-
+# -*- coding: utf-8 -*-
 import os
 import sys
-
 import psutil
-
 import plugins
 
 
 class Plugin(plugins.BasePlugin):
-
+    __name__ = 'diskusage'
 
     def run(self, *unused):
         disk = {}

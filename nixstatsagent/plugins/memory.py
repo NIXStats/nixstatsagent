@@ -1,13 +1,11 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 import psutil
-
-
 import plugins
 
 
 class Plugin(plugins.BasePlugin):
-
+    __name__ = 'memory'
 
     def run(self, *unused):
         memory = {}

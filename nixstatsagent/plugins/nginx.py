@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 # import psutil
 import urllib2
 import time
@@ -7,9 +7,10 @@ import plugins
 
 
 class Plugin(plugins.BasePlugin):
+    __name__ = 'nginx'
 
     def run(self, config):
-        """
+        '''
         Provides the following metrics (example):
             "accepts_per_second": 42.2,
             "active_connections": "207",
@@ -21,7 +22,7 @@ class Plugin(plugins.BasePlugin):
 
         requests, accepts, handled are values since the start of nginx.
         *_per_second values calculated from them using cached values from previous call.
-        """
+        '''
 
         try:
             results = dict()

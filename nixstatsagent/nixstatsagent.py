@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 # by Al Nikolov <root@toor.fi.eu.org>
 
 import bz2
@@ -8,9 +8,9 @@ import glob
 import httplib
 import imp
 try:
-    import json as serialize
+    import json
 except ImportError:
-    import simplejson as serialize
+    import simplejson as json
 import logging
 import os
 import pickle
@@ -25,7 +25,6 @@ import time
 import types
 import urllib
 import urllib2
-import json
 
 
 __version__ = '1.1.7'  # App version
@@ -34,21 +33,21 @@ __version__ = '1.1.7'  # App version
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
     os.path.join('/etc', 'nixstats-token.ini'),
-    '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats.ini')),
-    '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini')),
+    os.path.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats.ini')),
+    os.path.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini')),
     os.path.abspath('nixstats.ini'),
     os.path.abspath('nixstats-token.ini'),
 )
 
 
 def info():
-    """
+    '''
     Return string with info about nixstatsagent:
         - version
         - plugins enabled
         - absolute path to plugin directory
         - server id from configuration file
-    """
+    '''
     agent = Agent(dry_instance=True)
     plugins_path = agent.config.get('agent', 'plugins')
 
@@ -96,10 +95,10 @@ def _plugin_name(plugin):
 
 
 def test_plugins(plugins=[]):
-    """
+    '''
     Test specified plugins and print their data output after single check.
     If plugins list is empty test all enabled plugins.
-    """
+    '''
     agent = Agent(dry_instance=True)
     plugins_path = agent.config.get('agent', 'plugins')
     if plugins_path not in sys.path:
@@ -142,9 +141,9 @@ class Agent:
     shutdown = False
 
     def __init__(self, dry_instance=False):
-        """
+        '''
         Initialize internal strictures
-        """
+        '''
         self._config_init()
 
         # Cache for plugins so they can store values related to previous checks
@@ -160,9 +159,9 @@ class Agent:
         self._dump_config()
 
     def _config_init(self):
-        """
+        '''
         Initialize configuration object
-        """
+        '''
         defaults = {
             'max_data_span': 60,
             'max_data_age': 60 * 10,
@@ -170,7 +169,7 @@ class Agent:
             'threads': 100,
             'ttl': 60,
             'interval': 60,
-            'plugins': '/'.join((os.path.dirname(os.path.abspath(__file__)), 'plugins')),
+            'plugins': os.path.join((os.path.dirname(os.path.abspath(__file__)), 'plugins')),
             'enabled': 'no',
             'subprocess': 'no',
             'user': '',
@@ -190,24 +189,24 @@ class Agent:
             self._config_section_create(section)
 
     def _config_section_create(self, section):
-        """
+        '''
         Create an addition section in the configuration object
-        """
+        '''
         if not self.config.has_section(section):
             self.config.add_section(section)
 
     def _logging_init(self):
-        """
+        '''
         Initialize logging faculty
-        """
+        '''
         level = self.config.getint('agent', 'logging_level')
         logging.basicConfig(level=level)
         logging.info('Agent logging_level %i', level)
 
     def _plugins_init(self):
-        """
+        '''
         Discover the plugins
-        """
+        '''
         logging.info('_plugins_init')
         plugins_path = self.config.get('agent', 'plugins')
         filenames = glob.glob(os.path.join(plugins_path, '*.py'))
@@ -238,9 +237,9 @@ class Agent:
                         logging.error('import_plugin:%s:%s', name, sys.exc_type)
 
     def _subprocess_execution(self, task):
-        """
+        '''
         Execute /task/ in a subprocess
-        """
+        '''
         process = subprocess.Popen((sys.executable, task),
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             universal_newlines=True)
@@ -268,9 +267,9 @@ class Agent:
         return ret
 
     def _execution(self):
-        """
+        '''
         Take queued execution requests, execute plugins and queue the results
-        """
+        '''
         while True:
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
@@ -308,9 +307,9 @@ class Agent:
             self.hire.release()
 
     def _data(self):
-        """
+        '''
         Take and collect data, send and clean if needed
-        """
+        '''
         logging.info('%s', threading.currentThread())
         collection = []
         while True:
@@ -363,24 +362,24 @@ class Agent:
             time.sleep(self.config.getint('data', 'interval'))
 
     def _data_worker_init(self):
-        """
+        '''
         Initialize data worker thread
-        """
+        '''
         logging.info('_data_worker_init')
         threading.Thread(target=self._data).start()
 
     def _dump_config(self):
-        """
+        '''
         Dumps configuration object
-        """
+        '''
         buf = StringIO.StringIO()
         self.config.write(buf)
         logging.info('Config: %s', buf.getvalue())
 
     def _get_plugins(self, state='enabled'):
-        """
+        '''
         Return list with plugins names
-        """
+        '''
         plugins_path = self.config.get('agent', 'plugins')
         plugins = []
         for filename in glob.glob(os.path.join(plugins_path, '*.py')):
@@ -399,9 +398,9 @@ class Agent:
         return plugins
 
     def run(self):
-        """
+        '''
         Start all the worker threads
-        """
+        '''
         logging.info('Agent main loop')
         interval = self.config.getint('agent', 'interval')
         self.hire = threading.Semaphore(
