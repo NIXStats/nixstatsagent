@@ -74,7 +74,7 @@ def collect_ping(hostname):
         except CalledProcessError:
             pass
     else:
-        response = system_command("ping -W -c 1 " + hostname)
+        response = float(system_command("ping -W -c 1 " + hostname))
     return {'avgping': response, 'host': hostname}
 
 

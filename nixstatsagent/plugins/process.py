@@ -37,22 +37,24 @@ def procStats(pid):
                     f = open(os.path.join('/proc/', pid, 'io'))
                     if f:
                         for line in f:
-                            process['io'][line.strip().split(': ')[0]] = line.strip().split(': ')[1]
+                            splt = line.strip().split(': ')
+                            process['io'][splt[0]] = int(splt[1])
                 if os.path.exists('/proc/%s/status' % pid):
                     f = open(os.path.join('/proc/', pid, 'status'))
                     if f:
                         for line in f:
-                            if line.split(':')[0] == 'Uid':
+                            splt = line.split(':')
+                            if splt[0] == 'Uid':
                                 process['username'] = pwd.getpwuid(
-                                    int(line.split(':')[1].split('\t')[1])).pw_name
-                            if line.split(':')[0] == 'PPid':
-                                process['ppid'] = int(line.split(':')[1].split('\t')[1])
-                            if line.split(':')[0] == 'VmSize':
-                                process['vmsize'] = line.split(':')[1].split('kB')[0].strip()
-                            if line.split(':')[0] == 'State':
-                                process['cmdline'] += line.split(':')[1].strip()
-                            if line.split(':')[0] == 'VmRSS':
-                                process['vmrss'] = line.split(':')[1].split('kB')[0].strip()
+                                    int(splt[1].split('\t')[1])).pw_name
+                            if splt[0] == 'PPid':
+                                process['ppid'] = int(splt[1].split('\t')[1])
+                            if splt[0] == 'VmSize':
+                                process['vmsize'] = int(splt[1].split('kB')[0].strip())
+                            if splt[0] == 'State':
+                                process['cmdline'] += splt[1].strip()
+                            if splt[0] == 'VmRSS':
+                                process['vmrss'] = int(splt[1].split('kB')[0].strip())
                                 break
                 return process
 
