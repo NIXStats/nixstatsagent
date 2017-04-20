@@ -45,7 +45,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            'nixstatsagent=nixstatsagent.nixstatsagent:run_agent',
+            'nixstatsagent=nixstatsagent.nixstatsagent:main',
             'nixstatshello=nixstatsagent.nixstatsagent:hello',
         ],
     },
