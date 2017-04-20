@@ -33,8 +33,8 @@ __version__ = '1.1.7'  # App version
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
     os.path.join('/etc', 'nixstats-token.ini'),
-    os.path.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats.ini')),
-    os.path.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini')),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nixstats.ini'),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini'),
     os.path.abspath('nixstats.ini'),
     os.path.abspath('nixstats-token.ini'),
 )
@@ -63,7 +63,7 @@ def info():
 
 def hello(proto='https'):
     user_id = sys.argv[1]
-    token_filename = sys.argv[2] if len(sys.argv) > 2 else '/'.join((os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini'))
+    token_filename = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nixstats-token.ini')
     try:
         hostname = os.uname()[1]
     except AttributeError:
@@ -169,7 +169,7 @@ class Agent:
             'threads': 100,
             'ttl': 60,
             'interval': 60,
-            'plugins': os.path.join((os.path.dirname(os.path.abspath(__file__)), 'plugins')),
+            'plugins': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'plugins'),
             'enabled': 'no',
             'subprocess': 'no',
             'user': '',
