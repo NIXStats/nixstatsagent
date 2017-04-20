@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.7'  # App version
+__version__ = '1.1.8'  # App version
 
 
 ini_files = (
