@@ -154,7 +154,6 @@ class Agent:
         if dry_instance:
             return
 
-        self._config_init()
         self._logging_init()
         self._plugins_init()
         self._data_worker_init()
@@ -193,6 +192,7 @@ class Agent:
     def _config_section_create(self, section):
         '''
         Create an addition section in the configuration object
+        if it's not exists
         '''
         if not self.config.has_section(section):
             self.config.add_section(section)
