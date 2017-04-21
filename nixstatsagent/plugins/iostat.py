@@ -233,9 +233,12 @@ def diskstats_parse(dev=None):
 
         data = dict(zip(columns, split))
 
-        if "loop" in data['dev']:
+        if int(data['mm']) > 0:
             continue
 
+        if "loop" in data['dev'] or "ram" in data['dev']:
+            continue
+        
         if dev is not None and dev != data['dev']:
             continue
         for key in data:
