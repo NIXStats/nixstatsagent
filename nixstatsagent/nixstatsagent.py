@@ -357,7 +357,7 @@ class Agent:
                         clean = True
                     else:
                         connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
-                        connection.request('PUT', self.config.get('data', 'api_path'),
+                        connection.request('PUT', '%s?version=%s' % (self.config.get('data', 'api_path'), __version__),
                                 bz2.compress(str(json.dumps(collection)) + "\n"),
                                 headers=headers)
                         response = connection.getresponse()
