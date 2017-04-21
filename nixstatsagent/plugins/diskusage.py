@@ -18,12 +18,15 @@ class Plugin(plugins.BasePlugin):
                     # ENOENT, pop-up a Windows GUI error for a non-ready
                     # partition or just hang.
                     continue
-            usage = psutil.disk_usage(part.mountpoint)
-            diskdata = {}
-            diskdata['info'] = part
-            for key in usage._fields:
-                diskdata[key] = getattr(usage, key)
-            disk['df-psutil'].append(diskdata)
+            try:
+                usage = psutil.disk_usage(part.mountpoint)   
+                diskdata = {}
+                diskdata['info'] = part
+                for key in usage._fields:
+                    diskdata[key] = getattr(usage, key)
+                disk['df-psutil'].append(diskdata)
+            except:
+                pass
         return disk
 
 
