@@ -188,6 +188,8 @@ class Agent:
         self.config = config
         for section in sections:
             self._config_section_create(section)
+            if section is 'data' or section is 'agent':
+                self.config.set(section, 'interval', 1)
 
     def _config_section_create(self, section):
         '''
