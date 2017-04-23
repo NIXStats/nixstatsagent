@@ -62,3 +62,16 @@ class BasePlugin:
             self.agent_cache[0] = cache
         except IndexError:
             self.agent_cache.append(cache)
+
+    def absolute_to_per_second(self, key, val, prev_cache):
+        try:
+            if val >= prev_cache[key]:
+                value = \
+                    (val - prev_cache[key]) / \
+                    (time.time() - prev_cache['ts'])
+            else:  # previous cached value should not be higher than current value (service was restarted?)
+                value = val / \
+                    (time.time() - prev_cache['ts'])
+        except KeyError:  # No cache yet, can't calculate
+            value = 0
+        return value
