@@ -88,6 +88,8 @@ class Plugin(plugins.BasePlugin):
         systeminfo['cpu'] = cpu['brand']
         systeminfo['cores'] = cpu['count']
         systeminfo['memory'] = mem.total
+        systeminfo['psutil'] = '.'.join(map(str, psutil.version_info))
+        systeminfo['platform'] = platform.platform()
         systeminfo['uptime'] = int(time.time()-psutil.boot_time())
         systeminfo['ip_addresses'] = ip_addresses()
         return systeminfo
