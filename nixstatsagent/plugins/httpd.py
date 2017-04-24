@@ -11,7 +11,7 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, config):
         '''
-        php-fpm status page metrics
+        Apache/httpd status page metrics
         '''
 
         prev_cache = {}
