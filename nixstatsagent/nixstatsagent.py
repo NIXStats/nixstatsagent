@@ -69,8 +69,8 @@ def hello(proto='https'):
     else:
         token_filename = os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini')
     if '_' in user_id:
-        user_id = user_id.split('_')[0]
         server_id = user_id.split('_')[1]
+        user_id = user_id.split('_')[0]
     elif os.path.isfile('/etc/nixstats/token'):
         oldconfigfile = open('/etc/nixstats/token','r')
         server_id = oldconfigfile.readline()
