@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.12'  # App version
+__version__ = '1.1.13'  # App version
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,7 +68,10 @@ def hello(proto='https'):
         token_filename = sys.argv[2]
     else:
         token_filename = os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini')
-    if os.path.isfile('/etc/nixstats/token'):
+    if '_' in user_id:
+        user_id = user_id.split('_')[0]
+        server_id = user_id.split('_')[1]
+    elif os.path.isfile('/etc/nixstats/token'):
         oldconfigfile = open('/etc/nixstats/token','r')
         server_id = oldconfigfile.readline()
         print "Upgrading from old monitoring agent"
