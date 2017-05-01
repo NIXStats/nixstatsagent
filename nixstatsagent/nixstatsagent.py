@@ -192,6 +192,8 @@ class Agent:
             'server': '',
             'api_host': 'api.nixstats.com',
             'api_path': '/v2/server/poll',
+            'log_file': '/var/log/nixstatsagent.log',
+            'log_file_mode': 'a',
         }
         sections = [
             'agent',
@@ -219,7 +221,32 @@ class Agent:
         Initialize logging faculty
         '''
         level = self.config.getint('agent', 'logging_level')
-        logging.basicConfig(level=level)
+
+        log_file = self.config.get('agent', 'log_file')
+
+        log_file_mode = self.config.get('agent', 'log_file_mode')
+        if log_file_mode in ('w', 'a'):
+            pass
+        elif log_file_mode == 'truncate':
+            log_file_mode = 'w'
+        elif log_file_mode == 'append':
+            log_file_mode = 'a'
+        else:
+            log_file_mode = 'a'
+
+        if log_file == '-':
+            logging.basicConfig(level=level)  # Log to sys.stderr by default
+        else:
+            try:
+                logging.basicConfig(filename=log_file, filemode=log_file_mode, level=level)
+            except IOError as e:
+                logging.basicConfig(level=level)
+                logging.info('IOError: %s', e)
+                if __name__ == '__main__':
+                    sys.exit(1)
+                else:
+                    raise e
+
         logging.info('Agent logging_level %i', level)
 
     def _plugins_init(self):
