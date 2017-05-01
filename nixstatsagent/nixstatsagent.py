@@ -487,7 +487,14 @@ def main():
         if sys.argv[1].startswith('--'):
             sys.argv[1] = sys.argv[1][2:]
 
-        if sys.argv[1] == 'info':
+        if sys.argv[1] == 'help':
+            print '\n'.join((
+                'Run without options to run agent.',
+                'Acceptable options (leading -- is optional):',
+                '    help, info, version, hello, insecure-hello, test',
+            ))
+            sys.exit()
+        elif sys.argv[1] == 'info':
             print info()
             sys.exit()
         elif sys.argv[1] == 'version':
@@ -495,13 +502,12 @@ def main():
             sys.exit()
         elif sys.argv[1] == 'hello':
             del sys.argv[1]
-            hello()
+            sys.exit(hello())
         elif sys.argv[1] == 'insecure-hello':
             del sys.argv[1]
-            hello(proto='http')
+            sys.exit(hello(proto='http'))
         elif sys.argv[1] == 'test':
-            test_plugins(sys.argv[2:])
-            sys.exit()
+            sys.exit(test_plugins(sys.argv[2:]))
         else:
             print >>sys.stderr, 'Invalid option:', sys.argv[1]
             sys.exit(1)
