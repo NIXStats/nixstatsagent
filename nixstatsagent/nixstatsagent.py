@@ -242,10 +242,11 @@ class Agent:
             except IOError as e:
                 logging.basicConfig(level=level)
                 logging.info('IOError: %s', e)
-                if __name__ == '__main__':
-                    sys.exit(1)
-                else:
-                    raise e
+                logging.info('Drop logging to stderr')
+                # if __name__ == '__main__':
+                #     sys.exit(1)
+                # else:
+                #     raise e
 
         logging.info('Agent logging_level %i', level)
 
