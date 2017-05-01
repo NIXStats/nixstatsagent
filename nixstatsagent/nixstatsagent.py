@@ -74,14 +74,14 @@ def hello(proto='https'):
     elif os.path.isfile('/etc/nixstats/token'):
         oldconfigfile = open('/etc/nixstats/token','r')
         server_id = oldconfigfile.readline()
-        print "Upgrading from old monitoring agent"
-        print "Remove the old agent from the crontab (crontab -e -u nixstats)"
+        print 'Upgrading from old monitoring agent'
+        print 'Remove the old agent from the crontab (crontab -e -u nixstats)'
     elif os.path.isfile('/opt/nixstats/nixstats.cfg'):
         oldconfigfile = open('/opt/nixstats/nixstats.cfg')
         lines=oldconfigfile.readlines()
         server_id = lines[1].replace('server=', '').strip()
-        print "Upgrading from old python client."
-        print "Run :\nchkconfig --del nixstats \nor \nupdate-rc.d -f nixstats remove \nto remove the old service."
+        print 'Upgrading from old python client.'
+        print 'Run :\nchkconfig --del nixstats \nor \nupdate-rc.d -f nixstats remove \nto remove the old service.'
     else:
         try:
             hostname = os.uname()[1]
