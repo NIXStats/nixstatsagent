@@ -361,6 +361,7 @@ class Agent:
         logging.info('%s', threading.currentThread())
         collection = []
         while True:
+            now_ts = time.time()
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
