@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.16'  # App version
+__version__ = '1.1.17'  # App version
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -410,7 +410,10 @@ class Agent:
                             clean = True
                     if clean:
                         collection = []
-            time.sleep(self.config.getint('data', 'interval'))
+            correction = time.time()-now_ts
+            if correction < 0:
+                correction = 0
+            time.sleep(self.config.getint('data', 'interval')-correction)
 
     def _data_worker_init(self):
         '''
@@ -494,7 +497,10 @@ class Agent:
                                     self.config.getint('execution', 'threads')}
                         })
 
-                time.sleep(interval)
+                correction = time.time()-now
+                if correction < 0:
+                    correction = 0
+                time.sleep(interval-correction)
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
             while True:
@@ -507,7 +513,10 @@ class Agent:
                 if len(wait_for) == 0:
                     sys.exit(0)
                 self.shutdown = True
-                time.sleep(interval)
+                correction = time.time()-now
+                if correction < 0:
+                    correction = 0
+                time.sleep(interval-correction)
 
 
 def main():
