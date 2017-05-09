@@ -411,10 +411,10 @@ class Agent:
                             clean = True
                     if clean:
                         collection = []
-            correction = time.time()-now_ts
-            if correction < 0:
-                correction = 0
-            time.sleep(self.config.getint('data', 'interval')-correction)
+            sleep_interval = self.config.getint('data', 'interval')-(time.time()-now_ts)
+            if sleep_interval < 0:
+                sleep_interval = 0
+            time.sleep(sleep_interval)
 
     def _data_worker_init(self):
         '''
@@ -498,10 +498,10 @@ class Agent:
                                     self.config.getint('execution', 'threads')}
                         })
 
-                correction = time.time()-now
-                if correction < 0:
-                    correction = 0
-                time.sleep(interval-correction)
+                sleep_interval = interval-(time.time()-now)
+                if sleep_interval < 0:
+                    sleep_interval = 0
+                time.sleep(sleep_interval)
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
             while True:
@@ -514,10 +514,10 @@ class Agent:
                 if len(wait_for) == 0:
                     sys.exit(0)
                 self.shutdown = True
-                correction = time.time()-now
-                if correction < 0:
-                    correction = 0
-                time.sleep(interval-correction)
+                sleep_interval = interval-(time.time()-now)
+                if sleep_interval < 0:
+                    sleep_interval = 0
+                time.sleep(sleep_interval)
 
 
 def main():
