@@ -381,9 +381,11 @@ class Agent:
                 if last_ts - first_ts > max_span:
                     logging.info('Max data span')
                     send = True
+                    clean = False
                 elif now - first_ts > max_age:
                     logging.info('Max data age')
                     send = True
+                    clean = True
                 if send:
                     headers = {
                         "Content-type": "application/json",
@@ -393,22 +395,24 @@ class Agent:
                                 self.config.get('agent', 'server'),
                             ),
                     }
-                    clean = False
                     logging.info('collection:%s', collection)
                     if not server and not user:
                         logging.info('Empty server/user, but need to send: %s',
                             json.dumps(collection))
                         clean = True
                     else:
-                        connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
-                        connection.request('PUT', '%s?version=%s' % (self.config.get('data', 'api_path'), __version__),
-                                bz2.compress(str(json.dumps(collection)) + "\n"),
-                                headers=headers)
-                        response = connection.getresponse()
-                        logging.info('%s', response)
-                        connection.close()
-                        if response.status == 200:
-                            clean = True
+                        try:
+                            connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
+                            connection.request('PUT', '%s?version=%s' % (self.config.get('data', 'api_path'), __version__),
+                                    bz2.compress(str(json.dumps(collection)) + "\n"),
+                                    headers=headers)
+                            response = connection.getresponse()
+                            logging.info('%s', response)
+                            connection.close()
+                            if response.status == 200:
+                                clean = True
+                        except Exception:
+                            logging.exception('Failed to submit data.')
                     if clean:
                         collection = []
             sleep_interval = self.config.getint('data', 'interval')-(time.time()-now_ts)
