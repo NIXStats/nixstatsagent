@@ -34,8 +34,8 @@ __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 ini_files = (
     os.path.join('/etc', 'nixstats.ini'),
     os.path.join('/etc', 'nixstats-token.ini'),
-    os.path.join(__FILEABSDIRNAME__, 'nixstats.ini'),
-    os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini'),
+    os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'nixstats.ini'),
+    os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'nixstats-token.ini'),
     os.path.abspath('nixstats.ini'),
     os.path.abspath('nixstats-token.ini'),
 )
@@ -194,6 +194,8 @@ class Agent:
             'api_path': '/v2/server/poll',
             'log_file': '/var/log/nixstatsagent.log',
             'log_file_mode': 'a',
+            'max_cached_collections': 10,
+            # 'max_cached_collections': 2,  # DEV TMP
         }
         sections = [
             'agent',
@@ -359,9 +361,18 @@ class Agent:
         Take and collect data, send and clean if needed
         '''
         logging.info('%s', threading.currentThread())
+        api_host = self.config.get('data', 'api_host')
+        api_path = self.config.get('data', 'api_path')
+        max_age = self.config.getint('agent', 'max_data_age')
+        max_span = self.config.getint('agent', 'max_data_span')
+        server = self.config.get('agent', 'server')
+        user = self.config.get('agent', 'user')
+        interval = self.config.getint('data', 'interval')
+        max_cached_collections = self.config.get('agent', 'max_cached_collections')
+        cached_collections = []
         collection = []
         while True:
-            now_ts = time.time()
+            loop_ts = time.time()
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
@@ -373,11 +384,7 @@ class Agent:
                 first_ts = min((e['ts'] for e in collection))
                 last_ts = max((e['ts'] for e in collection))
                 now = time.time()
-                max_age = self.config.getint('agent', 'max_data_age')
-                max_span = self.config.getint('agent', 'max_data_span')
                 send = False
-                server = self.config.get('agent', 'server')
-                user = self.config.get('agent', 'user')
                 if last_ts - first_ts > max_span:
                     logging.info('Max data span')
                     send = True
@@ -389,36 +396,66 @@ class Agent:
                 if send:
                     headers = {
                         "Content-type": "application/json",
-                        "Authorization":
-                            'ApiKey %s:%s' % (
-                                self.config.get('agent', 'user'),
-                                self.config.get('agent', 'server'),
-                            ),
+                        "Authorization": "ApiKey %s:%s" % (user, server),
                     }
-                    logging.info('collection:%s', collection)
-                    if not server and not user:
-                        logging.info('Empty server/user, but need to send: %s',
-                            json.dumps(collection))
+                    # logging.debug('collection: %s', collection)
+                    logging.debug('collection: %s',
+                        json.dumps(collection, indent=2, sort_keys=True))
+                    if not (server and user):
+                        logging.info('Empty server or user, nowhere to send.')
                         clean = True
                     else:
+                        # logging.debug('cached_collections: %s', cached_collections)
+                        logging.debug('cached_collections: %s',
+                            json.dumps(cached_collections, indent=2, sort_keys=True))
+
                         try:
-                            connection = httplib.HTTPSConnection(self.config.get('data', 'api_host'))
-                            connection.request('PUT', '%s?version=%s' % (self.config.get('data', 'api_path'), __version__),
+                            connection = httplib.HTTPSConnection(api_host)
+
+                            # Trying to send cached collections if any
+                            if cached_collections:
+                                logging.info('Sending cached collections: %i', len(cached_collections))
+                                while cached_collections:
+                                    connection.request('PUT', '%s?version=%s' % (api_path, __version__),
+                                            bz2.compress(str(json.dumps(cached_collections[0])) + "\n"),
+                                            headers=headers)
+                                    response = connection.getresponse()
+                                    if response.status == 200:
+                                        del cached_collections[0]  # Remove just sent collection
+                                        logging.info('Successful response: %s', response.status)
+                                    else:
+                                        raise ValueError('Unsuccessful response: %s' % response.status)
+                                logging.info('All cached collections sent')
+
+                            # Send recent collection (reuse existing connection)
+                            connection.request('PUT', '%s?version=%s' % (api_path, __version__),
                                     bz2.compress(str(json.dumps(collection)) + "\n"),
                                     headers=headers)
                             response = connection.getresponse()
-                            logging.info('%s', response)
+
                             connection.close()
                             if response.status == 200:
+                                logging.info('Successful response: %s', response.status)
                                 clean = True
-                        except Exception:
-                            logging.exception('Failed to submit data.')
+                            else:
+                                raise ValueError('Unsuccessful response: %s' % response.status)
+                        except Exception as e:
+                            logging.error('Failed to submit collection: %s' % e)
+
+                            # Store recent collection in cached_collections if send failed
+                            if max_cached_collections > 0:
+                                if len(cached_collections) >= max_cached_collections:
+                                    del cached_collections[0]  # Remove oldest collection
+                                    logging.info('Reach max_cached_collections (%s): oldest cached collection dropped',
+                                        max_cached_collections)
+                                logging.info('Cache current collection to resend next time')
+                                cached_collections.append(collection)
+                                collection = []
                     if clean:
                         collection = []
-            sleep_interval = self.config.getint('data', 'interval')-(time.time()-now_ts)
-            if sleep_interval < 0:
-                sleep_interval = 0
-            time.sleep(sleep_interval)
+            sleep_interval = interval - (time.time() - loop_ts)
+            if sleep_interval > 0:
+                time.sleep(sleep_interval)
 
     def _data_worker_init(self):
         '''
