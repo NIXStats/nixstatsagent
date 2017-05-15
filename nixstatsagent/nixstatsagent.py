@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.17'  # App version
+__version__ = '1.1.18'  # App version
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -540,9 +540,9 @@ class Agent:
                         })
 
                 sleep_interval = interval-(time.time()-now)
-                if sleep_interval < 0:
-                    sleep_interval = 0
-                time.sleep(sleep_interval)
+                if sleep_interval > 0:
+                    time.sleep(sleep_interval)
+                
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
             while True:
@@ -556,9 +556,8 @@ class Agent:
                     sys.exit(0)
                 self.shutdown = True
                 sleep_interval = interval-(time.time()-now)
-                if sleep_interval < 0:
-                    sleep_interval = 0
-                time.sleep(sleep_interval)
+                if sleep_interval > 0:
+                    time.sleep(sleep_interval) 
 
 
 def main():
