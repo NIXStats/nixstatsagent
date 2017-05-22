@@ -73,6 +73,6 @@ class BasePlugin:
             else:  # previous cached value should not be higher than current value (service was restarted?)
                 value = val / \
                     (time.time() - prev_cache['ts'])
-        except KeyError:  # No cache yet, can't calculate
+        except (KeyError, TypeError):  # No cache yet, can't calculate
             value = 0
         return value
