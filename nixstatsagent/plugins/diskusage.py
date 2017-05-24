@@ -11,7 +11,7 @@ class Plugin(plugins.BasePlugin):
     def run(self, *unused):
         disk = {}
         disk['df-psutil'] = []
-        for part in psutil.disk_partitions(True):
+        for part in psutil.disk_partitions(False):
             if os.name == 'nt':
                 if 'cdrom' in part.opts or part.fstype == '':
                     # skip cd-rom drives with no disk in it; they may raise
