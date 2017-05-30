@@ -195,7 +195,6 @@ class Agent:
             'log_file': '/var/log/nixstatsagent.log',
             'log_file_mode': 'a',
             'max_cached_collections': 10,
-            # 'max_cached_collections': 2,  # DEV TMP
         }
         sections = [
             'agent',
@@ -398,16 +397,14 @@ class Agent:
                         "Content-type": "application/json",
                         "Authorization": "ApiKey %s:%s" % (user, server),
                     }
-                    # logging.debug('collection: %s', collection)
                     logging.debug('collection: %s',
                         json.dumps(collection, indent=2, sort_keys=True))
                     if not (server and user):
                         logging.info('Empty server or user, nowhere to send.')
                         clean = True
                     else:
-                        # logging.debug('cached_collections: %s', cached_collections)
-                        logging.debug('cached_collections: %s',
-                            json.dumps(cached_collections, indent=2, sort_keys=True))
+                        # logging.debug('cached_collections: %s',
+                        #     json.dumps(cached_collections, indent=2, sort_keys=True))
 
                         try:
                             connection = httplib.HTTPSConnection(api_host)
@@ -417,7 +414,7 @@ class Agent:
                                 logging.info('Sending cached collections: %i', len(cached_collections))
                                 while cached_collections:
                                     connection.request('PUT', '%s?version=%s' % (api_path, __version__),
-                                            bz2.compress(str(json.dumps(cached_collections[0])) + "\n"),
+                                            cached_collections[0],
                                             headers=headers)
                                     response = connection.getresponse()
                                     if response.status == 200:
@@ -449,7 +446,8 @@ class Agent:
                                     logging.info('Reach max_cached_collections (%s): oldest cached collection dropped',
                                         max_cached_collections)
                                 logging.info('Cache current collection to resend next time')
-                                cached_collections.append(collection)
+                                # cached_collections.append(collection)
+                                cached_collections.append(bz2.compress(str(json.dumps(collection)) + "\n"))
                                 collection = []
                     if clean:
                         collection = []
@@ -542,7 +540,7 @@ class Agent:
                 sleep_interval = interval-(time.time()-now)
                 if sleep_interval > 0:
                     time.sleep(sleep_interval)
-                
+
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
             while True:
@@ -557,7 +555,7 @@ class Agent:
                 self.shutdown = True
                 sleep_interval = interval-(time.time()-now)
                 if sleep_interval > 0:
-                    time.sleep(sleep_interval) 
+                    time.sleep(sleep_interval)
 
 
 def main():
