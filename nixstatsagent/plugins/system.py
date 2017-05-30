@@ -67,6 +67,8 @@ class Plugin(plugins.BasePlugin):
                     if line.strip():
                         if "model name" == line.rstrip('\n').split(':')[0].strip():
                             cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
+                        if "Processor" == line.rstrip('\n').split(':')[0].strip():
+                            cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
                         if "processor" == line.rstrip('\n').split(':')[0].strip():
                             cpu['count'] = line.rstrip('\n').split(':')[1].strip()
         else:
