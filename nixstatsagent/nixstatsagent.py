@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.18'  # App version
+__version__ = '1.1.19'  # App version
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -407,7 +407,7 @@ class Agent:
                         #     json.dumps(cached_collections, indent=2, sort_keys=True))
 
                         try:
-                            connection = httplib.HTTPSConnection(api_host)
+                            connection = httplib.HTTPSConnection(api_host, timeout=15)
 
                             # Trying to send cached collections if any
                             if cached_collections:
