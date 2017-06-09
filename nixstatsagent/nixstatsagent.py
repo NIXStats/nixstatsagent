@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.19'  # App version
+__version__ = '1.1.20'  # App version
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -206,8 +206,10 @@ class Agent:
         self.config = config
         for section in sections:
             self._config_section_create(section)
-            if section is 'data' or section is 'agent':
+            if section is 'data':
                 self.config.set(section, 'interval', 1)
+            if section is 'agent':
+                self.config.set(section, 'interval', .5)
 
     def _config_section_create(self, section):
         '''
@@ -384,11 +386,11 @@ class Agent:
                 last_ts = max((e['ts'] for e in collection))
                 now = time.time()
                 send = False
-                if last_ts - first_ts > max_span:
+                if last_ts - first_ts >= max_span:
                     logging.info('Max data span')
                     send = True
                     clean = False
-                elif now - first_ts > max_age:
+                elif now - first_ts >= max_age:
                     logging.info('Max data age')
                     send = True
                     clean = True
@@ -446,7 +448,6 @@ class Agent:
                                     logging.info('Reach max_cached_collections (%s): oldest cached collection dropped',
                                         max_cached_collections)
                                 logging.info('Cache current collection to resend next time')
-                                # cached_collections.append(collection)
                                 cached_collections.append(bz2.compress(str(json.dumps(collection)) + "\n"))
                                 collection = []
                     if clean:
@@ -510,7 +511,7 @@ class Agent:
                     plugin = metrics.get('task')
                     if plugin:
                         self.schedule[plugin] = \
-                            now + self.config.getint(name, 'interval')
+                            int(now) + self.config.getint(name, 'interval')
                         if isinstance(plugin, types.ModuleType):
                             metrics['task'] = plugin.__file__
                     self.data.put(metrics)
@@ -536,10 +537,7 @@ class Agent:
                                 'threads_capping':
                                     self.config.getint('execution', 'threads')}
                         })
-
-                sleep_interval = interval-(time.time()-now)
-                if sleep_interval > 0:
-                    time.sleep(sleep_interval)
+                time.sleep(interval)
 
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
