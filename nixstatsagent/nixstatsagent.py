@@ -537,7 +537,7 @@ class Agent:
                                 'threads_capping':
                                     self.config.getint('execution', 'threads')}
                         })
-                time.sleep(interval)
+                time.sleep(.5)
 
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
