@@ -19,7 +19,7 @@ class Plugin(plugins.BasePlugin):
                     # partition or just hang.
                     continue
             try:
-                usage = psutil.disk_usage(part.mountpoint)   
+                usage = psutil.disk_usage(part.mountpoint)
                 diskdata = {}
                 diskdata['info'] = part
                 for key in usage._fields:
@@ -27,6 +27,18 @@ class Plugin(plugins.BasePlugin):
                 disk['df-psutil'].append(diskdata)
             except:
                 pass
+ 
+        if len(disk['df-psutil']) == 0:
+            try:
+                df_output_lines = [s.split() for s in os.popen("df -Pl").read().splitlines()] 
+                del df_output_lines[0]
+                for row in df_output_lines:
+                    if row[0] == 'tmpfs':
+                        continue
+                    disk['df-psutil'].append({'info': [row[0], row[5],'',''], 'total': int(row[1])*1024, 'used': int(row[2])*1024, 'free': int(row[3])*1024, 'percent': row[4][:-1]}) 
+            except:
+                pass
+
         return disk
 
 
