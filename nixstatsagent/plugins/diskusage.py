@@ -35,7 +35,7 @@ class Plugin(plugins.BasePlugin):
 
         if len(disk['df-psutil']) == 0 or force_df == 'yes': 
             try:
-	            disk['df-psutil'] = []
+	        disk['df-psutil'] = []
                 df_output_lines = [s.split() for s in os.popen("df -Pl").read().splitlines()] 
                 del df_output_lines[0]
                 for row in df_output_lines:
