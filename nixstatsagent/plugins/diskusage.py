@@ -8,7 +8,7 @@ import plugins
 class Plugin(plugins.BasePlugin):
     __name__ = 'diskusage'
 
-    def run(self, *unused):
+    def run(self, config):
         disk = {}
         disk['df-psutil'] = []
         for part in psutil.disk_partitions(False):
@@ -27,8 +27,13 @@ class Plugin(plugins.BasePlugin):
                 disk['df-psutil'].append(diskdata)
             except:
                 pass
- 
-        if len(disk['df-psutil']) == 0:
+
+        try:
+                force_df = config.get('diskusage', 'force_df')
+        except:
+                force_df = 'no'
+
+        if len(disk['df-psutil']) == 0 or force_df == 'yes': 
             try:
                 df_output_lines = [s.split() for s in os.popen("df -Pl").read().splitlines()] 
                 del df_output_lines[0]
