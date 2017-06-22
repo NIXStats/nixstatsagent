@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.25'
+__version__ = '1.1.26'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -419,6 +419,7 @@ class Agent:
                                             cached_collections[0],
                                             headers=headers)
                                     response = connection.getresponse()
+                                    response.read()
                                     if response.status == 200:
                                         del cached_collections[0]  # Remove just sent collection
                                         logging.info('Successful response: %s', response.status)
@@ -431,6 +432,7 @@ class Agent:
                                     bz2.compress(str(json.dumps(collection)) + "\n"),
                                     headers=headers)
                             response = connection.getresponse()
+                            response.read()
 
                             connection.close()
                             if response.status == 200:
