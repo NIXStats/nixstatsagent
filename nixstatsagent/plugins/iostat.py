@@ -233,7 +233,7 @@ def diskstats_parse(dev=None):
 
         data = dict(zip(columns, split))
 
-        if int(data['mm']) > 0:
+        if data['dev'][-1:].isdigit() is True:
             continue
 
         if "loop" in data['dev'] or "ram" in data['dev']:
