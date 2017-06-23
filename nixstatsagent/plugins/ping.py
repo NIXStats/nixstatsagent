@@ -39,28 +39,31 @@ def system_command(Command, newlines=True):
 
 
 def collect_ping(hostname):
-    if sys.platform == "linux" or sys.platform == "linux2":
+    if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
+    #if sys.platform == "linux" or sys.platform == "linux2":
         response = str(system_command("ping -W 5 -c 1 " + hostname, False)[0])
         try:
             matcher = re.compile(r'(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)')
             minping, avgping, maxping, jitter = _get_match_groups(response, matcher)
             response = avgping
         except Exception:
-            response = 9999
+            #response = 9999
+            response = -1
     elif sys.platform == "darwin":
-        # print system_command("ping -W 5 -c 2 " + hostname, False)
         response = str(system_command("ping -c 1 " + hostname, False)[0])
         # matcher = re.compile(r'min/avg/max/stddev = (\d+)/(\d+)/(\d+)/(\d+) ms')
         # min, avg, max, stddev = _get_match_groups(response, matcher)
         matcher = re.compile(r'(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)')
         matched = _get_match_groups(response, matcher)
         if matched is False:
-            response = 0
+            #response = 0
+            response = -1
         else:
             minping, avgping, maxping, jitter = matched
             response = avgping
     elif sys.platform == "win32":
-        response = 0
+        #response = 0
+        response = -1
         try:
             ping = Popen(["ping", "-n", "1 ", hostname], stdout=PIPE, stderr=PIPE)
             out, error = ping.communicate()
@@ -70,11 +73,13 @@ def collect_ping(hostname):
                 except Exception:
                     pass
             else:
-                response = 0
+                #response = 0
+                response = -1
         except CalledProcessError:
             pass
     else:
-        response = float(system_command("ping -W -c 1 " + hostname))
+        #response = float(system_command("ping -W -c 1 " + hostname))
+        response = -1
     return {'avgping': response, 'host': hostname}
 
 
