@@ -433,8 +433,7 @@ class Agent:
                                     headers=headers)
                             response = connection.getresponse()
                             response.read()
-
-                            connection.close()
+                            
                             if response.status == 200:
                                 logging.info('Successful response: %s', response.status)
                                 clean = True
@@ -452,6 +451,8 @@ class Agent:
                                 logging.info('Cache current collection to resend next time')
                                 cached_collections.append(bz2.compress(str(json.dumps(collection)) + "\n"))
                                 collection = []
+                        finally:
+                            connection.close()
                     if clean:
                         collection = []
             sleep_interval = interval - (time.time() - loop_ts)
