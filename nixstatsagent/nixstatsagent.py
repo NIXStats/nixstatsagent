@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.26'
+__version__ = '1.1.27'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -181,7 +181,7 @@ class Agent:
         defaults = {
             'max_data_span': 60,
             'max_data_age': 60 * 10,
-            'logging_level': logging.WARNING,
+            'logging_level': logging.INFO,
             'threads': 100,
             'ttl': 60,
             'interval': 60,
@@ -241,15 +241,11 @@ class Agent:
             logging.basicConfig(level=level)  # Log to sys.stderr by default
         else:
             try:
-                logging.basicConfig(filename=log_file, filemode=log_file_mode, level=level)
+                logging.basicConfig(filename=log_file, filemode=log_file_mode, level=level, format="%(asctime)-15s  %(levelname)s    %(message)s")
             except IOError as e:
                 logging.basicConfig(level=level)
                 logging.info('IOError: %s', e)
                 logging.info('Drop logging to stderr')
-                # if __name__ == '__main__':
-                #     sys.exit(1)
-                # else:
-                #     raise e
 
         logging.info('Agent logging_level %i', level)
 
@@ -293,14 +289,14 @@ class Agent:
         process = subprocess.Popen((sys.executable, task),
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             universal_newlines=True)
-        logging.info('%s:process:%i', threading.currentThread(), process.pid)
+        logging.debug('%s:process:%i', threading.currentThread(), process.pid)
         interval = self.config.getint('execution', 'interval')
         name = _plugin_name(task)
         ttl = self.config.getint(name, 'ttl')
         ticks = ttl / interval or 1
         process.poll()
         while process.returncode is None and ticks > 0:
-            logging.info('%s:tick:%i', threading.currentThread(), ticks)
+            logging.debug('%s:tick:%i', threading.currentThread(), ticks)
             time.sleep(interval)
             ticks -= 1
             process.poll()
@@ -325,12 +321,12 @@ class Agent:
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
-            logging.info('%s:exec_queue:%i', threading.currentThread(), self.execute.qsize())
+            logging.debug('%s:exec_queue:%i', threading.currentThread(), self.execute.qsize())
             try:
                 task = self.execute.get_nowait()
             except Queue.Empty:
                 break
-            logging.info('%s:task:%s', threading.currentThread(), task)
+            logging.debug('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
             ts = time.time()
             if isinstance(task, basestring):
@@ -377,7 +373,7 @@ class Agent:
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
                 break
-            logging.info('%s:data_queue:%i:collection:%i',
+            logging.debug('%s:data_queue:%i:collection:%i',
                 threading.currentThread(), self.data.qsize(), len(collection))
             while self.data.qsize():
                 collection.append(self.data.get_nowait())
@@ -387,11 +383,11 @@ class Agent:
                 now = time.time()
                 send = False
                 if last_ts - first_ts >= max_span:
-                    logging.info('Max data span')
+                    logging.debug('Max data span')
                     send = True
                     clean = False
                 elif now - first_ts >= max_age:
-                    logging.info('Max data age')
+                    logging.warning('Max data age')
                     send = True
                     clean = True
                 if send:
@@ -402,11 +398,9 @@ class Agent:
                     logging.debug('collection: %s',
                         json.dumps(collection, indent=2, sort_keys=True))
                     if not (server and user):
-                        logging.info('Empty server or user, nowhere to send.')
+                        logging.warning('Empty server or user, nowhere to send.')
                         clean = True
                     else:
-                        # logging.debug('cached_collections: %s',
-                        #     json.dumps(cached_collections, indent=2, sort_keys=True))
 
                         try:
                             connection = httplib.HTTPSConnection(api_host, timeout=15)
@@ -422,7 +416,7 @@ class Agent:
                                     response.read()
                                     if response.status == 200:
                                         del cached_collections[0]  # Remove just sent collection
-                                        logging.info('Successful response: %s', response.status)
+                                        logging.debug('Successful response: %s', response.status)
                                     else:
                                         raise ValueError('Unsuccessful response: %s' % response.status)
                                 logging.info('All cached collections sent')
@@ -433,9 +427,9 @@ class Agent:
                                     headers=headers)
                             response = connection.getresponse()
                             response.read()
-                            
+
                             if response.status == 200:
-                                logging.info('Successful response: %s', response.status)
+                                logging.debug('Successful response: %s', response.status)
                                 clean = True
                             else:
                                 raise ValueError('Unsuccessful response: %s' % response.status)
@@ -506,11 +500,11 @@ class Agent:
         try:
             while True:
                 now = time.time()
-                logging.info('%i threads', threading.activeCount())
+                logging.debug('%i threads', threading.activeCount())
                 while self.metrics.qsize():
                     metrics = self.metrics.get_nowait()
                     name = metrics['name']
-                    logging.info('metrics:%s', name)
+                    logging.debug('metrics:%s', name)
                     plugin = metrics.get('task')
                     if plugin:
                         self.schedule[plugin] = \
@@ -524,13 +518,13 @@ class Agent:
                     if when <= now
                 ]
                 for name in execute:
-                    logging.info('scheduling:%s', name)
+                    logging.debug('scheduling:%s', name)
                     del self.schedule[name]
                     self.execute.put(name)
                     if self.hire.acquire(False):
                         thread = threading.Thread(target=self._execution)
                         thread.start()
-                        logging.info('new_execution_worker_thread:%s', thread)
+                        logging.debug('new_execution_worker_thread:%s', thread)
                     else:
                         logging.warning('threads_capped')
                         self.metrics.put({
