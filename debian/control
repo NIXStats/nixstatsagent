@@ -9,7 +9,7 @@ Build-Depends:
  python-setuptools,
  dh-systemd,
  po-debconf
-Standards-Version: 3.9.8
+Standards-Version: 4.0.0.4
 Homepage: https://github.com/NIXStats/nixstatsagent
 Vcs-Git: https://github.com/NIXStats/nixstatsagent.git
 Vcs-Browser: https://github.com/NIXStats/nixstatsagent

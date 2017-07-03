@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the nixstatsagent package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2016.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2016, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nixstatsagent\n"
 "Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
 "POT-Creation-Date: 2017-01-16 10:24+0300\n"
-"PO-Revision-Date: 2016-12-31 16:51+0100\n"
+"PO-Revision-Date: 2017-01-24 10:03+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -22,18 +22,14 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:1001
-#, fuzzy
-#| msgid "User name:"
 msgid "User ID:"
-msgstr "Gebruikersnaam:"
+msgstr "Gebruikers-ID:"
 
 #. Type: string
 #. Description
 #: ../templates:1001
-#, fuzzy
-#| msgid "Type your user name at NixStats.com or at your service provider."
 msgid "Type your user ID at NixStats.com or at your service provider."
-msgstr "Typ uw gebruikersnaam bij NixStats.com of bij uw serviceprovider."
+msgstr "Typ uw gebruikers-ID bij NixStats.com of bij uw serviceprovider."
 
 #. Type: string
 #. Description
@@ -44,24 +40,20 @@ msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
 "data will be sent to your service provider at all)."
 msgstr ""
-"Als deze waarde niet ingesteld is, zal dit instrument in testmodus opereren "
+"Als deze waarde niet ingesteld is, zal dit gereedschap in testmodus opereren "
 "(er zullen helemaal geen data verzonden worden naar uw serviceprovider)."
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Server name:"
 msgid "Server ID:"
-msgstr "Servernaam:"
+msgstr "Server-ID:"
 
 #. Type: string
 #. Description
 #: ../templates:2001
-#, fuzzy
-#| msgid "Type your server name at NixStats.com or at your service provider."
 msgid "Type your server ID at NixStats.com or at your service provider."
-msgstr "Typ uw servernaam bij NixStats.com of bij uw serviceprovider."
+msgstr "Typ uw server-ID bij NixStats.com of bij uw serviceprovider."
 
 #. Type: string
 #. Description
@@ -70,6 +62,8 @@ msgid ""
 "This setting will be ignored if you receive a server ID automatically, in  "
 "which case you may skip setting this value."
 msgstr ""
+"Deze instelling zal genegeerd worden als u automatisch een server-ID krijgt. "
+"In een dergelijk geval kunt u het instellen van deze waarde overslaan."
 
 #. Type: string
 #. Description
@@ -80,10 +74,6 @@ msgstr "API hostnaam:"
 #. Type: string
 #. Description
 #: ../templates:3001
-#, fuzzy
-#| msgid ""
-#| "If you're using NixStats.com service, leave it empty. Or type your "
-#| "service provider's API host name."
 msgid ""
 "If you're using NixStats.com service, leave it empty. Otherwise type your  "
 "service provider's API host name."
@@ -100,10 +90,6 @@ msgstr "API padnaam:"
 #. Type: string
 #. Description
 #: ../templates:4001
-#, fuzzy
-#| msgid ""
-#| "If you're using NixStats.com service, leave it empty. Or type your "
-#| "service provider's API path name."
 msgid ""
 "If you're using NixStats.com service, leave it empty. Otherwise type your  "
 "service provider's API path name."
@@ -114,24 +100,18 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid "Obtain the server name automatically?"
 msgid "Obtain the new server ID automatically?"
-msgstr "De servernaam automatisch verkrijgen?"
+msgstr "De nieuwe server-ID automatisch verkrijgen?"
 
 #. Type: boolean
 #. Description
 #: ../templates:5001
-#, fuzzy
-#| msgid ""
-#| "If you're using NixStats.com service, you can obtain a new server name "
-#| "automatically via API."
 msgid ""
 "If you're using NixStats.com service, you can obtain a new server ID  "
 "automatically via NixStats.com API."
 msgstr ""
-"Indien u gebruik maakt van de diensten van NixStats.com, kunt u een nieuwe "
-"servernaam automatisch verkrijgen via API."
+"Indien u gebruik maakt van de diensten van NixStats.com, kunt u automatisch "
+"een nieuwe server-ID verkrijgen via de API van NixStats.com."
 
 #~ msgid ""
 #~ "Without this value set, the agent will be operating in the test mode  (no "

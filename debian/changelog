@@ -1,3 +1,16 @@
+nixstatsagent (1.1.27-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Update Dutch translation, courtesy of Frans Spiesschaert (Closes: #854625).
+  * Update French translation, courtesy of Debian french l10n team (Closes:
+    #855394).
+  * Update German translation, courtesy of Chris Leick (Closes: #858280).
+  * Add Portuguese translation, courtesy of Rui Branco (Closes: #859944).
+  * Remove dh_make signature from debian/watch.
+  * Refer the manpage as the documentation for the service.
+
+ -- Al Nikolov <clown@debian.org>  Mon, 03 Jul 2017 19:08:04 +0300
+
 nixstatsagent (1.1.4-1) unstable; urgency=medium
 
   * New upstream release

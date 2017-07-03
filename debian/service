@@ -1,6 +1,7 @@
 [Unit]
 Description=NixStats agent
 After=network.target
+Documentation=man:nixstatsagent
 
 [Service]
 ExecStart=/usr/bin/nixstatsagent

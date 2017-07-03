@@ -1,34 +1,34 @@
-# German debconf translation of nixstatsagent
-# Copyright: © 2016 NIXStats <vincent@nixstats.com>
+# Portuguese translation for nixstatsagent debconf
 # This file is distributed under the same license as the nixstatsagent package.
-# Copyright of this file © 2011, 2017 Chris Leick <c.leick@vollbio.de>
-#
+# Rui Branco <ruipb@debianpt.org>, 2017. Initial translation 
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: nixstatsagent 1.1.4-1\n"
 "Report-Msgid-Bugs-To: nixstatsagent@packages.debian.org\n"
 "POT-Creation-Date: 2017-01-16 10:24+0300\n"
-"PO-Revision-Date: 2017-03-20 18:51+0100\n"
-"Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
-"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
-"Language: de\n"
+"PO-Revision-Date: 2017-03-31 19:39+0000\n"
+"Last-Translator: Rui Branco <ruipb@debianpt.org>\n"
+"Language-Team: Portuguese <traduz@debianpt.org>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Type: string
 #. Description
 #: ../templates:1001
 msgid "User ID:"
-msgstr "Benutzerkennung:"
+msgstr "ID de utilizador:"
 
 #. Type: string
 #. Description
 #: ../templates:1001
 msgid "Type your user ID at NixStats.com or at your service provider."
 msgstr ""
-"Geben Sie Ihre Benutzerkennung bei NixStats.com oder Ihrem Dienstanbieter an."
+"Digite o seu ID de utilizador do portal NixStats.com ou do seu fornecedor de "
+"serviços."
 
 #. Type: string
 #. Description
@@ -39,21 +39,22 @@ msgid ""
 "Without this value set, the agent will be operating in the test mode  (no "
 "data will be sent to your service provider at all)."
 msgstr ""
-"Ohne diesen Wert wird der Agent im Testmodus arbeiten (es werden keinerlei "
-"Daten an Ihren Dienstanbieter gesandt)."
+"Sem este valor configurado o agente irá funcionar em modo de teste (nenhuma "
+"informação será enviada para o seu fornecedor de serviços)"
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid "Server ID:"
-msgstr "Serverkennung:"
+msgstr "ID do servidor:"
 
 #. Type: string
 #. Description
 #: ../templates:2001
 msgid "Type your server ID at NixStats.com or at your service provider."
 msgstr ""
-"Geben Sie Ihre Serverkennung bei NixStats.com oder Ihrem Dienstanbieter an."
+"Digite o seu ID de servidor do portal NixStats.com ou do seu fornecedor de "
+"serviços."
 
 #. Type: string
 #. Description
@@ -62,14 +63,14 @@ msgid ""
 "This setting will be ignored if you receive a server ID automatically, in  "
 "which case you may skip setting this value."
 msgstr ""
-"Diese Einstellung wird ignoriert, falls Sie eine Serverkennung automatisch "
-"erhalten. In diesem Fall können Sie das Setzen dieses Wertes überspringen."
+"Esta configuração será ignorada se automaticamente receber um ID de "
+"servidor, neste caso poderá saltar a configuração deste passo."
 
 #. Type: string
 #. Description
 #: ../templates:3001
 msgid "API host name:"
-msgstr "API-Rechnername:"
+msgstr "Nome da máquina API:"
 
 #. Type: string
 #. Description
@@ -78,14 +79,14 @@ msgid ""
 "If you're using NixStats.com service, leave it empty. Otherwise type your  "
 "service provider's API host name."
 msgstr ""
-"Falls Sie den Dienst NixStats.com benutzen, lassen Sie dies leer. Andernfalls "
-"geben Sie den API-Rechnernamen Ihres Dienstanbieters an."
+"Se estiver a utilizar o serviço NixStats.com deixe vazio. De outro modo "
+"digite o nome de máquina API do seu fornecedor de serviços. "
 
 #. Type: string
 #. Description
 #: ../templates:4001
 msgid "API path name:"
-msgstr "API-Pfadname:"
+msgstr "Nome do caminho API:"
 
 #. Type: string
 #. Description
@@ -94,14 +95,14 @@ msgid ""
 "If you're using NixStats.com service, leave it empty. Otherwise type your  "
 "service provider's API path name."
 msgstr ""
-"Falls Sie den Dienst NixStats.com benutzen, lassen Sie dies leer. Andernfalls "
-"geben Sie den API-Pfadnamen Ihres Dienstanbieters an."
+"Se estiver a utilizar o serviço NixStats.com deixe vazio. De outro modo "
+"digite o nome do caminho API do seu fornecedor de serviços. "
 
 #. Type: boolean
 #. Description
 #: ../templates:5001
 msgid "Obtain the new server ID automatically?"
-msgstr "Neue Serverkennung automatisch beziehen?"
+msgstr "Obter automaticamente o ID do novo servidor?"
 
 #. Type: boolean
 #. Description
@@ -110,5 +111,5 @@ msgid ""
 "If you're using NixStats.com service, you can obtain a new server ID  "
 "automatically via NixStats.com API."
 msgstr ""
-"Falls Sie den Dienst NixStats.com benutzen, können Sie eine neue "
-"Serverkennung automatisch über das API von NixStats.com beziehen."
+"Se estiver a utilizar o serviço NixStats.com pode obter um novo ID de "
+"servidor automaticamente através da API do NixStats.com. "

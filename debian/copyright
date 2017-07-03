@@ -8,16 +8,15 @@ License: BSD-3-Clause
 
 Files: debian/po/de.po
 Copyright:
- 2016 NIXStats <vincent@nixstats.com>
- 2016 Chris Leick <c.leick@vollbio.de>
+ 2016, 2017 Chris Leick <c.leick@vollbio.de>
 License: BSD-3-Clause
 
 Files: debian/po/fr.po
-Copyright: 2016 Debian french l10n team
+Copyright: 2016, 2017 Debian french l10n team
 License: BSD-3-Clause
 
 Files: debian/po/nl.po
-Copyright: 2016 Frans Spiesschaert <Frans.Spiesschaert@yucom.be>
+Copyright: 2016, 2017 Frans Spiesschaert <Frans.Spiesschaert@yucom.be>
 License: BSD-3-Clause
 
 License: BSD-3-Clause
