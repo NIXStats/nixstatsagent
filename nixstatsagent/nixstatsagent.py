@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.27'
+__version__ = '1.1.28'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -522,9 +522,12 @@ class Agent:
                     del self.schedule[name]
                     self.execute.put(name)
                     if self.hire.acquire(False):
-                        thread = threading.Thread(target=self._execution)
-                        thread.start()
-                        logging.debug('new_execution_worker_thread:%s', thread)
+                        try:
+                            thread = threading.Thread(target=self._execution)
+                            thread.start()
+                            logging.debug('new_execution_worker_thread:%s', thread)
+                        except Exception as e:
+                            logging.warning('Can not start new thread: %s', e)
                     else:
                         logging.warning('threads_capped')
                         self.metrics.put({
