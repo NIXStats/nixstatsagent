@@ -1,6 +1,6 @@
 Source: nixstatsagent
 Section: net
-Priority: extra
+Priority: optional
 Maintainer: Al Nikolov <clown@debian.org>
 Build-Depends: 
  debhelper (>= 9),
