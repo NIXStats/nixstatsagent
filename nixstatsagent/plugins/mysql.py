@@ -18,12 +18,24 @@ class Plugin(plugins.BasePlugin):
             auth['port'] = int(config.get('mysql', 'port'))
         except ValueError:
             auth['port'] = 3306
-        db = MySQLdb.connect(host=config.get('mysql', 'host'),
-                             port=auth['port'],
-                             user=config.get('mysql', 'username'),
-                             unix_socket=config.get('mysql', 'socket'),
-                             passwd=config.get('mysql', 'password'),
-                             db=config.get('mysql', 'database'))
+        try:
+            auth['user'] = config.get('mysql', 'username')
+        except:
+            auth['user'] = 'root'
+        try:
+            auth['passwd'] = config.get('mysql', 'password')
+        except:
+            auth['passwd'] = ''
+        try:
+            auth['host'] = config.get('mysql', 'host')
+        except:
+            auth['unix_socket'] = config.get('mysql', 'socket')
+        try:
+            auth['db'] = config.get('mysql', 'database')
+        except:
+            auth['db'] = 'mysql'
+
+        db = MySQLdb.connect(**auth)
         cursor = db.cursor()
         cursor.execute("SHOW GLOBAL STATUS;")
         query_result = cursor.fetchall()
