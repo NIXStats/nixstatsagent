@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.28'
+__version__ = '1.1.29'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -376,7 +376,10 @@ class Agent:
             logging.debug('%s:data_queue:%i:collection:%i',
                 threading.currentThread(), self.data.qsize(), len(collection))
             while self.data.qsize():
-                collection.append(self.data.get_nowait())
+                try:
+                    collection.append(self.data.get_nowait())
+                except Exception as e:
+                    logging.error('Data queue error: %s' % e)
             if collection:
                 first_ts = min((e['ts'] for e in collection))
                 last_ts = max((e['ts'] for e in collection))
@@ -554,6 +557,9 @@ class Agent:
                 sleep_interval = interval-(time.time()-now)
                 if sleep_interval > 0:
                     time.sleep(sleep_interval)
+        except Exception as e:
+            logging.error('Worker error: %s' % e)
+            
 
 
 def main():
