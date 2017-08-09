@@ -1,3 +1,9 @@
+nixstatsagent (1.1.29-1) unstable; urgency=medium
+
+  * New updtream release.
+
+ -- Al Nikolov <clown@debian.org>  Wed, 09 Aug 2017 18:07:17 +0300
+
 nixstatsagent (1.1.28-1) unstable; urgency=medium
 
   * New upstream release.
