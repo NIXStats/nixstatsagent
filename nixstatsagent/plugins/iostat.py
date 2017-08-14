@@ -270,7 +270,7 @@ class Plugin(plugins.BasePlugin):
                         device_stats[key_value] = getattr(values, key_value)
                     results[device] = device_stats
             except Exception as e:
-                results = e
+                results = e.message
             return results
 
 
