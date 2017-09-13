@@ -1,3 +1,10 @@
+nixstatsagent (1.1.32-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Fix Standards-Version to match the current one.
+
+ -- Al Nikolov <clown@debian.org>  Wed, 13 Sep 2017 21:54:07 +0300
+
 nixstatsagent (1.1.30-1) unstable; urgency=medium
 
   * New upstream release.
