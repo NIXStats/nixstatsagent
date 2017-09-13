@@ -116,8 +116,8 @@ class Plugin(plugins.BasePlugin):
             if key in non_delta:
                 results[key] = value
             elif key in delta_keys:
-                results[key] = self.absolute_to_per_second(key, value, prev_cache)
-                data[key] = value
+                results[key] = self.absolute_to_per_second(key, float(value), prev_cache)
+                data[key] = float(value)
             else:
                 continue
         db.close()
