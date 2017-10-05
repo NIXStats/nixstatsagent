@@ -24,7 +24,11 @@ and derivaives. If your suite is already supported, simply do:
 
 ```
 apt-get install nixstatsagent
+wget -O /etc/nixstats.ini https://www.nixstats.com/nixstats.ini
+service nixstatsagent restart
 ```
+
+You will be asked for a userid, you can find this on the servers overview page when clicking "add server".
 
 Until then, use our [packagecloud repository](https://packagecloud.io/btbroot/nixstats/install#bash)
 
