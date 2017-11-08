@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.32'
+__version__ = '1.1.33'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -559,7 +559,6 @@ class Agent:
                     time.sleep(sleep_interval)
         except Exception as e:
             logging.error('Worker error: %s' % e)
-            
 
 
 def main():
