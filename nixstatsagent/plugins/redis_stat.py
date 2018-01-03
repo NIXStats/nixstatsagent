@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import plugins
-import json
 import redis
 
 ### Uncomment/Comment the Attribute Names to be monitored
@@ -145,16 +144,9 @@ class Plugin(plugins.BasePlugin):
                 return data
 
         for name, value in stats.iteritems():
-            try:
-                if name in METRICS.keys() :
-                    if METRICS[name] in ['used_memory_peak_human', 'used_memory_human']:
-                        value = float(value[0:-1])
-                    data[METRICS[name]] = value
-            except (ValueError, TypeError) as e:
-                data[name] = value
+            if name in METRICS.keys() :
+                data[METRICS[name]] = value
         return data
-
-        print(json.dumps(data, indent=4, sort_keys=True))
 
 if __name__ == '__main__':
     Plugin().execute()
