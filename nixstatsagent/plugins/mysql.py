@@ -109,10 +109,16 @@ class Plugin(plugins.BasePlugin):
             'threads_created',
             'threads_running'
         )
-        results = {}
-        data = {}
+        results = dict()
+        data = dict()
+        constructors = [int, float, str]
         for key, value in query_result:
             key = key.lower()
+            for c in constructors:
+                try:
+                    value = c(value)
+                except ValueError:
+                    pass
             if key in non_delta:
                 results[key] = value
             elif key in delta_keys:
