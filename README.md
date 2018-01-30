@@ -30,7 +30,7 @@ service nixstatsagent restart
 
 You will be asked for a userid, you can find this on the servers overview page when clicking "add server".
 
-Until then, use our [packagecloud repository](https://packagecloud.io/btbroot/nixstats/install#bash)
+Until then, use our [packagecloud repository](https://packagecloud.io/nixstats/nixstats/install#bash)
 
 Current status:
 
