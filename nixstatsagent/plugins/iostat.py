@@ -13,6 +13,9 @@ def diskstats_parse(dev=None):
     file_path = '/proc/diskstats'
     result = {}
 
+    if not os.path.isfile("/proc/diskstats"):
+        return False
+
     # ref: http://lxr.osuosl.org/source/Documentation/iostats.txt
     columns_disk = ['m', 'mm', 'dev', 'reads', 'rd_mrg', 'rd_sectors',
                     'ms_reading', 'writes', 'wr_mrg', 'wr_sectors',
@@ -35,7 +38,9 @@ def diskstats_parse(dev=None):
 
         data = dict(zip(columns, split))
 
-        if data['dev'][-1:].isdigit() is True:
+        if data['dev'][:3] == 'nvm' and data['dev'][-2:-1] == 'n':
+            pass
+        elif data['dev'][-1:].isdigit() is True:
             continue
 
         if "loop" in data['dev'] or "ram" in data['dev']:
@@ -55,9 +60,8 @@ class Plugin(plugins.BasePlugin):
     __name__ = 'iostat'
 
     def run(self, *unused):
-        if(os.path.isfile("/proc/diskstats")):
-            return diskstats_parse()
-        else:
+        results = diskstats_parse()
+        if not results  or results is False:
             results = {}
             try:
                 diskdata = psutil.disk_io_counters(perdisk=True)
@@ -68,7 +72,7 @@ class Plugin(plugins.BasePlugin):
                     results[device] = device_stats
             except Exception as e:
                 results = e.message
-            return results
+        return results
 
 
 if __name__ == '__main__':
