@@ -17,7 +17,7 @@ class Plugin(plugins.BasePlugin):
                 ])
                 pinfo['name'].encode('utf-8')
                 pinfo['username'].encode('utf-8')
-                pinfo['cmdline'] = ''.join(pinfo['cmdline']).encode('utf-8')
+                pinfo['cmdline'] = ' '.join(pinfo['cmdline']).encode('utf-8').strip()
             except psutil.NoSuchProcess:
                 pass
             except psutil.AccessDenied:
