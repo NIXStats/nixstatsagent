@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.37'
+__version__ = '1.1.38'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,6 +40,11 @@ ini_files = (
     os.path.abspath('nixstats-token.ini'),
 )
 
+if sys.platform == 'win32':
+    ini_files = (
+        os.path.join(__FILEABSDIRNAME__, 'nixstats.ini'),
+        os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini'),
+    )
 
 def info():
     '''

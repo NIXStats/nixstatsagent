@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 import os
 import plugins
-
+import sys
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'loadavg'
 
     def run(self, *unused):
-        return os.getloadavg()
+        if sys.platform == 'win32':
+            return None
+        else:
+            return os.getloadavg()
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import psutil
 import plugins
-
+import sys
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'process'
@@ -16,8 +16,9 @@ class Plugin(plugins.BasePlugin):
                     'cpu_percent', 'memory_percent', 'io_counters'
                 ])
                 pinfo['name'].encode('utf-8')
-                pinfo['username'].encode('utf-8')
-                pinfo['cmdline'] = ' '.join(pinfo['cmdline']).encode('utf-8').strip()
+                if sys.platform != 'win32':
+                    pinfo['username'].encode('utf-8')
+                    pinfo['cmdline'] = ' '.join(pinfo['cmdline']).encode('utf-8').strip()
             except psutil.NoSuchProcess:
                 pass
             except psutil.AccessDenied:
