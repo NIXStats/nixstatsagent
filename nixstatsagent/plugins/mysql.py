@@ -111,9 +111,9 @@ class Plugin(plugins.BasePlugin):
         )
         results = dict()
         data = dict()
-        constructors = [int, float, str]
+        constructors = [str, float]
         for key, value in query_result:
-            key = key.lower()
+            key = key.lower().strip()
             for c in constructors:
                 try:
                     value = c(value)
@@ -121,11 +121,11 @@ class Plugin(plugins.BasePlugin):
                     pass
             if key in non_delta:
                 results[key] = value
-            elif key in delta_keys:
+            elif key in delta_keys and type(value) is not str:
                 results[key] = self.absolute_to_per_second(key, float(value), prev_cache)
                 data[key] = float(value)
             else:
-                continue
+                pass
         db.close()
         data['ts'] = time.time()
         self.set_agent_cache(data)
