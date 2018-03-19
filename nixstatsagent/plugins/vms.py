@@ -19,8 +19,9 @@ class Plugin(plugins.BasePlugin):
         uri = os.getenv("uri", "qemu:///system")
         values = self.fetch_values(uri)
 
+        deltas = {}
         for key, value in values.items():
-            deltas = {}
+            deltas[key] = {}
             for subkey, subvalue in value.items():
                 deltas[key][subkey] = self.absolute_to_per_second('%s_%s' % (key, subkey), float(subvalue), prev_cache)
                 last_value['%s_%s' % (key, subkey)] = float(value[subkey])
