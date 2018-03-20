@@ -1,21 +1,34 @@
 import plugins
 import struct
 import time
-from memcached_stats import MemcachedStats
+import memcache
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'memcached'
 
     def run(self, config):
         '''
+        pip install python-memcached
         add to /etc/nixstats.ini
         [memcached]
         enabled=yes
         host=127.0.0.1
         port=11211
         '''
-
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
+        try:
+            socket = config.get('memcached', 'socket')
+        except:
+            socket = False
+        try:
+            # Connect
+            if socket is False:
+                mc = memcache.Client(['%s:%s' % (config.get('memcached', 'host'), config.get('memcached', 'port'))], debug=0)
+            else:
+                mc = memcache.Client(['unix:/%s' % socket], debug=0)
+        except:
+            return "Could not connect to memcached"
+
         non_delta = (
             'accepting_conns',
             'bytes',
@@ -72,18 +85,13 @@ class Plugin(plugins.BasePlugin):
             'cmd_hits'
         )
 
-        try:
-            # Connect
-            mem = MemcachedStats(config.get('memcached', 'host'), config.get('memcached', 'port'))
-        except:
-            return "Could not connect to memcached"
-
         results = {}
         data = {}
         try:
-            result = mem.stats()
-            for key, value in result.items():
-                key = key.lower().strip()
+            result = mc.get_stats()
+            for key, key_value in enumerate(result[0][1]):
+                value = result[0][1][key_value]
+                key = key_value.lower().strip()
                 if key in non_delta:
                     results[key] = float(value)
                 elif key in delta_keys:
@@ -93,7 +101,7 @@ class Plugin(plugins.BasePlugin):
                 else:
                     pass
         except:
-            return "Could not fetch memcached stats"
+            return 'Could not fetch memcached stats'
 
         data['ts'] = time.time()
         self.set_agent_cache(data)
