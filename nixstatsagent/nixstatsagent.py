@@ -545,7 +545,12 @@ class Agent:
                                 'threads_capping':
                                     self.config.getint('execution', 'threads')}
                         })
-                time.sleep(.5)
+                sleep_interval = .5-(time.time()-now)
+                if sleep_interval > 0:
+                    time.sleep(sleep_interval)
+                else:
+                    logging.warning('not enough time to start worker threads')
+                    time.sleep(.1)
 
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
