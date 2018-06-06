@@ -13,6 +13,20 @@ class Plugin(plugins.BasePlugin):
         '''
         data = {}
 
+        if sys.platform == "win32":
+            try:
+                import wmi
+            except:
+                return 'wmi module not installed.'
+            try:
+                w = wmi.WMI(namespace="root\OpenHardwareMonitor")
+                temperature_infos = w.Sensor()
+                for sensor in temperature_infos:
+                    if sensor.SensorType==u'Temperature':
+                        data[sensor.Parent.replace('/','-').strip('-')] = sensor.Value
+                return data
+            except:
+                return 'Could not fetch temperature data from OpenHardwareMonitor.'
         if not hasattr(psutil, "sensors_temperatures"):
             return "platform not supported"
 

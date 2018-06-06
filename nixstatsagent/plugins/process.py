@@ -15,13 +15,21 @@ class Plugin(plugins.BasePlugin):
                     'pid', 'name', 'ppid', 'exe', 'cmdline', 'username',
                     'cpu_percent', 'memory_percent', 'io_counters'
                 ])
-                pinfo['name'].encode('utf-8')
-                if sys.platform != 'win32':
-                    pinfo['username'].encode('utf-8')
-                    pinfo['cmdline'] = ' '.join(pinfo['cmdline']).encode('utf-8').strip()
+
+                try:
+                    pinfo['cmdline'] = ' '.join(pinfo['cmdline']).strip()
+                except:
+                    pass
+                pinfo['cmdline'] = unicode(pinfo['cmdline'], sys.getdefaultencoding(), errors="replace").strip()
+                pinfo['name'] = unicode(pinfo['name'], sys.getdefaultencoding(), errors="replace")
+                pinfo['username'] = unicode(pinfo['username'], sys.getdefaultencoding(), errors="replace")
+                pinfo['exe'] = unicode(pinfo['exe'], sys.getdefaultencoding(), errors="replace")
+
             except psutil.NoSuchProcess:
                 pass
             except psutil.AccessDenied:
+                pass
+            except:
                 pass
             else:
                 process.append(pinfo)
