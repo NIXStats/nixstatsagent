@@ -23,8 +23,10 @@ class Plugin(plugins.BasePlugin):
                 pinfo['cmdline'] = unicode(pinfo['cmdline'], sys.getdefaultencoding(), errors="replace").strip()
                 pinfo['name'] = unicode(pinfo['name'], sys.getdefaultencoding(), errors="replace")
                 pinfo['username'] = unicode(pinfo['username'], sys.getdefaultencoding(), errors="replace")
-                pinfo['exe'] = unicode(pinfo['exe'], sys.getdefaultencoding(), errors="replace")
-
+                try:
+                    pinfo['exe'] = unicode(pinfo['exe'], sys.getdefaultencoding(), errors="replace")
+                except:
+                    pass
             except psutil.NoSuchProcess:
                 pass
             except psutil.AccessDenied:
