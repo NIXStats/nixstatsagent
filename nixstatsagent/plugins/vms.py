@@ -23,11 +23,14 @@ class Plugin(plugins.BasePlugin):
         for key, value in values.items():
             deltas[key] = {}
             for subkey, subvalue in value.items():
-                deltas[key][subkey] = self.absolute_to_per_second('%s_%s' % (key, subkey), float(subvalue), prev_cache)
-                last_value['%s_%s' % (key, subkey)] = float(value[subkey])
+                if subkey == 'mem_bytes' or subkey == 'soft_limit_bytes' or subkey == 'min_guarantee_bytes' or subkey == 'hard_limit_bytes':
+                    deltas[key][subkey] = value[subkey]
+                else:
+                    deltas[key][subkey] = self.absolute_to_per_second('%s_%s' % (key, subkey), float(subvalue), prev_cache)
+                    last_value['%s_%s' % (key, subkey)] = float(value[subkey])
         last_value['ts'] = time.time()
         self.set_agent_cache(last_value)
-        return results
+        return deltas
 
     def canon(self, name):
         return re.sub(r"[^a-zA-Z0-9_]", "_", name)
@@ -89,11 +92,10 @@ class Plugin(plugins.BasePlugin):
         conn = libvirt.openReadOnly(uri)
         ids = conn.listDomainsID()
         results = {}
-        processors = float(conn.getInfo()[2])
-        data = {}
         for id in ids:
-            data['net_rx'] = 0
-            data['net_tx'] = 0
+            data = {}
+            data['net_rx_bytes'] = 0
+            data['net_tx_bytes'] = 0
             try:
                 dom = conn.lookupByID(id)
                 name = dom.name()
@@ -106,26 +108,26 @@ class Plugin(plugins.BasePlugin):
             for iface in ifaces:
                 try:
                     stats = dom.interfaceStats(iface)
-                    data['net_rx'] += stats[0]
-                    data['net_tx'] += stats[4]
+                    data['net_rx_bytes'] += stats[0]
+                    data['net_tx_bytes'] += stats[4]
                 except:
                     print >>sys.stderr, "Cannot get ifstats for '%s' on '%s'" % (iface, name)
 
             cputime = float(dom.info()[4])
-            cputime_percentage = 1.0e-7 * cputime / processors
+            cputime_percentage = 1.0e-7 * cputime
             data['cpu'] = cputime_percentage
 
             maxmem, mem = dom.info()[1:3]
             mem *= 1024
             maxmem *= 1024
-            data['mem'] = mem
+            data['mem_bytes'] = mem
             memtune = self.get_memtune(dom)
-            data['min_guarantee'] = memtune['min_guarantee'] * 1024
-            data['hard_limit'] = memtune['hard_limit'] * 1024
-            data['soft_limit'] = memtune['soft_limit'] * 1024
+            data['min_guarantee_bytes'] = memtune['min_guarantee'] * 1024
+            data['hard_limit_bytes'] = memtune['hard_limit'] * 1024
+            data['soft_limit_bytes'] = memtune['soft_limit'] * 1024
 
-            data['disk_rd'] = 0
-            data['disk_wr'] = 0
+            data['disk_rd_bytes'] = 0
+            data['disk_wr_bytes'] = 0
             data['disk_wr_req'] = 0
             data['disk_rd_req'] = 0
             try:
@@ -140,8 +142,8 @@ class Plugin(plugins.BasePlugin):
             for disk in disks:
                 try:
                     rd_req, rd_bytes, wr_req, wr_bytes, errs = dom.blockStats(disk)
-                    data['disk_rd'] += rd_bytes
-                    data['disk_wr'] += wr_bytes
+                    data['disk_rd_bytes'] += rd_bytes
+                    data['disk_wr_bytes'] += wr_bytes
                     data['disk_rd_req'] += rd_req
                     data['disk_wr_req'] += wr_req
                 except TypeError:

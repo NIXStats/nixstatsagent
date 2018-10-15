@@ -6,13 +6,15 @@ import time
 import re
 import urllib2
 import base64
+import requests
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'litespeed'
 
     '''
+    This plugin needs requests (pip install requests)
     Litespeed monitoring plugin. Add the following section to /etc/nixstats.ini
-    
+
     [litespeed]
     enabled=yes
     host=localhost
@@ -26,12 +28,9 @@ class Plugin(plugins.BasePlugin):
         results = {}
         data = False
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
-        request = urllib2.Request("http://%s:%s/status?rpt=summary" % (config.get('litespeed', 'host'),config.get('litespeed', 'port')))
-        base64string = base64.b64encode('%s:%s' % (config.get('litespeed', 'username'), config.get('litespeed', 'password')))
-        request.add_header("Authorization", "Basic %s" % base64string)
-        response = urllib2.urlopen(request).read()
+        response = requests.get("http://%s:%s/status?rpt=summary" % (config.get('litespeed', 'host'),config.get('litespeed', 'port')), auth=(config.get('litespeed', 'username'), config.get('litespeed', 'password')), verify=False)
 
-        for line in response.split('\n'):
+        for line in response.text.split('\n'):
             test = re.search('REQ_RATE \[(.*)\]', line)
             if test is not None and test.group(1):
                 data = True

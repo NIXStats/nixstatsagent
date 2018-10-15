@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import plugins
 import psutil
+import sys
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'temp'
@@ -18,6 +19,7 @@ class Plugin(plugins.BasePlugin):
                 import wmi
             except:
                 return 'wmi module not installed.'
+
             try:
                 w = wmi.WMI(namespace="root\OpenHardwareMonitor")
                 temperature_infos = w.Sensor()
