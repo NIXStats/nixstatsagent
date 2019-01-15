@@ -27,7 +27,7 @@ import urllib
 import urllib2
 
 
-__version__ = '1.1.47'
+__version__ = '1.1.48'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -73,6 +73,10 @@ def hello(proto='https'):
         token_filename = sys.argv[2]
     else:
         token_filename = os.path.join(__FILEABSDIRNAME__, 'nixstats-token.ini')
+    if len(sys.argv) > 3:
+        unique_id = sys.argv[3]
+    else:
+        unique_id = ''
     if '_' in user_id:
         server_id = user_id.split('_')[1]
         user_id = user_id.split('_')[0]
@@ -96,7 +100,8 @@ def hello(proto='https'):
             proto + '://api.nixstats.com/hello.php',
             data=urllib.urlencode({
                     'user': user_id,
-                    'hostname': hostname
+                    'hostname': hostname,
+                    'unique_id': unique_id
             })
         ).read()
     print('Got server_id: %s' % server_id)
