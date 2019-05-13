@@ -20,6 +20,7 @@ class Plugin(plugins.BasePlugin):
         try:
             data = subprocess.Popen('nvme --list --output-format=json', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()[0]
             data = json.loads(data)
+            data['Devices']
             nvme = True
         except Exception:
             nvme = False
