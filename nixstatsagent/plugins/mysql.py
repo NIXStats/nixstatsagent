@@ -109,6 +109,22 @@ class Plugin(plugins.BasePlugin):
             'threads_created',
             'threads_running'
         )
+
+        cursor.execute("SHOW SLAVE STATUS;")
+        query_result = cursor.fetchall()
+        non_delta = (
+            'Slave_IO_State',
+            'Master_Host',
+            'Read_Master_Log_Pos',
+            'Relay_Log_Pos',
+            'Slave_IO_Running',
+            'Slave_SQL_Running',
+            'Last_Error',
+            'Exec_Master_Log_Pos',
+            'Relay_Log_Space',
+            'Slave_SQL_Running_State',
+            'Master_Retry_Count'
+        )
         results = dict()
         data = dict()
         constructors = [str, float]
