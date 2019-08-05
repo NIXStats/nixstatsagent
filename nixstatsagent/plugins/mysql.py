@@ -110,21 +110,6 @@ class Plugin(plugins.BasePlugin):
             'threads_running'
         )
 
-        cursor.execute("SHOW SLAVE STATUS;")
-        query_result = cursor.fetchall()
-        non_delta = (
-            'Slave_IO_State',
-            'Master_Host',
-            'Read_Master_Log_Pos',
-            'Relay_Log_Pos',
-            'Slave_IO_Running',
-            'Slave_SQL_Running',
-            'Last_Error',
-            'Exec_Master_Log_Pos',
-            'Relay_Log_Space',
-            'Slave_SQL_Running_State',
-            'Master_Retry_Count'
-        )
         results = dict()
         data = dict()
         constructors = [str, float]
@@ -142,6 +127,38 @@ class Plugin(plugins.BasePlugin):
                 data[key] = float(value)
             else:
                 pass
+
+        cursor.execute("SHOW SLAVE STATUS;")
+        query_result_slave = cursor.fetchall()
+        non_delta_slave = (
+            'Slave_IO_State',
+            'Master_Host',
+            'Read_Master_Log_Pos',
+            'Relay_Log_Pos',
+            'Slave_IO_Running',
+            'Slave_SQL_Running',
+            'Last_Error',
+            'Exec_Master_Log_Pos',
+            'Relay_Log_Space',
+            'Slave_SQL_Running_State',
+            'Master_Retry_Count'
+        )
+
+        for key, value in query_result_slave:
+            key = key.lower().strip()
+            for c in constructors:
+                try:
+                    value = c(value)
+                except ValueError:
+                    pass
+            if key in non_delta_slave:
+                results[key] = value
+            elif key in delta_keys and type(value) is not str:
+                results[key] = self.absolute_to_per_second(key, float(value), prev_cache)
+                data[key] = float(value)
+            else:
+                pass
+
         db.close()
         data['ts'] = time.time()
         self.set_agent_cache(data)
