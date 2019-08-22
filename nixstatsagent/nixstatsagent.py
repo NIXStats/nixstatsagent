@@ -26,7 +26,7 @@ import types
 import urllib
 import urllib2
 
-__version__ = '1.1.53'
+__version__ = '1.1.54'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
@@ -337,6 +337,10 @@ class Agent:
                 break
             logging.debug('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
+            try:
+                interval = self.config.get(name, 'interval')
+            except:
+                interval = 60
             ts = time.time()
             if isinstance(task, basestring):
                 payload = self._subprocess_execution(task)
@@ -358,9 +362,11 @@ class Agent:
                 'ts': ts,
                 'task': task,
                 'name': name,
+                'interval': interval,
                 'payload': payload,
             })
             self.hire.release()
+
 
     def _data(self):
         '''
