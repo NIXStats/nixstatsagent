@@ -145,6 +145,8 @@ class Plugin(plugins.BasePlugin):
             'slave_sql_running_state',
             'master_retry_count'
         )
+        if query_result_slave is None:
+            query_result_slave = dict()
         for key, value in query_result_slave.items():
             key = key.lower().strip()
             if key == 'slave_sql_running':
