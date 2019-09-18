@@ -26,7 +26,7 @@ import types
 import urllib
 import urllib2
 
-__version__ = '1.1.55'
+__version__ = '1.1.56'
 
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 

@@ -128,34 +128,37 @@ class Plugin(plugins.BasePlugin):
             else:
                 pass
 
-        cursor.execute("SHOW SLAVE STATUS;")
-        query_result_slave = cursor.fetchall()
+        cursor = db.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SHOW SLAVE STATUS')
+        query_result_slave = cursor.fetchone()
         non_delta_slave = (
-            'Slave_IO_State',
-            'Master_Host',
-            'Read_Master_Log_Pos',
-            'Relay_Log_Pos',
-            'Slave_IO_Running',
-            'Slave_SQL_Running',
-            'Last_Error',
-            'Exec_Master_Log_Pos',
-            'Relay_Log_Space',
-            'Slave_SQL_Running_State',
-            'Master_Retry_Count'
+            'slave_io_state',
+            'master_host',
+            'seconds_behind_master',
+            'read_master_log_pos',
+            'relay_log_pos',
+            'slave_io_running',
+            'slave_sql_running',
+            'last_error',
+            'exec_master_log_pos',
+            'relay_log_space',
+            'slave_sql_running_state',
+            'master_retry_count'
         )
-
-        for key, value in query_result_slave:
+        for key, value in query_result_slave.items():
             key = key.lower().strip()
+            if key == 'slave_sql_running':
+                value = 1 if value == 'Yes' else 0
+            if key == 'slave_io_running':
+                value = 1 if value == 'Yes' else 0
+
             for c in constructors:
                 try:
                     value = c(value)
                 except ValueError:
                     pass
-            if key in non_delta_slave:
+            if key in non_delta_slave and type(value) is not str:
                 results[key] = value
-            elif key in delta_keys and type(value) is not str:
-                results[key] = self.absolute_to_per_second(key, float(value), prev_cache)
-                data[key] = float(value)
             else:
                 pass
 
