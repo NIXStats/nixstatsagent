@@ -19,32 +19,34 @@ class Plugin(plugins.BasePlugin):
 
         results = dict()
         next_cache = dict()
-        request = urllib2.Request(config.get('phpfpm', 'status_page_url'))
-        raw_response = urllib2.urlopen(request)
-        next_cache['ts'] = time.time()
+        my_pools = config.get(__name__, 'status_page_url').split(',')
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
+        for pool in my_pools:
+            request = urllib2.Request(pool)
+            raw_response = urllib2.urlopen(request)
 
-        try:
-            j = json.loads(raw_response.read(), object_hook=ascii_encode_dict)
+            try:
+                j = json.loads(raw_response.read(), object_hook=ascii_encode_dict)
+                results[j['pool']] = {}
+                next_cache['%s_ts' % j['pool']] = time.time()
+                for k, v in j.items():
+                    results[j['pool']][k.replace(" ", "_")] = v
 
-            for k, v in j.items():
-                results[k.replace(" ", "_")] = v
+                next_cache['%s_accepted_conn' % j['pool']] = int(results[j['pool']]['accepted_conn'])
+            except Exception:
+                return False
 
-            next_cache['accepted_conn'] = int(results['accepted_conn'])
-        except Exception:
-            return False
-
-        try:
-            if next_cache['accepted_conn'] >= prev_cache['accepted_conn']:
-                results['accepted_conn_per_second'] = \
-                    (next_cache['accepted_conn'] - prev_cache['accepted_conn']) / \
-                    (next_cache['ts'] - prev_cache['ts'])
-            else:  # Was restarted after previous caching
-                results['accepted_conn_per_second'] = \
-                    next_cache['accepted_conn'] / \
-                    (next_cache['ts'] - prev_cache['ts'])
-        except KeyError:  # No cache yet, can't calculate
-            results['accepted_conn_per_second'] = 0.0
+            try:
+                if next_cache['%s_accepted_conn' % j['pool']] >= prev_cache['%s_accepted_conn' % j['pool']]:
+                    results[j['pool']]['accepted_conn_per_second'] = \
+                        (next_cache['%s_accepted_conn' % j['pool']] - prev_cache['%s_accepted_conn' % j['pool']]) / \
+                        (next_cache['%s_ts' % j['pool']] - prev_cache['%s_ts' % j['pool']])
+                else:  # Was restarted after previous caching
+                    results[j['pool']]['accepted_conn_per_second'] = \
+                        next_cache['%s_accepted_conn' % j['pool']] / \
+                        (next_cache['%s_ts' % j['pool']] - prev_cache['%s_ts' % j['pool']])
+            except KeyError:  # No cache yet, can't calculate
+                results[j['pool']]['accepted_conn_per_second'] = 0.0
 
         # Cache absolute values for next check calculations
         self.set_agent_cache(next_cache)
