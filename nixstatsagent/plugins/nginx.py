@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # import psutil
-import urllib2
+try:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
 import time
 import plugins
 
@@ -30,12 +37,13 @@ class Plugin(plugins.BasePlugin):
         try:
             results = dict()
             next_cache = dict()
-            request = urllib2.Request(config.get('nginx', 'status_page_url'))
-            raw_response = urllib2.urlopen(request)
+            # request = urllib2.Request(config.get('nginx', 'status_page_url'))
+            # raw_response = urllib2.urlopen(request)
             next_cache['ts'] = time.time()
             prev_cache = self.get_agent_cache()  # Get absolute values from previous check
-            response = raw_response.readlines()
-
+            # response = raw_response.readlines()
+            request = Request(config.get('nginx', 'status_page_url'))
+            response = urlopen(request).read().decode('utf-8').split("\n")
             # Active connections: N
             # active_connections = response[0].split(':')[1].strip()
             active_connections = response[0].split()[-1]

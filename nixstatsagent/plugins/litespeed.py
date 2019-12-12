@@ -4,7 +4,14 @@ import plugins
 import os
 import time
 import re
-import urllib2
+try:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
 import base64
 import requests
 

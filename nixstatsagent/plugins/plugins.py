@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import ConfigParser
 import pickle
 import time
 import sys
-# import os
+if sys.version_info >= (3,):
+    import configparser
+else:
+    import ConfigParser
 
 
 class BasePlugin:
@@ -35,7 +37,10 @@ class BasePlugin:
         '''
         config = None
         if len(sys.argv) > 1:
-            config = ConfigParser.RawConfigParser()
+            if sys.version_info >= (3,):
+                config = configparser.RawConfigParser(defaults)
+            else:
+                config = ConfigParser.RawConfigParser(defaults)
             config.read(sys.argv[1])
         pickle.dump(self.run(config), sys.stdout)
 

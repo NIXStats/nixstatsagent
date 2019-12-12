@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # by Al Nikolov <root@toor.fi.eu.org>
-
+from __future__ import print_function
 import bz2
-import ConfigParser
+import sys
+if sys.version_info >= (3,):
+    from past.builtins import basestring
+    import configparser
+    import http.client
+    import http.cookies
+    import http.cookiejar
+    import http.server
+    from queue import Queue, Empty
+    import io
+else:
+    import ConfigParser
+    import httplib
+    import StringIO
+    from Queue import Queue, Empty
+
 import glob
-import httplib
 import imp
 try:
     import json
@@ -14,20 +28,24 @@ except ImportError:
 import logging
 import os
 import pickle
-import Queue
 import signal
 import socket
-import StringIO
 import subprocess
-import sys
 import threading
 import time
 import types
 import urllib
-import urllib2
 
-__version__ = '1.1.58'
+try:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
 
+__version__ = '1.2.1'
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
@@ -82,27 +100,27 @@ def hello(proto='https'):
     elif os.path.isfile('/etc/nixstats/token'):
         oldconfigfile = open('/etc/nixstats/token','r')
         server_id = oldconfigfile.readline()
-        print 'Upgrading from old monitoring agent'
-        print 'Remove the old agent from the crontab (crontab -e -u nixstats)'
+        print('Upgrading from old monitoring agent')
+        print('Remove the old agent from the crontab (crontab -e -u nixstats)')
     elif os.path.isfile('/opt/nixstats/nixstats.cfg'):
         oldconfigfile = open('/opt/nixstats/nixstats.cfg')
         lines=oldconfigfile.readlines()
         server_id = lines[1].replace('server=', '').strip()
-        print 'Upgrading from old python client.'
-        print 'Run :\nchkconfig --del nixstats \nor \nupdate-rc.d -f nixstats remove \nto remove the old service.'
+        print('Upgrading from old python client.')
+        print('Run :\nchkconfig --del nixstats \nor \nupdate-rc.d -f nixstats remove \nto remove the old service.')
     else:
         try:
             hostname = os.uname()[1]
         except AttributeError:
             hostname = socket.getfqdn()
-        server_id = urllib2.urlopen(
+            server_id = urlopen(
             proto + '://api.nixstats.com/hello.php',
-            data=urllib.urlencode({
+            data=urlencode({
                     'user': user_id,
                     'hostname': hostname,
                     'unique_id': unique_id
-            })
-        ).read()
+            }).encode("utf-8")
+           ).read().decode()
     print('Got server_id: %s' % server_id)
     open(token_filename, 'w').\
         write('[DEFAULT]\nuser=%s\nserver=%s\n' % (user_id, server_id))
@@ -132,21 +150,21 @@ def test_plugins(plugins=[]):
 
     if not plugins:
         plugins = agent._get_plugins(state='enabled')
-        print 'Check all enabled plugins: %s' % ', '.join(plugins)
+        print('Check all enabled plugins: %s' % ', '.join(plugins))
 
     for plugin_name in plugins:
-        print '%s:' % plugin_name
+        print('%s:' % plugin_name)
 
         try:
             fp, pathname, description = imp.find_module(plugin_name)
         except Exception as e:
-            print 'Find error:', e
+            print('Find error:', e)
             continue
 
         try:
             module = imp.load_module(plugin_name, fp, pathname, description)
         except Exception as e:
-            print 'Load error:', e
+            print('Load error:', e)
             continue
         finally:
             # Since we may exit via an exception, close fp explicitly.
@@ -155,15 +173,15 @@ def test_plugins(plugins=[]):
 
         try:
             payload = module.Plugin().run(agent.config)
-            print json.dumps(payload, indent=4, sort_keys=True)
+            print(json.dumps(payload, indent=4, sort_keys=True))
         except Exception as e:
-            print 'Execution error:', e
+            print('Execution error:', e)
 
 
 class Agent:
-    execute = Queue.Queue()
-    metrics = Queue.Queue()
-    data = Queue.Queue()
+    execute = Queue()
+    metrics = Queue()
+    data = Queue()
     shutdown = False
 
     def __init__(self, dry_instance=False):
@@ -210,7 +228,10 @@ class Agent:
             'execution',
             'data',
         ]
-        config = ConfigParser.RawConfigParser(defaults)
+        if sys.version_info >= (3,):
+            config = configparser.RawConfigParser(defaults)
+        else:
+            config = ConfigParser.RawConfigParser(defaults)
         config.read(ini_files)
         self.config = config
         for section in sections:
@@ -333,7 +354,7 @@ class Agent:
             logging.debug('%s:exec_queue:%i', threading.currentThread(), self.execute.qsize())
             try:
                 task = self.execute.get_nowait()
-            except Queue.Empty:
+            except Empty:
                 break
             logging.debug('%s:task:%s', threading.currentThread(), task)
             name = _plugin_name(task)
@@ -421,7 +442,10 @@ class Agent:
                     else:
 
                         try:
-                            connection = httplib.HTTPSConnection(api_host, timeout=15)
+                            if sys.version_info >= (3,):
+                                connection = http.client.HTTPSConnection(api_host, timeout=15)
+                            else:
+                                connection = httplib.HTTPSConnection(api_host, timeout=15)
 
                             # Trying to send cached collections if any
                             if cached_collections:
@@ -441,7 +465,7 @@ class Agent:
 
                             # Send recent collection (reuse existing connection)
                             connection.request('PUT', '%s?version=%s' % (api_path, __version__),
-                                    bz2.compress(str(json.dumps(collection)) + "\n"),
+                                    bz2.compress(str(json.dumps(collection)+"\n").encode()),
                                     headers=headers)
                             response = connection.getresponse()
                             response.read()
@@ -461,7 +485,7 @@ class Agent:
                                     logging.info('Reach max_cached_collections (%s): oldest cached collection dropped',
                                         max_cached_collections)
                                 logging.info('Cache current collection to resend next time')
-                                cached_collections.append(bz2.compress(str(json.dumps(collection)) + "\n"))
+                                cached_collections.append(bz2.compress(str(json.dumps(collection)+"\n").encode()))
                                 collection = []
                         finally:
                             connection.close()
@@ -482,7 +506,11 @@ class Agent:
         '''
         Dumps configuration object
         '''
-        buf = StringIO.StringIO()
+        if sys.version_info >= (3,):
+            buf = io.StringIO()
+        else:
+            buf = StringIO.StringIO()
+
         self.config.write(buf)
         logging.info('Config: %s', buf.getvalue())
 
@@ -587,17 +615,17 @@ def main():
             sys.argv[1] = sys.argv[1][2:]
 
         if sys.argv[1] == 'help':
-            print '\n'.join((
+            print('\n'.join((
                 'Run without options to run agent.',
                 'Acceptable options (leading -- is optional):',
                 '    help, info, version, hello, insecure-hello, test',
-            ))
+            )))
             sys.exit()
         elif sys.argv[1] == 'info':
-            print info()
+            print(info())
             sys.exit()
         elif sys.argv[1] == 'version':
-            print __version__
+            print(__version__)
             sys.exit()
         elif sys.argv[1] == 'hello':
             del sys.argv[1]
@@ -608,7 +636,8 @@ def main():
         elif sys.argv[1] == 'test':
             sys.exit(test_plugins(sys.argv[2:]))
         else:
-            print >>sys.stderr, 'Invalid option:', sys.argv[1]
+
+            print('Invalid option:', sys.argv[1], file=sys.stderr)
             sys.exit(1)
     else:
         Agent().run()

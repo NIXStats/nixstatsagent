@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import urllib2
+#from past.builtins import basestring    # pip install future
+try:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
+import sys
 import time
 import plugins
 import json
@@ -22,19 +31,24 @@ class Plugin(plugins.BasePlugin):
         my_pools = config.get(__name__, 'status_page_url').split(',')
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
         for pool in my_pools:
-            request = urllib2.Request(pool)
-            raw_response = urllib2.urlopen(request)
+            request = Request(pool)
+            raw_response = urlopen(request)
 
             try:
-                j = json.loads(raw_response.read(), object_hook=ascii_encode_dict)
+                data = raw_response.read().decode('utf-8')
+#                pprint.pprint(data)
+                if sys.version_info >= (3,):
+                    j = json.loads(data)
+                else:
+                    j = json.loads(data, object_hook=ascii_encode_dict)
                 results[j['pool']] = {}
                 next_cache['%s_ts' % j['pool']] = time.time()
                 for k, v in j.items():
                     results[j['pool']][k.replace(" ", "_")] = v
 
                 next_cache['%s_accepted_conn' % j['pool']] = int(results[j['pool']]['accepted_conn'])
-            except Exception:
-                return False
+            except Exception as e:
+                return e
 
             try:
                 if next_cache['%s_accepted_conn' % j['pool']] >= prev_cache['%s_accepted_conn' % j['pool']]:

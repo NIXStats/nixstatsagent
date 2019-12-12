@@ -14,7 +14,8 @@ readme = open(os.path.join(here, 'README.md')).read()
 if sys.version.startswith('2.4'):
     install_requires = ['psutil==2.1.3', 'netifaces==0.8', 'simplejson==2.1.0']
 else:
-    install_requires = ['psutil', 'netifaces']
+    install_requires = ['psutil', 'netifaces', 'configparser', 'future']
+
 
 setuptools.setup(
     name='nixstatsagent',
@@ -34,10 +35,9 @@ setuptools.setup(
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2.4',
-        'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Topic :: System :: Monitoring',
     ],
     keywords='nixstats system monitoring agent',

@@ -20,9 +20,10 @@ class Plugin(plugins.BasePlugin):
                     pinfo['cmdline'] = ' '.join(pinfo['cmdline']).strip()
                 except:
                     pass
-                pinfo['cmdline'] = unicode(pinfo['cmdline'], sys.getdefaultencoding(), errors="replace").strip()
-                pinfo['name'] = unicode(pinfo['name'], sys.getdefaultencoding(), errors="replace")
-                pinfo['username'] = unicode(pinfo['username'], sys.getdefaultencoding(), errors="replace")
+                if sys.version_info < (3,):
+                    pinfo['cmdline'] = unicode(pinfo['cmdline'], sys.getdefaultencoding(), errors="replace").strip()
+                    pinfo['name'] = unicode(pinfo['name'], sys.getdefaultencoding(), errors="replace")
+                    pinfo['username'] = unicode(pinfo['username'], sys.getdefaultencoding(), errors="replace")
                 try:
                     pinfo['exe'] = unicode(pinfo['exe'], sys.getdefaultencoding(), errors="replace")
                 except:

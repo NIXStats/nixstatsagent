@@ -22,11 +22,11 @@ class Plugin(plugins.BasePlugin):
         if enabled_interfaces is False:
             return psutil.net_io_counters(pernic=True)
         else:
-	    returndata = {}
-	    interfaces = psutil.net_io_counters(pernic=True)
+            returndata = {}
+            interfaces = psutil.net_io_counters(pernic=True)
             for interface in interfaces:
-		if interface in enabled_interfaces:
-		    returndata[interface] = interfaces[interface]
+                if interface in enabled_interfaces:
+                    returndata[interface] = interfaces[interface]
             return returndata
         return None
 

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-import urllib2
 import time
 import plugins
 from pymongo import MongoClient

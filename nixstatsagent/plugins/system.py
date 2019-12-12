@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import netifaces
+try:
+    import netifaces
+except ImportError:
+    netifaces = None
 import os
 import platform
 from subprocess import Popen, PIPE
@@ -39,6 +42,8 @@ def ip_addresses():
     ip_list = {}
     ip_list['v4'] = {}
     ip_list['v6'] = {}
+    if netifaces is None:
+        return ip_list
     for interface in netifaces.interfaces():
         link = netifaces.ifaddresses(interface)
         if netifaces.AF_INET in link:
@@ -80,7 +85,7 @@ class Plugin(plugins.BasePlugin):
         elif sys.platform == "darwin":
             systeminfo['os'] = "Mac OS %s" % platform.mac_ver()[0]
             cpu['brand'] = str(systemCommand('sysctl machdep.cpu.brand_string', False)[0]).split(': ')[1]
-            cpu['count'] = systemCommand('sysctl hw.ncpu')
+            #cpu['count'] = systemCommand('sysctl hw.ncpu')
         elif sys.platform == "freebsd10" or sys.platform == "freebsd11":
             systeminfo['os'] = "FreeBSD %s" % platform.release()
             cpu['brand'] = str(systemCommand('sysctl hw.model', False)[0]).split(': ')[1]

@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import urllib
+try:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urlparse import urlparse
+    from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
 import time
 import plugins
 import json
@@ -19,12 +26,20 @@ class Plugin(plugins.BasePlugin):
 
         results = dict()
         next_cache = dict()
-        raw_response = urllib.urlopen(config.get('rabbitmq', 'status_page_url')).fp
+
+
+        request = Request(config.get('rabbitmq', 'status_page_url'))
+        raw_response = urlopen(request)
+        data = raw_response.read().decode('utf-8')
+        
         next_cache['ts'] = time.time()
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
 
         try:
-            j = json.loads(raw_response.read(), object_hook=ascii_encode_dict)
+            if sys.version_info >= (3,):
+                j = json.loads(data)
+            else:
+                j = json.loads(data, object_hook=ascii_encode_dict)
         except Exception:
             return False
 

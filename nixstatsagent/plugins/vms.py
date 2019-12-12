@@ -1,3 +1,4 @@
+from __future__ import print_function
 import re, sys, os
 import libvirt
 import libxml2
@@ -99,8 +100,8 @@ class Plugin(plugins.BasePlugin):
             try:
                 dom = conn.lookupByID(id)
                 name = dom.name()
-            except libvirt.libvirtError, err:
-                print >>sys.stderr, "Id: %s: %s" % (id, err)
+            except libvirt.libvirtError as err:
+                print("Id: %s: %s" % (id, err), file=sys.stderr)
                 continue
             if name == "Domain-0":
                 continue
@@ -133,8 +134,8 @@ class Plugin(plugins.BasePlugin):
             try:
                 dom = conn.lookupByID(id)
                 name = dom.name()
-            except libvirt.libvirtError, err:
-                print >>sys.stderr, "Id: %s: %s" % (id, err)
+            except libvirt.libvirtError as err:
+                print("Id: %s: %s" % (id, err), file=sys.stderr)
                 continue
             if name == "Domain-0":
                 continue
