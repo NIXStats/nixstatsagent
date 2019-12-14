@@ -5,7 +5,10 @@ from __future__ import print_function
 import bz2
 import sys
 if sys.version_info >= (3,):
-    from past.builtins import basestring
+    try:
+        from past.builtins import basestring
+    except ImportError:
+        basestring = str
     import configparser
     import http.client
     import http.cookies

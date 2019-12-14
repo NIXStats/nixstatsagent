@@ -12,7 +12,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 readme = open(os.path.join(here, 'README.md')).read()
 if sys.version.startswith('3.'):
-    install_requires = ['psutil', 'netifaces', 'configparser', 'future', 'past']
+    install_requires = ['psutil', 'netifaces', 'configparser', 'future']
 elif sys.version.startswith('2.6'):
     install_requires = ['psutil', 'netifaces', 'configparser==3.5.0', 'future']
 else:
