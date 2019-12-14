@@ -113,7 +113,7 @@ def hello(proto='https'):
             hostname = os.uname()[1]
         except AttributeError:
             hostname = socket.getfqdn()
-            server_id = urlopen(
+        server_id = urlopen(
             proto + '://api.nixstats.com/hello.php',
             data=urlencode({
                     'user': user_id,
