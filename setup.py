@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # by Al Nikolov <root@toor.fi.eu.org>
 
-from nixstatsagent.nixstatsagent import __version__
+
 import os
 import sys
 import setuptools
@@ -21,7 +21,7 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version=__version__,
+    version='1.2.3',
     description='NixStats agent',
     long_description=readme,
     url='https://github.com/NIXStats/nixstatsagent',
@@ -39,7 +39,9 @@ setuptools.setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: System :: Monitoring',
     ],
     keywords='nixstats system monitoring agent',
