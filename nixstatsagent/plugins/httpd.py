@@ -27,7 +27,8 @@ class Plugin(plugins.BasePlugin):
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
 
         try:
-            data = urllib.urlopen(config.get('httpd', 'status_page_url')).read()
+            request = Request(config.get('httpd', 'status_page_url'))
+            data = urlopen(request).read().decode('utf-8')
         except Exception as e:
             return False
 
