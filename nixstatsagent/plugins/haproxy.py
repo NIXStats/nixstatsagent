@@ -19,8 +19,8 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
             results = dict()
             next_cache = dict()
-            request = urllib2.Request(config.get('haproxy', 'status_page_url'))
-            raw_response = urllib2.urlopen(request)
+            request = Request(config.get('haproxy', 'status_page_url'))
+            raw_response = urlopen(request)
             next_cache['ts'] = time.time()
             prev_cache = self.get_agent_cache()  # Get absolute values from previous check
             response = raw_response.readlines()
