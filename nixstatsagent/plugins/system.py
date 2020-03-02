@@ -96,6 +96,7 @@ class Plugin(plugins.BasePlugin):
         systeminfo['cores'] = cpu['count']
         systeminfo['memory'] = mem.total
         systeminfo['psutil'] = '.'.join(map(str, psutil.version_info))
+        systeminfo['python_version'] = sys.version
         systeminfo['platform'] = platform.platform()
         systeminfo['uptime'] = int(time.time()-psutil.boot_time())
         systeminfo['ip_addresses'] = ip_addresses()

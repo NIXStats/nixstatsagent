@@ -48,7 +48,7 @@ except ImportError:
     from urllib import urlencode
     from urllib2 import urlopen, Request, HTTPError
 
-__version__ = '1.2.6'
+__version__ = '1.2.7'
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
@@ -306,6 +306,7 @@ class Agent:
                         module = imp.load_module(name, fp, pathname, description)
                     except Exception:
                         module = None
+                        logging.error('import_plugin_exception:%s', str(sys.exc_info()[0]))
                     finally:
                         # Since we may exit via an exception, close fp explicitly.
                         if fp:
@@ -313,7 +314,7 @@ class Agent:
                     if module:
                         self.schedule[module] = 0
                     else:
-                        logging.error('import_plugin:%s:%s', name, sys.exc_type)
+                        logging.error('import_plugin:%s', name)
 
     def _subprocess_execution(self, task):
         '''
