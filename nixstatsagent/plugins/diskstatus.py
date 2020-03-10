@@ -19,7 +19,11 @@ class Plugin(plugins.BasePlugin):
         results = {}
 
         try:
-            devlist = subprocess.Popen('smartctl --scan', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()[0].splitlines()
+            devlist = subprocess.Popen(
+                'smartctl --scan', stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, universal_newlines=True,
+                shell=True
+            ).communicate()[0].splitlines()
             smartctl = True
         except Exception:
             smartctl = False
@@ -28,8 +32,13 @@ class Plugin(plugins.BasePlugin):
         if smartctl is True:
             for row in devlist:
                 try:
-                    disk_id = row.split(' ')[0].split('/')[2]
-                    disk_stats = os.popen('smartctl -A -H {}'.format(row.split(' ')[0])).read().splitlines()
+                    disk = row.split(' ')[0]
+                    disk_id = disk.split('/')[2]
+                    disk_stats = subprocess.Popen(
+                        'smartctl -A -H {}'.format(disk),
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        universal_newlines=True, shell=True
+                    ).communicate()[0].splitlines()
                     smart_status = 0
                     if disk_stats[4].split(': ')[1] == 'PASSED':
                         smart_status = 1
