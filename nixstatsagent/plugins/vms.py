@@ -4,6 +4,7 @@ import libvirt
 import libxml2
 import time
 import plugins
+import psutil
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'vms'
@@ -117,6 +118,10 @@ class Plugin(plugins.BasePlugin):
             cputime = float(dom.info()[4])
             cputime_percentage = 1.0e-7 * cputime
             data['cpu'] = cputime_percentage
+            try:
+                data['cpu_percentage'] = cputime_percentage / psutil.cpu_count()
+            except Exception as e:
+                pass
 
             maxmem, mem = dom.info()[1:3]
             mem *= 1024
