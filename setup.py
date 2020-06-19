@@ -21,14 +21,14 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.2.9',
+    version='1.2.10',
     description='NixStats agent',
     long_description=readme,
     url='https://github.com/NIXStats/nixstatsagent',
     author='NIXStats',
     author_email='vincent@nixstats.com',
-    maintainer='Al Nikolov',
-    maintainer_email='root@toor.fi.eu.org',
+    maintainer='Vincent',
+    maintainer_email='vincent@nixstats.com',
     license='BSD-3-Clause',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
