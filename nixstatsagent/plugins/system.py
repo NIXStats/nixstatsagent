@@ -11,13 +11,15 @@ import sys
 import time
 import psutil
 import plugins
-
+try:
+    import distro
+except ImportError:
+    distro = None
 
 def systemCommand(Command, newlines=True):
     Output = ""
     Error = ""
     try:
-        # Output = subprocess.check_output(Command, stderr = subprocess.STDOUT, shell='True')
         proc = Popen(Command.split(), stdout=PIPE)
         Output = proc.communicate()[0]
     except Exception:
@@ -81,7 +83,10 @@ class Plugin(plugins.BasePlugin):
             cpu['count'] = 0
         mem = psutil.virtual_memory()
         if sys.platform == "linux" or sys.platform == "linux2":
-            systeminfo['os'] = str(' '.join(platform.linux_distribution()))
+            if distro is None:
+                systeminfo['os'] = str(' '.join(platform.linux_distribution()))
+            else:
+                systeminfo['os'] = str(' '.join(distro.linux_distribution(full_distribution_name=True)))
         elif sys.platform == "darwin":
             systeminfo['os'] = "Mac OS %s" % platform.mac_ver()[0]
             cpu['brand'] = str(systemCommand('sysctl machdep.cpu.brand_string', False)[0]).split(': ')[1]

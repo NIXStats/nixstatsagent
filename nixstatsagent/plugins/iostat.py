@@ -8,6 +8,8 @@ import subprocess
 import sys
 import psutil
 import plugins
+import time
+import pprint
 
 def diskstats_parse(dev=None):
     file_path = '/proc/diskstats'
@@ -20,6 +22,18 @@ def diskstats_parse(dev=None):
     columns_disk = ['m', 'mm', 'dev', 'reads', 'rd_mrg', 'rd_sectors',
                     'ms_reading', 'writes', 'wr_mrg', 'wr_sectors',
                     'ms_writing', 'cur_ios', 'ms_doing_io', 'ms_weighted']
+    # For kernel 4.18+
+    columns_disk_418 = ['m', 'mm', 'dev', 'reads', 'rd_mrg', 'rd_sectors',
+                    'ms_reading', 'writes', 'wr_mrg', 'wr_sectors',
+                    'ms_writing', 'cur_ios', 'ms_doing_io', 'ms_weighted',
+                    'discards', 'discards_merged', 'discarded_sectors',
+                    'discarded_time']
+    # for kernel 5.5+
+    columns_disk_55 = ['m', 'mm', 'dev', 'reads', 'rd_mrg', 'rd_sectors',
+                    'ms_reading', 'writes', 'wr_mrg', 'wr_sectors',
+                    'ms_writing', 'cur_ios', 'ms_doing_io', 'ms_weighted',
+                    'discards', 'discards_merged', 'discarded_sectors',
+                    'discarded_time', 'flush', 'flush_time']
 
     columns_partition = ['m', 'mm', 'dev', 'reads', 'rd_sectors', 'writes', 'wr_sectors']
 
@@ -28,7 +42,11 @@ def diskstats_parse(dev=None):
         if line == '':
             continue
         split = line.split()
-        if len(split) == len(columns_disk):
+        if len(split) == len(columns_disk_55):
+            columns = columns_disk_55
+        elif len(split) == len(columns_disk_418):
+            columns = columns_disk_418
+        elif len(split) == len(columns_disk):
             columns = columns_disk
         elif len(split) == len(columns_partition):
             columns = columns_partition
@@ -60,8 +78,28 @@ class Plugin(plugins.BasePlugin):
     __name__ = 'iostat'
 
     def run(self, *unused):
-        results = diskstats_parse()
-        if not results  or results is False:
+        delta_keys = (
+            'reads',
+            'writes',
+            'wr_sectors',
+            'rd_sectors',
+            'ms_reading',
+            'rd_mrg',
+            'wr_mrg',
+            'ms_weighted',
+            'ms_doing_io',
+            'ms_writing',
+            'discarded_sectors',
+            'discarded_time',
+            'flush',
+            'flush_time',
+            'discards'
+        )
+        next_cache = {}
+        next_cache['ts'] = time.time()
+        prev_cache = self.get_agent_cache()  # Get absolute values from previous check
+        disks = diskstats_parse()
+        if not disks  or disks is False:
             results = {}
             try:
                 diskdata = psutil.disk_io_counters(perdisk=True)
@@ -72,6 +110,41 @@ class Plugin(plugins.BasePlugin):
                     results[device] = device_stats
             except Exception as e:
                 results = e.message
+        else:
+            results = {}
+            for device, values in disks.items():
+                device_stats = {}
+                next_cache[device] = {}
+                next_cache[device]['ts'] = time.time()
+                try:
+                    prev_cache[device]
+                except:
+                    prev_cache[device] = {}
+                for key_value, value in values.items():
+                    if key_value in delta_keys:
+                        try:
+                            device_stats[key_value] = self.absolute_to_per_second(key_value, value, prev_cache[device])
+                        except:
+                            pass
+                        next_cache[device][key_value] = value
+                    else:
+                        device_stats[key_value] = value
+                try:
+                    device_stats['avgrq-sz'] = (device_stats['wr_sectors']+device_stats['rd_sectors']) / (device_stats['reads']+device_stats['writes'])
+                except:
+                    device_stats['avgrq-sz'] = 0
+                try:
+                    device_stats['tps'] = device_stats['reads']+device_stats['writes']
+                except:
+                    device_stats['tps'] = 0
+                try:
+                    device_stats['usage'] = (100 * device_stats['ms_doing_io']) / (1000 * (next_cache['ts'] - prev_cache['ts']))
+                except:
+                    device_stats['usage'] = 0
+
+                results[device] = device_stats
+
+        self.set_agent_cache(next_cache)
         return results
 
 
