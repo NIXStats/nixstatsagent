@@ -11,9 +11,6 @@ if sys.version_info >= (3,):
         basestring = str
     import configparser
     import http.client
-    import http.cookies
-    import http.cookiejar
-    import http.server
     from queue import Queue, Empty
     import io
 else:
@@ -48,7 +45,7 @@ except ImportError:
     from urllib import urlencode
     from urllib2 import urlopen, Request, HTTPError
 
-__version__ = '1.2.10'
+__version__ = '1.2.11'
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
@@ -575,6 +572,8 @@ class Agent:
                         try:
                             thread = threading.Thread(target=self._execution)
                             thread.start()
+                            if sys.version_info >= (3,7):
+                                thread.join()
                             logging.debug('new_execution_worker_thread:%s', thread)
                         except Exception as e:
                             logging.warning('Can not start new thread: %s', e)

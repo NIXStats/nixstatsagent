@@ -9,7 +9,6 @@ import sys
 import psutil
 import plugins
 import time
-import pprint
 
 def diskstats_parse(dev=None):
     file_path = '/proc/diskstats'

@@ -4,22 +4,12 @@ import plugins
 import os
 import time
 import re
-try:
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import urlopen, Request
-    from urllib.error import HTTPError
-except ImportError:
-    from urlparse import urlparse
-    from urllib import urlencode
-    from urllib2 import urlopen, Request, HTTPError
 import base64
-import requests
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'litespeed'
 
     '''
-    This plugin needs requests (pip install requests)
     Litespeed monitoring plugin. Add the following section to /etc/nixstats.ini
 
     [litespeed]
@@ -35,9 +25,10 @@ class Plugin(plugins.BasePlugin):
         results = {}
         data = False
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
-        response = requests.get("http://%s:%s/status?rpt=summary" % (config.get('litespeed', 'host'),config.get('litespeed', 'port')), auth=(config.get('litespeed', 'username'), config.get('litespeed', 'password')), verify=False)
 
-        for line in response.text.split('\n'):
+        response = os.popen("curl -s -i -k -u %s:%s 'https://%s:%s/status?rpt=summary'"% (config.get('litespeed', 'username'), config.get('litespeed', 'password'), config.get('litespeed', 'host'),config.get('litespeed', 'port'))).read()
+
+        for line in response.splitlines():
             test = re.search('REQ_RATE \[(.*)\]', line)
             if test is not None and test.group(1):
                 data = True

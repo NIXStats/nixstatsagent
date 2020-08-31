@@ -1,17 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# import psutil
-try:
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import urlopen, Request
-    from urllib.error import HTTPError
-except ImportError:
-    from urlparse import urlparse
-    from urllib import urlencode
-    from urllib2 import urlopen, Request, HTTPError
 import time
 import plugins
 import csv
+import requests
+
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'haproxy'
@@ -19,11 +12,19 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
             results = dict()
             next_cache = dict()
-            request = Request(config.get('haproxy', 'status_page_url'))
-            raw_response = urlopen(request)
+            try:
+                username = config.get('haproxy', 'username')
+                password = config.get('haproxy', 'password')
+                user_pass = (username, password)
+            except:
+                user_pass = False
+            request = requests.get(config.get('haproxy', 'status_page_url'), auth=user_pass)
             next_cache['ts'] = time.time()
             prev_cache = self.get_agent_cache()  # Get absolute values from previous check
-            response = raw_response.readlines()
+            if request.status_code is 200:
+                response = request.text.split("\n")
+            else:
+                return "Could not load haproxy status page: {}".format(request.text)
 
             non_delta = (
             'qcur',
@@ -116,7 +117,7 @@ class Plugin(plugins.BasePlugin):
                 except KeyError:
                     prev_cache[row["# pxname"]+"/"+row["svname"]] = {}
 
-                for k, v in row.iteritems():
+                for k, v in row.items():
                     for c in constructors:
                         try:
                             v = c(v)
