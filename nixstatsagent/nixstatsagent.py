@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8; tab-width: 4; indent-tabs: nil; -*-
 # by Al Nikolov <root@toor.fi.eu.org>
 from __future__ import print_function
 import bz2
@@ -182,6 +182,7 @@ class Agent:
     execute = Queue()
     metrics = Queue()
     data = Queue()
+    cemetery = Queue()
     shutdown = False
 
     def __init__(self, dry_instance=False):
@@ -387,7 +388,8 @@ class Agent:
                 'interval': interval,
                 'payload': payload,
             })
-            self.hire.release()
+        self.cemetery.put(threading.currentThread())
+        self.hire.release()
 
 
     def _data(self):
@@ -536,16 +538,33 @@ class Agent:
 
         return plugins
 
+
+    def _rip(self):
+        '''
+        Join with dead workers
+        Workaround for https://bugs.python.org/issue37788
+        '''
+        logging.debug('cemetery:%i', self.cemetery.qsize())
+        while True:
+            try:
+                thread = self.cemetery.get_nowait()
+            except Empty:
+                break
+            logging.debug('joining:%s', thread)
+            thread.join()
+
+
     def run(self):
         '''
         Start all the worker threads
         '''
         logging.info('Agent main loop')
-        interval = self.config.getint('agent', 'interval')
+        interval = self.config.getfloat('agent', 'interval')
         self.hire = threading.Semaphore(
             self.config.getint('execution', 'threads'))
         try:
             while True:
+                self._rip()
                 now = time.time()
                 logging.debug('%i threads', threading.activeCount())
                 while self.metrics.qsize():
@@ -572,8 +591,6 @@ class Agent:
                         try:
                             thread = threading.Thread(target=self._execution)
                             thread.start()
-                            if sys.version_info >= (3,7):
-                                thread.join()
                             logging.debug('new_execution_worker_thread:%s', thread)
                         except Exception as e:
                             logging.warning('Can not start new thread: %s', e)
@@ -595,19 +612,25 @@ class Agent:
 
         except KeyboardInterrupt:
             logging.warning(sys.exc_info()[0])
-            while True:
-                wait_for = [thread
-                    for thread in threading.enumerate()
-                        if not thread.isDaemon() and
-                           not isinstance(thread, threading._MainThread)]
-                logging.info('Shutdown, waiting for %i threads to exit', len(wait_for))
-                logging.info('Remaining threads: %s', threading.enumerate())
-                if len(wait_for) == 0:
+            logging.info('Shutting down')
+            self._rip()
+            wait_for = True
+            while wait_for:
+                all_threads = threading.enumerate()
+                logging.info('Remaining threads: %s', all_threads)
+                wait_for = [
+                    thread for thread in all_threads
+                    if not thread.isDaemon() and
+                    not isinstance(thread, threading._MainThread)
+                ]
+                if not wait_for:
+                    logging.info('Bye!')
                     sys.exit(0)
                 self.shutdown = True
-                sleep_interval = interval-(time.time()-now)
-                if sleep_interval > 0:
-                    time.sleep(sleep_interval)
+                logging.info('Waiting for %i threads to exit', len(wait_for))
+                for thread in wait_for:
+                    logging.info('Joining with %s/%f', thread, interval)
+                    thread.join(interval)
         except Exception as e:
             logging.error('Worker error: %s' % e)
 
