@@ -143,7 +143,7 @@ class Plugin(plugins.BasePlugin):
             if not stats:
                 return data
 
-        for name, value in stats.iteritems():
+        for name, value in stats.items():
             if name in METRICS.keys() :
                 data[METRICS[name]] = value
         return data
