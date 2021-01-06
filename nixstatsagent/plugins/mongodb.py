@@ -72,9 +72,9 @@ class Plugin(plugins.BasePlugin):
 
         #deadlock stats
         try:
-                for key, val in statistics['locks'].iteritems():
-                        for key2, val2 in val.iteritems():
-                                for key3, val3 in val2.iteritems():
+                for key, val in statistics['locks'].items():
+                        for key2, val2 in val.items():
+                                for key3, val3 in val2.items():
                                         data['locks-{}-{}-{}'.format(key.lower(), key2, key3)] = val3
         except:
                 pass
