@@ -19,53 +19,59 @@ preferred) to the most generic ones.
 
 ### Debian GNU/Linux
 
-The package is existing in Debian Sid and should appear soon in other releases
-and derivaives. If your suite is already supported, simply do:
-
+Manual installation:
 ```
-apt-get install nixstatsagent
+apt-get install python3-devel python3-setuptools python3-pip
+pip3 install nixstatsagent
 wget -O /etc/nixstats.ini https://www.nixstats.com/nixstats.ini
-service nixstatsagent restart
 ```
 
-You will be asked for a userid, you can find this on the servers overview page when clicking "add server".
+You can find your USERTOKEN on the settings page (https://nixstats.com/settings/overview). You need this to generate a serverid.
 
-Until then, use our [packagecloud repository](https://packagecloud.io/nixstats/nixstats/install#bash)
+```
+nixstatshello USERTOKEN /etc/nixstats-token.ini
+```
 
-Current status:
+Create a service for systemd at `/etc/systemd/system/nixstatsagent.service`
+```
+[Unit]
+Description=Nixstatsagent
 
-- [x] Ubuntu 16.04.1 LTS (packagecloud:ubuntu/xenial)
-- [x] Ubuntu 14.04.5 LTS (packagecloud:ubuntu/trusty)
-- [x] Ubuntu 12.04.5 LTS (packagecloud:ubuntu/precise)
-- [x] Debian 8 (packagecloud:debian/jessie)
-- [x] Debian 7 (packagecloud:debian/wheezy)
-- [ ] Debian 6
-- [x] Debian 9 (sid, stretch, packagecloud:debian/stretch)
-- [x] Ubuntu 17.04 (zesty)
+[Service]
+ExecStart=/usr/local/bin/nixstatsagent
+User=nixstats
 
-### Fedora
+[Install]
+WantedBy=multi-user.target
+```
+Then run:
+```
+chmod 644 /etc/systemd/system/nixstatsagent.service
+systemctl daemon-reload
+systemctl enable nixstatsagent
+systemctl start nixstatsagent
+```
 
--   CentOS 7
--   CentOS 6
--   CentOS 5
--   Fedora 25 (low priority)
--   Fedora 24 (low priority)
--   Fedora 23 (low priority)
+### Fedora / CentOS
+
+For version 6 or earlier (python 2.6, 2.7):
+```
+yum install python-devel python-setuptools gcc
+easy_install nixstatsagent netifaces psutil
+```
+
+For version 7 and later (python 3):
+```
+yum install python36-devel python36 gcc
+```
+
+```
+pip3 install nixstatsagent
+```
 
 ### Windows
 
--   Windows 2016 (low priority)
--   Windows 2012 (low priority)
-
-### Python 2.6 or 2.7 environment
-
-As the binary packages are published on [PyPI](https://pypi.python.org/pypi),
-provided that you've obtained [pip](https://pip.pypa.io/en/latest/installing/),
-simply do:
-
-```
-pip install nixstatsagent
-```
+Download the [windows installer for nixstatsagent](https://nixstats.com/windows/nixstatsagent-setup.exe). When asked for the usertoken, provide the usertoken that is available on the [settings page](https://nixstats.com/settings) at Nixstats.
 
 ### Python 2.4 or 2.5 environment
 
@@ -76,5 +82,3 @@ simply do:
 ```
 easy_install nixstatsagent
 ```
-
-
