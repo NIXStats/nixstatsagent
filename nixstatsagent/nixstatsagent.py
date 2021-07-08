@@ -45,7 +45,7 @@ except ImportError:
     from urllib import urlencode
     from urllib2 import urlopen, Request, HTTPError
 
-__version__ = '1.2.12'
+__version__ = '1.2.13'
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
@@ -86,6 +86,7 @@ def info():
 
 def hello(proto='https'):
     user_id = sys.argv[1]
+    agent = Agent(dry_instance=True)
     if len(sys.argv) > 2:
         token_filename = sys.argv[2]
     else:
@@ -97,33 +98,25 @@ def hello(proto='https'):
     if '_' in user_id:
         server_id = user_id.split('_')[1]
         user_id = user_id.split('_')[0]
-    elif os.path.isfile('/etc/nixstats/token'):
-        oldconfigfile = open('/etc/nixstats/token','r')
-        server_id = oldconfigfile.readline()
-        print('Upgrading from old monitoring agent')
-        print('Remove the old agent from the crontab (crontab -e -u nixstats)')
-    elif os.path.isfile('/opt/nixstats/nixstats.cfg'):
-        oldconfigfile = open('/opt/nixstats/nixstats.cfg')
-        lines=oldconfigfile.readlines()
-        server_id = lines[1].replace('server=', '').strip()
-        print('Upgrading from old python client.')
-        print('Run :\nchkconfig --del nixstats \nor \nupdate-rc.d -f nixstats remove \nto remove the old service.')
     else:
         try:
             hostname = os.uname()[1]
         except AttributeError:
             hostname = socket.getfqdn()
         server_id = urlopen(
-            proto + '://api.nixstats.com/hello.php',
+            proto + '://' + agent.config.get('data', 'api_host') + '/hello.php',
             data=urlencode({
                     'user': user_id,
                     'hostname': hostname,
                     'unique_id': unique_id
             }).encode("utf-8")
            ).read().decode()
-    print('Got server_id: %s' % server_id)
-    open(token_filename, 'w').\
-        write('[DEFAULT]\nuser=%s\nserver=%s\n' % (user_id, server_id))
+    if len(server_id) == 24:
+        print('Got server_id: %s' % server_id)
+        open(token_filename, 'w').\
+            write('[DEFAULT]\nuser=%s\nserver=%s\n' % (user_id, server_id))
+    else:
+        print('Could not retrieve server_id: %s' % server_id)
 
 
 # def run_agent():
@@ -237,9 +230,9 @@ class Agent:
         self.config = config
         for section in sections:
             self._config_section_create(section)
-            if section is 'data':
+            if section == 'data':
                 self.config.set(section, 'interval', 1)
-            if section is 'agent':
+            if section == 'agent':
                 self.config.set(section, 'interval', .5)
 
     def _config_section_create(self, section):

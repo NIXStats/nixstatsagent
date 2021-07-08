@@ -15,13 +15,15 @@ if sys.version.startswith('3.'):
     install_requires = ['psutil', 'netifaces', 'configparser', 'future', 'distro']
 elif sys.version.startswith('2.6'):
     install_requires = ['psutil==5.7.0', 'netifaces', 'configparser==3.5.0', 'future']
+elif sys.version.startswith('2.7'):
+    install_requires = ['psutil', 'netifaces', 'configparser==3.5.0', 'future']
 else:
     install_requires = ['psutil', 'netifaces', 'configparser', 'future']
 
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.2.12',
+    version='1.2.13',
     description='NixStats agent',
     long_description=readme,
     url='https://github.com/NIXStats/nixstatsagent',
