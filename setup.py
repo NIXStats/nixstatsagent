@@ -23,8 +23,9 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.2.16',
+    version='1.2.17',
     description='NixStats agent',
+    long_description_content_type='text/markdown',
     long_description=readme,
     url='https://github.com/NIXStats/nixstatsagent',
     author='NIXStats',
