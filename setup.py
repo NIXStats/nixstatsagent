@@ -22,16 +22,16 @@ else:
 
 
 setuptools.setup(
-    name='nixstatsagent',
+    name='360agent',
     version='1.2.17',
-    description='NixStats agent',
+    description='360 agent',
     long_description_content_type='text/markdown',
     long_description=readme,
-    url='https://github.com/NIXStats/nixstatsagent',
-    author='NIXStats',
-    author_email='vincent@nixstats.com',
-    maintainer='Vincent',
-    maintainer_email='vincent@nixstats.com',
+    url='https://github.com/plesk/360agent',
+    author='360',
+    author_email='360support@webpros.com',
+    maintainer='360',
+    maintainer_email='360support@webpros.com',
     license='BSD-3-Clause',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -47,17 +47,17 @@ setuptools.setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: System :: Monitoring',
     ],
-    keywords='nixstats system monitoring agent',
+    keywords='360 system monitoring agent',
     install_requires=install_requires,
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            'nixstatsagent=nixstatsagent.nixstatsagent:main',
-            'nixstatshello=nixstatsagent.nixstatsagent:hello',
+            '360sagent=360agent.360agent:main',
+            '360hello=360agent.360agent:hello',
         ],
     },
-    data_files=[('share/doc/nixstatsagent', [
-        'nixstats-example.ini',
+    data_files=[('share/doc/360agent', [
+        '360agent-example.ini',
         'LICENSE',
         'README.md',
     ])],
