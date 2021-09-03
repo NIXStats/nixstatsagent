@@ -4,11 +4,6 @@ python:
 - "2.7"
 - "3.5"
 - "3.6"
-matrix:
-  include:
-    - python: "2.6"
-      before_install: pip install setuptools==36.2.0
-      dist: trusty
 install: python setup.py install
 script: python setup.py sdist bdist_egg bdist_wheel
 deploy:

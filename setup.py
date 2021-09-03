@@ -13,8 +13,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 readme = open(os.path.join(here, 'README.md')).read()
 if sys.version.startswith('3.'):
     install_requires = ['psutil', 'netifaces', 'configparser', 'future', 'distro']
-elif sys.version.startswith('2.6'):
-    install_requires = ['psutil==5.7.0', 'netifaces', 'configparser==3.5.0', 'future']
 elif sys.version.startswith('2.7'):
     install_requires = ['psutil', 'netifaces', 'configparser==3.5.0', 'future']
 else:
@@ -40,7 +38,6 @@ setuptools.setup(
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
