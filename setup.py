@@ -49,7 +49,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            '360sagent=360agent.360agent:main',
+            '360agent=360agent.360agent:main',
             '360hello=360agent.360agent:hello',
         ],
     },
