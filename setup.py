@@ -21,7 +21,7 @@ else:
 
 setuptools.setup(
     name='360agent',
-    version='1.2.22',
+    version='1.2.23',
     description='360 agent',
     long_description_content_type='text/markdown',
     long_description=readme,
