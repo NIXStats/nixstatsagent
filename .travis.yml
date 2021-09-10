@@ -2,12 +2,9 @@ language: python
 dist: focal
 python:
   - "2.7"
+  - "3.5"
   - "3.6"
-  - "pypy"
-  - "pypy3"
-install:
-  - python -c 'import platform; print(platform.python_implementation())'
-  - python setup.py install
+install: python setup.py install
 script: python setup.py sdist bdist_egg bdist_wheel
 deploy:
   provider: pypi
