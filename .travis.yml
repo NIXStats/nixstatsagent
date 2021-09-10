@@ -5,7 +5,9 @@ python:
   - "3.6"
   - "pypy"
   - "pypy3"
-install: python setup.py install
+install:
+  - python -c 'import platform; print(platform.python_implementation())'
+  - python setup.py install
 script: python setup.py sdist bdist_egg bdist_wheel
 deploy:
   provider: pypi
