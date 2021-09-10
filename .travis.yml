@@ -16,3 +16,4 @@ deploy:
     tags: true
     distributions: sdist bdist_egg bdist_wheel
     repo: plesk/360agent
+    python: 3.6
