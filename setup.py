@@ -14,7 +14,7 @@ readme = open(os.path.join(here, 'README.md')).read()
 if sys.version.startswith('3.'):
     install_requires = ['psutil', 'netifaces', 'configparser', 'future', 'distro']
 elif sys.version.startswith('2.7'):
-    install_requires = ['psutil', 'netifaces', 'configparser==3.5.0', 'future']
+    install_requires = ['psutil==5.6.7', 'netifaces', 'configparser==3.5.0', 'future']
 else:
     install_requires = ['psutil', 'netifaces', 'configparser', 'future']
 
