@@ -1,9 +1,9 @@
 language: python
 dist: focal
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
+- '2.7'
+- '3.5'
+- '3.6'
 install: pip install .
 script: python setup.py sdist bdist_egg bdist_wheel
 deploy:
@@ -11,7 +11,7 @@ deploy:
   username: __token__
   skip_existing: true
   password:
-    secure: YoMCo2nBcfS87WjQ0fEgUT1oztPIfkI2JZn6B2z3ne0NyzNVzghoxP2JBtWHMg2rSJJnuh7tC4J83Kelna7RmLbfoA3Luyy4FLV0uVGFszf950rN1It/CK0V0P8eOF2fWaVJOsYqhft9U9qxgSBCy/cKl/oKNwsrim9DdhpUn12FtYACpAOSt2n3P02IUHtYl1c5YObuDQQ++cY5PeoXXVqgMP3PZqUAs9GMUaU3pxyk+IzRynx4iqkpUjwg6PmG0Fd3rCErnF5wH19p2A/qvPRfZLJoCeBjUWQV8MsVI9xwiaP5geYBw6q4aeh826fHc6S0yMQbFpO7oU0dmHDRayAIr6orGLZp/7iKo0G2xgM+eCimamtwA1MUQNpIudl1aGL6fgYEUF7FVYjBI83DHmpuny6UUW2lmmGROsnu35hAZr+uchR9pdHpmaL5gzUTSzV8mFvFWlmYVewka+aicELqdUJO0aVxXKwekRSJmAwE6Oq1KlW7QMvqVN2nsTqM8VBRfKMiMWP3Qfiym7XS8V0HxGh2AlT9AJzFHtg9KqoObeCBH+8K03zKMcvtfs/1Q38XpdbiH+ZN3+fMH0Tvrmfh782wP6MuqYz2uVa6Lxx0uueUpzz8Bd/+oSOd2hBR7DDB3Vt1+oaraq+7wY1gn9wrPsu5uO2cMaF7vF5+2J8=
+    secure: iwoVAeRiRg5uPQjMbMVUzow7YqQ7W7vnK7ZKKnjmR/0UCf1t7DofLSHZ8xuzmK1lvRD+EpyWZkOkPbU4r4MspAtqEBpdF9C3Oi80SYiEqoj6nmx8x4nlehR1NJjCjxDkiNnYeDefWQHlefIgHH7eHCusxZLz2XrMp4GkKtM367A31LWs0zROHBOoEKSmfqSQKPsjC/kDiAk9impFY8tAZ8fPOZQTIjtmmHKK/lIkfaf+2aTCJrzFO9268R+G4x1bTst8q42g7pefwICFIkrzHigQLytdFovBYo4NUVfYXB6BR6DIEQUelYu2A15JS07/lqHkDjoSm/vzpkoPhGFl1iCzgl2kwFJTcUxUs8qwY9XJ4U8RbxgLQ8ST7vWjNK/SDSRlt1en0idnD7hCSQ/UUEMPKmfmAzzEi1mLxPP2BdZGEFDGnCrLkA476YjgCUewNapdUnk8ir9Tg6muvokdLeJXeCMwbdX678qG9+UVCDAJGZjgvaOP0FzdjM2ZBsj8074SwJjfyozrsKva1ztLoysy5pMKg2SHV0iIDv8cZ1ww+qhkH1G8gNWTlKxeMlpz3h1sQjVWIm9CpBmFXn2VdrQIi9XKy/ypHRmb9G0eTh7LL2qFIFdyuWnOjdMovx1F0hGc9lQ/GBJNPpivI++ekU/3ah8KZSCCRqsZ6PAdTfc=
   on:
     tags: true
     distributions: sdist bdist_egg bdist_wheel
