@@ -48,23 +48,23 @@ __version__ = '1.2.23'
 __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
-    os.path.join('/etc', '360agent.ini'),
-    os.path.join('/etc', '360agent-token.ini'),
-    os.path.join(os.path.dirname(__FILEABSDIRNAME__), '360agent.ini'),
-    os.path.join(os.path.dirname(__FILEABSDIRNAME__), '360agent-token.ini'),
-    os.path.abspath('360agent.ini'),
-    os.path.abspath('360agent-token.ini'),
+    os.path.join('/etc', 'agent360.ini'),
+    os.path.join('/etc', 'agent360-token.ini'),
+    os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'agent360.ini'),
+    os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'agent360-token.ini'),
+    os.path.abspath('agent360.ini'),
+    os.path.abspath('agent360-token.ini'),
 )
 
 if sys.platform == 'win32':
     ini_files = (
-        os.path.join(__FILEABSDIRNAME__, '360agent.ini'),
-        os.path.join(__FILEABSDIRNAME__, '360agent-token.ini'),
+        os.path.join(__FILEABSDIRNAME__, 'agent360.ini'),
+        os.path.join(__FILEABSDIRNAME__, 'agent360-token.ini'),
     )
 
 def info():
     '''
-    Return string with info about 360agent:
+    Return string with info about agent360:
         - version
         - plugins enabled
         - absolute path to plugin directory
@@ -89,7 +89,7 @@ def hello(proto='https'):
     if len(sys.argv) > 2:
         token_filename = sys.argv[2]
     else:
-        token_filename = os.path.join(__FILEABSDIRNAME__, '360agent-token.ini')
+        token_filename = os.path.join(__FILEABSDIRNAME__, 'agent360-token.ini')
     if len(sys.argv) > 3:
         unique_id = sys.argv[3]
     else:
@@ -210,9 +210,9 @@ class Agent:
             'subprocess': 'no',
             'user': '',
             'server': '',
-            'api_host': 'api.360agent.com',
+            'api_host': 'ingest.monitoring360.io',
             'api_path': '/v2/server/poll',
-            'log_file': '/var/log/360agent.log',
+            'log_file': '/var/log/agent360.log',
             'log_file_mode': 'a',
             'max_cached_collections': 10,
         }

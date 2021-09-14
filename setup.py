@@ -20,12 +20,12 @@ else:
 
 
 setuptools.setup(
-    name='360agent',
+    name='agent360',
     version='1.2.23',
     description='360 agent',
     long_description_content_type='text/markdown',
     long_description=readme,
-    url='https://github.com/plesk/360agent',
+    url='https://github.com/plesk/agent360',
     author='360',
     author_email='360support@webpros.com',
     maintainer='360',
@@ -49,12 +49,12 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            '360agent=360agent.360agent:main',
-            '360hello=360agent.360agent:hello',
+            'agent360=agent360.agent360:main',
+            'hello360=agent360.agent360:hello',
         ],
     },
-    data_files=[('share/doc/360agent', [
-        '360agent-example.ini',
+    data_files=[('share/doc/agent360', [
+        'agent360-example.ini',
         'LICENSE',
         'README.md',
     ])],
