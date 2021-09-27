@@ -20,7 +20,7 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
         '''
         experimental monitoring plugin for elasticsearch
-        Add to /etc/nixstats.ini:
+        Add to /etc/agent360.ini:
         [elasticsearch]
         enabled = yes
         status_page_url = http://127.0.0.1:9200/_stats

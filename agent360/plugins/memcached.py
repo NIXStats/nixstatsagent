@@ -9,7 +9,7 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
         '''
         pip install python-memcached
-        add to /etc/nixstats.ini
+        add to /etc/agent360.ini
         [memcached]
         enabled=yes
         host=127.0.0.1

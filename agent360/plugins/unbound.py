@@ -2,7 +2,7 @@
 import plugins
 import subprocess
 
-# Needs: nixstats ALL=(ALL) NOPASSWD: /usr/sbin/unbound-control
+# Needs: agent360 ALL=(ALL) NOPASSWD: /usr/sbin/unbound-control
 
 
 class Plugin(plugins.BasePlugin):

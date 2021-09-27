@@ -10,7 +10,7 @@ class Plugin(plugins.BasePlugin):
     def run(self, *unused):
         '''
         expirimental plugin used to collect temperature from system sensors
-        plugin can be tested by running nixstatsagent test temp
+        plugin can be tested by running agent360 test temp
         '''
         data = {}
 

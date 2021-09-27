@@ -16,15 +16,15 @@ class Plugin(plugins.BasePlugin):
         or
         pip3 install openvpn-status
 
-        In /etc/nixstats.ini to enable put:
+        In /etc/agent360.ini to enable put:
         [openvpn]
         enabled = yes
         status_path = /etc/openvpn/openvpn-status.log
 
-        test the plugin by running: sudo -u nixstats nixstatsagent test OpenVPN
+        test the plugin by running: sudo -u agent360 agent360 test OpenVPN
 
         If you are having permission issues try to run the agent as root user:
-        https://help.nixstats.com/en/article/running-the-monitoring-agent-as-root-user-m0ylxw/
+        https://docs.platform360.io/monitoring360/development/run-the-monitoring-agent-as-the-root-user/
         '''
         openvpn_clients = {}
         last_value = {}

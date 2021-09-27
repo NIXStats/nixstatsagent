@@ -10,7 +10,7 @@ class Plugin(plugins.BasePlugin):
         '''
         exim mail queue monitoring, needs sudo access!
         Instructions at:
-        https://help.nixstats.com/en/article/monitoring-exim-mail-queue-size-1vcukxa/
+        https://docs.platform360.io/monitoring360/plugins/exim-mail-queue/
         '''
         data = {}
         data['queue_size'] = int(os.popen('sudo exim -bpc').read())

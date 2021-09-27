@@ -10,7 +10,7 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, config):
         '''
-        Monitor total directory sizes, specify the directories you want to monitor in /etc/nixstats.ini
+        Monitor total directory sizes, specify the directories you want to monitor in /etc/agent360.ini
         '''
 
         data = {}

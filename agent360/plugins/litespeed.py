@@ -10,7 +10,7 @@ class Plugin(plugins.BasePlugin):
     __name__ = 'litespeed'
 
     '''
-    Litespeed monitoring plugin. Add the following section to /etc/nixstats.ini
+    Litespeed monitoring plugin. Add the following section to /etc/agent360.ini
 
     [litespeed]
     enabled=yes

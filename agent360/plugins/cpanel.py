@@ -9,7 +9,7 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
         '''
         Plugin to measure disk usage of cpanel users
-        To enable add to /etc/nixstats.ini:
+        To enable add to /etc/agent360.ini:
         [cpanel]
         enabled = yes
         '''

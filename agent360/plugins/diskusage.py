@@ -75,8 +75,8 @@ class Plugin(plugins.BasePlugin):
 
         # For LVM volume group monitoring, requires sudo access to vgs
         # add vgs to /etc/sudoers
-        # nixstats ALL=(ALL) NOPASSWD: /usr/sbin/vgs
-        # set lvm = yes right under enabled = yes in /etc/nixstats.ini
+        # agent360 ALL=(ALL) NOPASSWD: /usr/sbin/vgs
+        # set lvm = yes right under enabled = yes in /etc/agent360.ini
         if lvm_stats == 'yes':
             try:
                 lines = [s.split(', ') for s in os.popen("sudo vgs --all --units b --noheadings --separator ', '").read().splitlines()]
