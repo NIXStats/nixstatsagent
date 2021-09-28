@@ -12,7 +12,7 @@ class Plugin(plugins.BasePlugin):
         '''
         Docker monitoring, needs sudo access!
         Instructions at:
-        https://help.nixstats.com/en/article/monitoring-docker-9st778/
+        https://docs.platform360.io/monitoring360/plugins/docker/
         '''
         containers = {}
         last_value = {}

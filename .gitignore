@@ -1,10 +1,8 @@
-nixstats.ini
 *.pyc
 *~
 *.bak
 build
 debian
 dist
-nixstatsagent.egg-info
 README.html
 .idea/

@@ -10,12 +10,12 @@ class Plugin(plugins.BasePlugin):
         '''
         ubuntu/debian updates available from apt-get
         add to /etc/sudoers the following line:
-        nixstats ALL=(ALL) NOPASSWD: /usr/bin/apt-get
+        agent360 ALL=(ALL) NOPASSWD: /usr/bin/apt-get
 
         test by running:
-        sudo -u nixstats nixstatsagent test apt-updates
+        sudo -u agent360 agent360 test apt-updates
 
-        Add to /etc/nixstats.ini:
+        Add to /etc/agent360.ini:
         [apt-updates]
         enabled = yes
         interval = 3600

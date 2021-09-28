@@ -3,7 +3,7 @@
 import plugins
 import subprocess
 
-### You need to add `nixstats ALL=(ALL) NOPASSWD: /usr/sbin/kamctl` to /etc/sudoers in order for this to work
+### You need to add `agent360 ALL=(ALL) NOPASSWD: /usr/sbin/kamctl` to /etc/sudoers in order for this to work
 class Plugin(plugins.BasePlugin):
     __name__ = 'asterisk'
 

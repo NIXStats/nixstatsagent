@@ -12,9 +12,9 @@ class Plugin(plugins.BasePlugin):
         '''
         Beta plugin to monitor cloudlinux db governor users
         Requires sudo access to lveinfo (whereis lveinfo) add to /etc/sudoers:
-        nixstats ALL=(ALL) NOPASSWD: /REPLACE/PATH/TO/lveinfo
+        agent360 ALL=(ALL) NOPASSWD: /REPLACE/PATH/TO/lveinfo
 
-        To enable add to /etc/nixstats.ini:
+        To enable add to /etc/agent360.ini:
         [cloudlinux-dbgov]
         enabled = yes
         '''

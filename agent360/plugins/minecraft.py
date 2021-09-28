@@ -9,7 +9,7 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
         '''
         Fetch the amount of active and max players
-        add to /etc/nixstats.ini
+        add to /etc/agent360.ini
         [minecraft]
         enabled=yes
         hosts=127.0.0.1:8000,127.0.0.2:8000...
