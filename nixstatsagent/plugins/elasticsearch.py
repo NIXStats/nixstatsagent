@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import urllib.request
 try:
     from urllib.parse import urlparse, urlencode
     from urllib.request import urlopen, Request
@@ -12,7 +13,7 @@ import time
 import plugins
 import json
 import collections
-
+import base64
 
 class Plugin(plugins.BasePlugin):
     __name__ = 'elasticsearch'
@@ -24,6 +25,10 @@ class Plugin(plugins.BasePlugin):
         [elasticsearch]
         enabled = yes
         status_page_url = http://127.0.0.1:9200/_stats
+        # In case basic_auth is needed:
+        basic_auth = yes
+        username = <username>
+        password = <password>
         '''
 
         def ascii_encode_dict(data):
@@ -32,8 +37,14 @@ class Plugin(plugins.BasePlugin):
 
         results = dict()
         next_cache = dict()
-        request = urllib2.Request(config.get('elasticsearch', 'status_page_url'))
-        raw_response = urllib2.urlopen(request)
+        request = urllib.request.Request(config.get('elasticsearch', 'status_page_url'))
+        basic_auth_enabled = config.get('elasticsearch', 'basic_auth')
+        if bool(basic_auth_enabled):
+            user = config.get('elasticsearch', 'username')
+            password = config.get('elasticsearch', 'password')
+            b64auth = base64.b64encode(bytes("%s:%s" % (user, password), 'ascii'))
+            request.add_header("Authorization", "Basic %s" % b64auth.decode('utf-8'))
+        raw_response = urllib.request.urlopen(request)
         next_cache['ts'] = time.time()
         prev_cache = self.get_agent_cache()  # Get absolute values from previous check
         def flatten(d, parent_key='', sep='_'):
@@ -46,7 +57,7 @@ class Plugin(plugins.BasePlugin):
                     items.append((new_key, v))
             return dict(items)
         try:
-            j = flatten(json.loads(raw_response.read(), object_hook=ascii_encode_dict)['_all']['total'])
+            j = flatten(json.loads(raw_response.read())['_all']['total'])
         except Exception:
             return False
 
