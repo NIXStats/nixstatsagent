@@ -1,7 +1,7 @@
 Agent360
 ==============
 
-360 Monitoring is a web service is a web service of monitoring and displaying statistics of
+360 Monitoring is a web service of monitoring and displaying statistics of
 your server performance.
 
 This software is an OS-agnostic agent compatible with Python 2.7, 3.5 and 3.6.
