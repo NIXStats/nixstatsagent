@@ -23,13 +23,13 @@ Manual installation:
 ```
 apt-get install python3-devel python3-setuptools python3-pip
 pip3 install agent360
-wget -O /etc/agent360.ini https://www.monitoring360.io/agent360.ini
+wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
 ```
 
-You can find your USERTOKEN on the settings page (https://www.monitoring360.io/settings/overview). You need this to generate a serverid.
+You can find your USERTOKEN on the servers page (https://monitoring.platform360.io/servers/overview) by clicking the "Add server" button. You need this to generate a serverid.
 
 ```
-agent360hello USERTOKEN /etc/agent360-token.ini
+agent360 hello USERTOKEN /etc/agent360-token.ini
 ```
 
 Create a service for systemd at `/etc/systemd/system/agent360.service`
@@ -71,6 +71,4 @@ pip3 install agent360
 
 ### Windows
 
-Download the [windows installer for agent360](https://www.monitoring360.io/windows/agent360-setup.exe).
-When asked for the usertoken, provide the usertoken that is available on the [settings page](https://www.monitoring360.io/settings)
-at 360 Monitoring.
+Not available yet.
