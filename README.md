@@ -1,11 +1,11 @@
 Agent360
 ==============
 
-360 Monitoring is a web service of monitoring and displaying statistics of
+360 Monitoring is a web service that monitors and displays statistics of
 your server performance.
 
-This software is an OS-agnostic agent compatible with Python 2.7, 3.5 and 3.6.
-It's been optimized to have a small CPU consumption and comes with an
+Agent360 is OS agnostic software compatible with Python 2.7, 3.5, and 3.6.
+It's been optimized to have low CPU consumption and comes with an
 extendable set of useful plugins.
 
 [![Build Status](https://github.com/plesk/agent360/workflows/Agent360-Test-And-Deploy/badge.svg?branch=master)](https://github.com/plesk/agent360/actions/workflows/test-and-deploy.yml)
@@ -13,26 +13,30 @@ extendable set of useful plugins.
 Installation
 ------------
 
-Depending on your platform, many installation options are possible. We
-are listing them more or less in the order from the most specific (and
-preferred) to the most generic ones.
+Depending on your platform, many installation options are available. We
+are listing them in the following order: from the most preferred and specific to the most general ones.
 
 ### Debian GNU/Linux
 
-Manual installation:
+**Manual installation**
+
+#. Connect to your server via SSH and run the following command:
 ```
 apt-get install python3-devel python3-setuptools python3-pip
 pip3 install agent360
 wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
 ```
 
-You can find your USERTOKEN on the servers page (https://monitoring.platform360.io/servers/overview) by clicking the "Add server" button. You need this to generate a serverid.
+#. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button. You need this to generate a serverid.
+
+#. Run the following command:
 
 ```
 agent360 hello USERTOKEN /etc/agent360-token.ini
 ```
 
-Create a service for systemd at `/etc/systemd/system/agent360.service`
+#. Create a systemd service at `/etc/systemd/system/agent360.service` by adding the following settings:
+
 ```
 [Unit]
 Description=Agent360
@@ -44,7 +48,9 @@ User=agent360
 [Install]
 WantedBy=multi-user.target
 ```
-Then run:
+
+#. Run the following command:
+
 ```
 chmod 644 /etc/systemd/system/agent360.service
 systemctl daemon-reload
