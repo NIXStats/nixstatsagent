@@ -26,17 +26,32 @@ You can install the default configuration of Agent360 on all Linux distributions
 ## Manual Installation
 
 To customize installation options, install Agent360 manually.
-Manual installation differs depending on your platform. 
 
-### Debian GNU/Linux
+1. Connect to your server via SSH.
+2. Run the following command, which differs depending on your server platform: 
 
-1. Connect to your server via SSH and then run the following command:
+   -  Debian GNU/Linux:
 
-   ```
-   apt-get install python3-devel python3-setuptools python3-pip
-   pip3 install agent360
-   wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
-   ```
+      ```
+      apt-get install python3-devel python3-setuptools python3-pip
+      pip3 install agent360
+      wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
+      ```
+
+   -  Fedora/CentOS version 6 or earlier (python 2.7):
+
+      ```
+      yum install python-devel python-setuptools gcc
+      easy_install agent360 netifaces psutil
+      ```
+   
+   
+   -  Fedora/CentOS version 7 and later (python 3):
+
+      ```
+      yum install python36-devel python36 gcc  
+      pip3 install agent360
+      ```
 
 2. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button. 
    You need this to generate a serverid.
@@ -68,29 +83,4 @@ Manual installation differs depending on your platform.
    systemctl enable agent360
    systemctl start agent360
    ```
-
-### Fedora/CentOS version 6 or earlier (python 2.7)
-
-1. Connect to your server via SSH.
-2. Run the following command:
-
-   ```
-   yum install python-devel python-setuptools gcc
-   easy_install agent360 netifaces psutil
-   ```
-
-### Fedora/CentOS version 7 and later (python 3)
-
-1. Connect to your server via SSH.
-2. Run the following command:
-
-   ```
-   yum install python36-devel python36 gcc
-   ```
-2. Run the following command:
-
-   ```
-   pip3 install agent360
-   ```
-
 
