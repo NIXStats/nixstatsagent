@@ -43,6 +43,7 @@ To customize installation options, install Agent360 manually.
       ```
       yum install python-devel python-setuptools gcc
       easy_install agent360 netifaces psutil
+      wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
       ```
    
    
@@ -51,6 +52,7 @@ To customize installation options, install Agent360 manually.
       ```
       yum install python36-devel python36 gcc  
       pip3 install agent360
+      wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
       ```
 
 2. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button. 
