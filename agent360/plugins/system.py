@@ -105,6 +105,8 @@ class Plugin(plugins.BasePlugin):
         systeminfo['platform'] = platform.platform()
         systeminfo['uptime'] = int(time.time()-psutil.boot_time())
         systeminfo['ip_addresses'] = ip_addresses()
+        systeminfo['hostname'] = platform.node()
+
         return systeminfo
 
 
