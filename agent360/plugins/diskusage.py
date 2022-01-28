@@ -15,8 +15,15 @@ class Plugin(plugins.BasePlugin):
         disk['df-psutil'] = []
 
         for part in psutil.disk_partitions(False):
-            if part.fstype == 'squashfs':
-                continue;
+            valid_part = True
+            ignored_partitions = ['/loop', '/snap', 'squashfs', 'cagefs-skeleton']
+            
+            for ignore in ignored_partitions:
+                if ignore in part.device or ignore in part.mountpoint or ignore in part.fstype:
+                   valid_part = False
+            if valid_part == False:
+                continue
+            
             if os.name == 'nt':
                 if 'cdrom' in part.opts or part.fstype == '':
                     # skip cd-rom drives with no disk in it; they may raise
