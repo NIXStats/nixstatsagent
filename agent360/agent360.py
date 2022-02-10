@@ -404,7 +404,7 @@ class Agent:
             if initial_data:
                 max_age = 10
             else:
-                max_age = self.config.getint('agent', 'max_data_age')
+                max_age = self.config.getint('agent', 'max_data_span')
             loop_ts = time.time()
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
