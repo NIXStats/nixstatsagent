@@ -399,7 +399,12 @@ class Agent:
         max_cached_collections = self.config.get('agent', 'max_cached_collections')
         cached_collections = []
         collection = []
+        initial_data = True
         while True:
+            if initial_data:
+                max_age = 10
+            else:
+                max_age = self.config.getint('agent', 'max_data_span')
             loop_ts = time.time()
             if self.shutdown:
                 logging.info('%s:shutdown', threading.currentThread())
@@ -425,6 +430,7 @@ class Agent:
                     send = True
                     clean = True
                 if send:
+                    initial_data = False
                     headers = {
                         "Content-type": "application/json",
                         "Authorization": "ApiKey %s:%s" % (user, server),
