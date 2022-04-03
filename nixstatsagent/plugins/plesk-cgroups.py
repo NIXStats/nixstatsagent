@@ -61,6 +61,7 @@ class Plugin(plugins.BasePlugin):
                                 self.absolute_to_per_second(
                                     k, int(v), cache[uslice]['io.stat'][devnum]
                                 )
+                            cache[uslice]['io.stat'][devnum][k] = int(v)
             except FileNotFoundError:
                 pass
 
@@ -77,9 +78,11 @@ class Plugin(plugins.BasePlugin):
                             self.absolute_to_per_second(
                                 k, int(v), cache[uslice]['cpu.stat']
                             )
+                        cache[uslice]['cpu.stat'][k] = int(v)
             except FileNotFoundError:
                 pass
 
+        selt.set_agent_cache(cache)
         return acc
 
 
