@@ -82,7 +82,7 @@ class Plugin(plugins.BasePlugin):
             except FileNotFoundError:
                 pass
 
-        selt.set_agent_cache(cache)
+        self.set_agent_cache(cache)
         return acc
 
 
