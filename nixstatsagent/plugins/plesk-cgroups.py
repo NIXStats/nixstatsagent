@@ -28,7 +28,8 @@ class Plugin(plugins.BasePlugin):
 
             acc[uslice]['uid'] = int(uid_re.search(uslice).group())
             try:
-                acc[uslice]['username'] = pwd.getpwuid(acc[uslice]['uid'])
+                acc[uslice]['username'] = \
+                    pwd.getpwuid(acc[uslice]['uid']).pw_name
             except KeyError:
                 # There's no guarantee that the uid has a name
                 pass
