@@ -42,7 +42,7 @@ class BasePlugin:
             else:
                 config = ConfigParser.RawConfigParser(defaults)
             config.read(sys.argv[1])
-        pickle.dump(self.run(config), sys.stdout)
+        pickle.dump(self.run(config), sys.stdout.buffer)
 
     def get_agent_cache(self):
         '''
