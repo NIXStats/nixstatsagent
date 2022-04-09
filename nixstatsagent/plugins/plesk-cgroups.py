@@ -21,7 +21,11 @@ class Plugin(plugins.BasePlugin):
         # This is silently depending on CGroup virtual file system
         # and SystemD user slices
 
-        for uslice in glob.glob('/sys/fs/cgroup/user.slice/user-*.slice'):
+        for uslice in (
+            glob.glob('/sys/fs/cgroup/user.slice/user-*.slice') +  # cgroup v2
+            glob.glob('/sys/fs/cgroup/unified/user.slice/user-*.slice')  # cgroup v1+v2 mixed, e.g. on Focal
+        ):
+
             acc[uslice] = {}
             if not uslice in cache:
                 cache[uslice] = {}
