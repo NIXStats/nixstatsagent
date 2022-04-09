@@ -18,7 +18,7 @@ class Plugin(plugins.BasePlugin):
         cache = self.get_agent_cache()
         uid_re = re.compile('\d+')
 
-        # This is silently depending on CGroup virtual file system
+        # This is silently depending on cgroup mounted virtual file systems
         # and SystemD user slices
 
         for uslice in (
@@ -30,6 +30,7 @@ class Plugin(plugins.BasePlugin):
             if not uslice in cache:
                 cache[uslice] = {}
 
+            # Resolve uid to username
             acc[uslice]['uid'] = int(uid_re.search(uslice).group())
             try:
                 acc[uslice]['username'] = \
@@ -41,12 +42,15 @@ class Plugin(plugins.BasePlugin):
             # This is silently depending
             # on the corresponding CGroup controllers individually enabled
 
+            # Memory accounting
             try:
+                # cgroup v2
                 # See https://facebookmicrosites.github.io/cgroup2/docs/memory-controller.html
                 with pathlib.Path(uslice, 'memory.current').open() as f:
                     acc[uslice]['memory.current'] = int(f.read().strip())
             except FileNotFoundError:
                 try:
+                    # cgroup v1
                     # See https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/resource_management_guide/sec-memory
                     with pathlib.Path(
                         uslice,
@@ -62,28 +66,65 @@ class Plugin(plugins.BasePlugin):
                 except FileNotFoundError:
                     pass
 
+            # IO accounting
             try:
+                # cgroup v2
+                # See https://facebookmicrosites.github.io/cgroup2/docs/io-controller.html
                 with pathlib.Path(uslice, 'io.stat').open() as f:
                     acc[uslice]['io.stat'] = {}
                     if not 'io.stat' in cache[uslice]:
                         cache[uslice]['io.stat'] = {}
-                    # See https://facebookmicrosites.github.io/cgroup2/docs/io-controller.html
                     for line in f.readlines():
-                        devnum = line.split()[0]
-                        acc[uslice]['io.stat'][devnum] = {}
+                        devnum, kv = line.split()
+                        if not devnum in acc[uslice]['io.stat']:
+                            acc[uslice]['io.stat'][devnum] = {}
+                            acc[uslice]['io.stat'][devnum]['ts'] = time.time()
                         if not devnum in cache[uslice]['io.stat']:
                             cache[uslice]['io.stat'][devnum] = {}
-                        acc[uslice]['io.stat'][devnum]['ts'] = time.time()
-                        for kv in line.split()[1:]:
-                            k, v = kv.split('=')
+                        k, v = kv.split('=')
+                        acc[uslice]['io.stat'][devnum][k] = \
+                            self.absolute_to_per_second(
+                                k, int(v), cache[uslice]['io.stat'][devnum]
+                            )
+                        cache[uslice]['io.stat'][devnum][k] = int(v)
+            except FileNotFoundError:
+                try:
+                    # cgroup v1
+                    # See https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/resource_management_guide/ch-subsystems_and_tunable_parameters#sec-blkio
+                    with pathlib.Path(
+                        uslice,
+                        '..',
+                        '..',
+                        '..',
+                        'blkio',
+                        'user.slice',
+                        'user-{}.slice'.format(acc[uslice]['uid']),
+                        'blkio.throttle.io_service_bytes'
+                    ).open() as f:
+                        acc[uslice]['io.stat'] = {}
+                        if not 'io.stat' in cache[uslice]:
+                            cache[uslice]['io.stat'] = {}
+                        for line in f.readlines():
+                            try:
+                                devnum, k, v = line.split()
+                            except ValueError:
+                                # The last line has only 2 values
+                                # but can be ignored
+                                pass
+                            if not devnum in acc[uslice]['io.stat']:
+                                acc[uslice]['io.stat'][devnum] = {}
+                                acc[uslice]['io.stat'][devnum]['ts'] = time.time()
+                            if not devnum in cache[uslice]['io.stat']:
+                                cache[uslice]['io.stat'][devnum] = {}
                             acc[uslice]['io.stat'][devnum][k] = \
                                 self.absolute_to_per_second(
                                     k, int(v), cache[uslice]['io.stat'][devnum]
                                 )
                             cache[uslice]['io.stat'][devnum][k] = int(v)
-            except FileNotFoundError:
-                pass
+                except FileNotFoundError:
+                    pass
 
+            # CPU accounting
             try:
                 with pathlib.Path(uslice, 'cpu.stat').open() as f:
                     acc[uslice]['cpu.stat'] = {}
