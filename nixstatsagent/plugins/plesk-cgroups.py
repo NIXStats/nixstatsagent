@@ -42,11 +42,25 @@ class Plugin(plugins.BasePlugin):
             # on the corresponding CGroup controllers individually enabled
 
             try:
+                # See https://facebookmicrosites.github.io/cgroup2/docs/memory-controller.html
                 with pathlib.Path(uslice, 'memory.current').open() as f:
-                    # See https://facebookmicrosites.github.io/cgroup2/docs/memory-controller.html
                     acc[uslice]['memory.current'] = int(f.read().strip())
             except FileNotFoundError:
-                pass
+                try:
+                    # See https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/resource_management_guide/sec-memory
+                    with pathlib.Path(
+                        uslice,
+                        '..',
+                        '..',
+                        '..',
+                        'memory',
+                        'user.slice',
+                        'user-{}.slice'.format(acc[uslice]['uid']),
+                        'memory.usage_in_bytes'
+                    ).open() as f:
+                        acc[uslice]['memory.current'] = int(f.read().strip())
+                except FileNotFoundError:
+                    pass
 
             try:
                 with pathlib.Path(uslice, 'io.stat').open() as f:
