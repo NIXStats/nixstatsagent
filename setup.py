@@ -23,7 +23,7 @@ else:
 
 setuptools.setup(
     name='nixstatsagent',
-    version='1.2.17',
+    version='1.2.18',
     description='NixStats agent',
     long_description_content_type='text/markdown',
     long_description=readme,
