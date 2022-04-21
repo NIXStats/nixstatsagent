@@ -15,6 +15,15 @@ class Plugin(plugins.BasePlugin):
         disk['df-psutil'] = []
 
         for part in psutil.disk_partitions(False):
+            valid_part = True
+            ignored_partitions = ['/loop', '/snap', 'squashfs', 'cagefs-skeleton']
+            
+            for ignore in ignored_partitions:
+                if ignore in part.device or ignore in part.mountpoint or ignore in part.fstype:
+                   valid_part = False
+            if valid_part == False:
+                continue
+            
             if os.name == 'nt':
                 if 'cdrom' in part.opts or part.fstype == '':
                     # skip cd-rom drives with no disk in it; they may raise
@@ -75,8 +84,8 @@ class Plugin(plugins.BasePlugin):
 
         # For LVM volume group monitoring, requires sudo access to vgs
         # add vgs to /etc/sudoers
-        # nixstats ALL=(ALL) NOPASSWD: /usr/sbin/vgs
-        # set lvm = yes right under enabled = yes in /etc/nixstats.ini
+        # agent360 ALL=(ALL) NOPASSWD: /usr/sbin/vgs
+        # set lvm = yes right under enabled = yes in /etc/agent360.ini
         if lvm_stats == 'yes':
             try:
                 lines = [s.split(', ') for s in os.popen("sudo vgs --all --units b --noheadings --separator ', '").read().splitlines()]
