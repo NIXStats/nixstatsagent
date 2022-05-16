@@ -1,7 +1,7 @@
 #define MyAppName "Agent360"
 #define MyAppVersion "1.2.36"
-#define MyAppPublisher "Plesk International GmbH"
-#define MyAppURL "https://www.plesk.com/"
+#define MyAppPublisher "360 Monitoring"
+#define MyAppURL "https://360monitoring.io/"
 
 [Setup]
 AppId={{E536D193-F9A3-4711-9082-82264F210799}
