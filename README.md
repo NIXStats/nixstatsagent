@@ -11,78 +11,88 @@ extendable set of useful plugins.
 
 ## Automatic Installation (All Linux Distributions)
 
-**Note:** Agent360 is not yet available on Windows.
-
 You can install the default configuration of Agent360 on all Linux distributions with just one click.
 
 1. Connect to your server via SSH.
-2. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button. 
+
+2. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button.
+
 3. Run the following command:
 
-   ```
-   wget -q -N https://monitoring.platform360.io/agent360.sh && bash agent360.sh USERTOKEN
-   ```
+    ```sh
+    wget -q -N https://monitoring.platform360.io/agent360.sh && bash agent360.sh USERTOKEN
+    ```
+
+## Automatic Installation (Windows)
+
+Download the [setup](https://github.com/plesk/agent360/releases) and install it on your Windows server.
+
+The installer will ask for your USERTOKEN which you can get [from the servers page](https://monitoring.platform360.io/servers/overview).
 
 ## Manual Installation
 
 To customize installation options, install Agent360 manually.
 
 1. Connect to your server via SSH.
-2. Run the following command, which differs depending on your server platform: 
+2. Run the following command, which differs depending on your server platform:
 
-   -  Debian GNU/Linux:
+    - Debian GNU/Linux:
 
-      ```
-      apt-get install python3-devel python3-setuptools python3-pip
-      pip3 install agent360
-      wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
-      ```
+        ```sh
+        apt-get install python3-devel python3-setuptools python3-pip
+        pip3 install agent360
+        wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
+        ```
 
-   -  Fedora/CentOS version 6 or earlier (python 2.7):
+    - Fedora/CentOS version 6 or earlier (python 2.7):
 
-      ```
-      yum install python-devel python-setuptools gcc
-      easy_install agent360 netifaces psutil
-      wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
-      ```
-   
-   
-   -  Fedora/CentOS version 7 and later (python 3):
+        ```sh
+        yum install python-devel python-setuptools gcc
+        easy_install agent360 netifaces psutil
+        wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
+        ```
 
-      ```
-      yum install python36-devel python36 gcc  
-      pip3 install agent360
-      wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
-      ```
+    - Fedora/CentOS version 7 and later (python 3):
 
-2. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button. 
-   You need this to generate a serverid.
-3. Run the following command (USERTOKEN is the one you got during the previous step):
+        ```sh
+        yum install python36-devel python36 gcc
+        pip3 install agent360
+        wget -O /etc/agent360.ini https://monitoring.platform360.io/agent360.ini
+        ```
 
-   ```
-   agent360 hello USERTOKEN /etc/agent360-token.ini
-   ```
+3. Find your USERTOKEN. To do so, [go to the servers page](https://monitoring.platform360.io/servers/overview) and then click the "Add server" button. You need this to generate a serverid.
 
-4. Create a systemd service at `/etc/systemd/system/agent360.service` by adding the following:
+4. Run the following command (USERTOKEN is the one you got during the previous step):
 
-   ```
-   [Unit]
-   Description=Agent360
+    ```sh
+    agent360 hello USERTOKEN /etc/agent360-token.ini
+    ```
 
-   [Service]
-   ExecStart=/usr/local/bin/agent360
-   User=agent360
+5. Create a systemd service at `/etc/systemd/system/agent360.service` by adding the following:
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
+    ```ini
+    [Unit]
+    Description=Agent360
 
-5. Run the following command:
+    [Service]
+    ExecStart=/usr/local/bin/agent360
+    User=agent360
 
-   ```
-   chmod 644 /etc/systemd/system/agent360.service
-   systemctl daemon-reload
-   systemctl enable agent360
-   systemctl start agent360
-   ```
+    [Install]
+    WantedBy=multi-user.target
+    ```
 
+6. Run the following command:
+
+    ```sh
+    chmod 644 /etc/systemd/system/agent360.service
+    systemctl daemon-reload
+    systemctl enable agent360
+    systemctl start agent360
+    ```
+
+## Building Windows setup
+
+Prerequisite: [InnoSetup](https://jrsoftware.org/isdl.php) is used as the installer, build script assumes that it is installed in the default location.
+
+Run `php windows/build.php` to create setup file.
