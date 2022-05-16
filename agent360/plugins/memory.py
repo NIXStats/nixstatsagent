@@ -9,6 +9,7 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, *unused):
         memory = {}
+        memory['buffers'] = 0
         mem = psutil.virtual_memory()
         for name in mem._fields:
             memory[name] = getattr(mem, name)

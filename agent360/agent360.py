@@ -56,10 +56,10 @@ ini_files = (
     os.path.abspath('agent360-token.ini'),
 )
 
-if sys.platform == 'win32':
+if os.name == 'nt':
     ini_files = (
-        os.path.join(__FILEABSDIRNAME__, 'agent360.ini'),
-        os.path.join(__FILEABSDIRNAME__, 'agent360-token.ini'),
+        os.path.join(__FILEABSDIRNAME__, '..', 'config', 'agent360.ini'),
+        os.path.join(__FILEABSDIRNAME__, '..', 'config', 'agent360-token.ini'),
     )
 
 def info():
@@ -71,7 +71,7 @@ def info():
         - server id from configuration file
     '''
     agent = Agent(dry_instance=True)
-    plugins_path = agent.config.get('agent', 'plugins')
+    plugins_path = agent._get_plugins_path()
 
     plugins_enabled = agent._get_plugins(state='enabled')
 
@@ -136,7 +136,7 @@ def test_plugins(plugins=[]):
     If plugins list is empty test all enabled plugins.
     '''
     agent = Agent(dry_instance=True)
-    plugins_path = agent.config.get('agent', 'plugins')
+    plugins_path = agent._get_plugins_path()
     if plugins_path not in sys.path:
         sys.path.insert(0, plugins_path)
 
@@ -194,6 +194,13 @@ class Agent:
         self._data_worker_init()
         self._dump_config()
 
+    def _get_plugins_path(self):
+        if os.name == 'nt':
+            return os.path.expandvars(self.config.get('agent', 'plugins'))
+        else:
+            return self.config.get('agent', 'plugins')
+
+
     def _config_init(self):
         '''
         Initialize configuration object
@@ -248,7 +255,10 @@ class Agent:
         '''
         level = self.config.getint('agent', 'logging_level')
 
-        log_file = self.config.get('agent', 'log_file')
+        if os.name == 'nt':
+            log_file = os.path.expandvars(self.config.get('agent', 'log_file'))
+        else:
+            log_file = self.config.get('agent', 'log_file')
 
         log_file_mode = self.config.get('agent', 'log_file_mode')
         if log_file_mode in ('w', 'a'):
@@ -277,7 +287,7 @@ class Agent:
         Discover the plugins
         '''
         logging.info('_plugins_init')
-        plugins_path = self.config.get('agent', 'plugins')
+        plugins_path = self._get_plugins_path()
         filenames = glob.glob(os.path.join(plugins_path, '*.py'))
         if plugins_path not in sys.path:
             sys.path.insert(0, plugins_path)
@@ -519,7 +529,7 @@ class Agent:
         '''
         Return list with plugins names
         '''
-        plugins_path = self.config.get('agent', 'plugins')
+        plugins_path = self._get_plugins_path()
         plugins = []
         for filename in glob.glob(os.path.join(plugins_path, '*.py')):
             plugin_name = _plugin_name(filename)
