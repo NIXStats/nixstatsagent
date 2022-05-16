@@ -65,6 +65,8 @@ class Plugin(plugins.BasePlugin):
     def run(self, *unused):
         systeminfo = {}
         cpu = {}
+        cpu['brand'] = "Unknown CPU"
+        cpu['count'] = 0
         if(os.path.isfile("/proc/cpuinfo")):
             f = open('/proc/cpuinfo')
             if f:
@@ -78,9 +80,19 @@ class Plugin(plugins.BasePlugin):
                             cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
                         if "processor" == line.rstrip('\n').split(':')[0].strip():
                             cpu['count'] = line.rstrip('\n').split(':')[1].strip()
-        else:
-            cpu['brand'] = "Unknown CPU"
-            cpu['count'] = 0
+        if cpu['brand'] == "Unknown CPU":
+            f = os.popen('lscpu').read().split('\n')
+            if f:
+                for line in f:
+                    # Ignore the blank line separating the information between
+                    # details about two processing units
+                    if line.strip():
+                        if "Model name" == line.rstrip('\n').split(':')[0].strip():
+                            cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
+                        if "Processor" == line.rstrip('\n').split(':')[0].strip():
+                            cpu['brand'] = line.rstrip('\n').split(':')[1].strip()
+                        if "CPU(s)" == line.rstrip('\n').split(':')[0].strip():
+                            cpu['count'] = line.rstrip('\n').split(':')[1].strip()
         mem = psutil.virtual_memory()
         if sys.platform == "linux" or sys.platform == "linux2":
             if distro is None:
