@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; tab-width: 4; indent-tabs: nil; -*-
-# by Al Nikolov <root@toor.fi.eu.org>
+# by Al Nikolov <roottoorfieuorg@gmail.com>
 from __future__ import print_function
 import bz2
 import sys
