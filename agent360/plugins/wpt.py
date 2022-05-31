@@ -8,7 +8,7 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, config):
         '''
-        Grabbing some basic information from the your cPanel or Plesk server
+        Grabbing some basic information from your cPanel or Plesk server
         If you are using Plesk:
         add to /etc/sudoers the following line:
         agent360 ALL=(ALL) NOPASSWD: /usr/sbin/plesk
