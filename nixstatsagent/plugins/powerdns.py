@@ -6,7 +6,10 @@ except ImportError:
     from urllib2 import urlopen, Request
 import time
 import plugins
-import urllib2
+try:
+        import urllib2
+except:
+        import urllib.request as urllib2
 import json
 
 class Plugin(plugins.BasePlugin):
@@ -16,6 +19,10 @@ class Plugin(plugins.BasePlugin):
         '''
         Experimental plugin for PowerDNS authoritative server. Might also work with PowerDNS recursor,
         but it may need extra delta_keys / absolute_keys.
+        On python3, use:
+        pip3 install requests
+        on Python2 use:
+        pip install urllib2
         Add to /etc/nixstats.ini:
         [powerdns]
         enabled=yes
