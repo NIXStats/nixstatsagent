@@ -9,6 +9,8 @@ class Plugin(plugins.BasePlugin):
     def run(self, config):
         '''
         pip install python-memcached
+        or
+        pip3 install python-memcached
         add to /etc/nixstats.ini
         [memcached]
         enabled=yes
