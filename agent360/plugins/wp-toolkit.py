@@ -4,7 +4,9 @@ import os
 import plugins
 
 class Plugin(plugins.BasePlugin):
-    __name__ = 'WP Toolkit'
+    __name__ = 'wp-toolkit'
+    __title__ = 'WP Toolkit'
+    __description__ = 'Unified plugin for gathering metrics for WP Toolkit servers on cPanel and Plesk.'
 
     def run(self, config):
         '''
