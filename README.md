@@ -1,6 +1,6 @@
 # Agent360
 
-360 Monitoring is a web service that monitors and displays statistics of
+360 Monitoring ([360monitoring.com](https://360monitoring.com)) is a web service that monitors and displays statistics of
 your server performance.
 
 Agent360 is OS agnostic software compatible with Python 2.7, 3.5, and 3.6.
@@ -8,6 +8,10 @@ It's been optimized to have low CPU consumption and comes with an
 extendable set of useful plugins.
 
 [![Build Status](https://github.com/plesk/agent360/workflows/Agent360-Test-And-Deploy/badge.svg?branch=master)](https://github.com/plesk/agent360/actions/workflows/test-and-deploy.yml)
+
+## Documentation
+
+You can find the full documentation including the feature complete REST API at [docs.360monitoring.com](https://docs.360monitoring.com/docs) and [docs.360monitoring.com/docs/api](https://docs.360monitoring.com/docs/api).
 
 ## Automatic Installation (All Linux Distributions)
 
