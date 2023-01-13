@@ -7,3 +7,4 @@ dist
 README.html
 .idea/
 tmp
+agent360.egg-info/
