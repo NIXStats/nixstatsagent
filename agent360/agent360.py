@@ -34,6 +34,7 @@ import subprocess
 import threading
 import time
 import types
+from optparse import OptionParser
 
 try:
     from urllib.parse import urlparse, urlencode
@@ -84,16 +85,24 @@ def info():
 
 
 def hello(proto='https'):
-    user_id = sys.argv[1]
+    parser = OptionParser()
+    parser.add_option("-t", "--tags", help="Comma-separated list of tags")
+    (options, args) = parser.parse_args()
+
+    user_id = args[0]
     agent = Agent(dry_instance=True)
-    if len(sys.argv) > 2:
-        token_filename = sys.argv[2]
+    if len(args) > 1:
+        token_filename = args[1]
     else:
         token_filename = os.path.join(__FILEABSDIRNAME__, 'agent360-token.ini')
-    if len(sys.argv) > 3:
-        unique_id = sys.argv[3]
+    if len(args) > 2:
+        unique_id = args[2]
     else:
         unique_id = ''
+    if options.tags is None:
+        tags = ''
+    else:
+        tags = options.tags
     if '_' in user_id:
         server_id = user_id.split('_')[1]
         user_id = user_id.split('_')[0]
@@ -107,7 +116,8 @@ def hello(proto='https'):
             data=urlencode({
                     'user': user_id,
                     'hostname': hostname,
-                    'unique_id': unique_id
+                    'unique_id': unique_id,
+                    'tags': tags,
             }).encode("utf-8")
            ).read().decode()
     if len(server_id) == 24:
