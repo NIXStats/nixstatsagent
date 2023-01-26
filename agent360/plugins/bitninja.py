@@ -17,7 +17,7 @@ class Plugin(plugins.BasePlugin):
 
         /etc/bitninja/System/config.ini:
         ```ini
-        [Statistics]
+        [statistics]
         enableIntegration = 1
         ```
 
