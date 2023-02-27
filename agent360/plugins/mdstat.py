@@ -10,10 +10,13 @@ class Plugin(plugins.BasePlugin):
 
     def run(self, config):
         '''
-        Monitor software raid status using mdadm
+        Monitor software raid status using mdadm:
         pip install mdstat
+
+        Requires sudo access to mdjson add to /etc/sudoers:
+        agent360 ALL=(ALL) NOPASSWD: /usr/local/bin/mdjson
         '''
-        data = os.popen('sudo mdjson').read()
+        data = os.popen('mdjson').read()
         results = {}
 
         try:
