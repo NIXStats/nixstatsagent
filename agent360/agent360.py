@@ -50,16 +50,20 @@ __FILEABSDIRNAME__ = os.path.dirname(os.path.abspath(__file__))
 
 ini_files = (
     os.path.join('/etc', 'agent360.ini'),
+    os.path.join('/etc', 'agent360-custom.ini'),
     os.path.join('/etc', 'agent360-token.ini'),
     os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'agent360.ini'),
+    os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'agent360-custom.ini'),
     os.path.join(os.path.dirname(__FILEABSDIRNAME__), 'agent360-token.ini'),
     os.path.abspath('agent360.ini'),
+    os.path.abspath('agent360-custom.ini'),
     os.path.abspath('agent360-token.ini'),
 )
 
 if os.name == 'nt':
     ini_files = (
         os.path.join(__FILEABSDIRNAME__, '..', 'config', 'agent360.ini'),
+        os.path.join(__FILEABSDIRNAME__, '..', 'config', 'agent360-custom.ini'),
         os.path.join(__FILEABSDIRNAME__, '..', 'config', 'agent360-token.ini'),
     )
 
