@@ -25,6 +25,7 @@ OutputDir=dist
 DisableWelcomePage=no
 ArchitecturesInstallIn64BitMode=x64
 UsedUserAreasWarning=no
+SetupLogging=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -60,8 +61,17 @@ var
   CustomQueryPage: TInputQueryWizardPage;
 
 function GetUserToken(Param: string): string;
+var
+  TokenParam: string;
 begin
-  Result := CustomQueryPage.Values[0];
+  if Assigned(CustomQueryPage) and (CustomQueryPage.Values[0] <> '') then
+  begin
+    Result := CustomQueryPage.Values[0];
+  end
+  else
+  begin
+    Result := ExpandConstant('{param:token|false}');
+  end;
 end;
 
 function CharIsAlpha(C: Char): Boolean;
@@ -95,6 +105,12 @@ var
 begin
   Result := True;
   Token := CustomQueryPage.Values[0];
+
+  if WizardSilent then
+  begin
+    Log('In silent mode. Skipping token validation.');
+    Exit;
+  end;
 
   if (Token = '') then
   begin
