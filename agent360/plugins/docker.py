@@ -12,7 +12,7 @@ class Plugin(plugins.BasePlugin):
         '''
         Docker monitoring, needs sudo access!
         Instructions at:
-        https://docs.platform360.io/monitoring360/plugins/docker/
+        https://docs.360monitoring.com/docs/docker-plugin
         '''
         containers = {}
         last_value = {}
