@@ -17,7 +17,7 @@ class Plugin(plugins.BasePlugin):
         my_dirs = config.get('dirsize', 'dirs').split(',')
 
         for dir in my_dirs:
-            data[dir] = {'bytes': os.popen('du -bc {} | grep total'.format(dir)).read().replace('total', '').rstrip()}
+            data[dir] = {'bytes': os.popen('du -sbc {} | grep total'.format(dir)).read().replace('total', '').rstrip()}
 
         return data
 
