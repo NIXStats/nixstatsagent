@@ -61,8 +61,6 @@ var
   CustomQueryPage: TInputQueryWizardPage;
 
 function GetUserToken(Param: string): string;
-var
-  TokenParam: string;
 begin
   if Assigned(CustomQueryPage) and (CustomQueryPage.Values[0] <> '') then
   begin
