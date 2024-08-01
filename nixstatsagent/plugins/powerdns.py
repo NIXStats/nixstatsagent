@@ -6,7 +6,6 @@ except ImportError:
     from urllib2 import urlopen, Request
 import time
 import plugins
-import urllib2
 import json
 
 class Plugin(plugins.BasePlugin):
@@ -26,7 +25,7 @@ class Plugin(plugins.BasePlugin):
         ;timeout=10
         '''
         # Create request to configured URL
-        request = urllib2.Request(config.get(__name__, 'statistics_url'), headers={'X-API-Key': '%s' % config.get(__name__, 'api_key')})
+        request = Request(config.get(__name__, 'statistics_url'), headers={'X-API-Key': '%s' % config.get(__name__, 'api_key')})
         # defaults
         timeout = 10
         results = dict()
@@ -39,11 +38,11 @@ class Plugin(plugins.BasePlugin):
             timeout = int(config.get(__name__, 'timeout'))
         # create response based on configuration
         if config.has_option(__name__, 'ca_file'):
-            raw_response = urllib2.urlopen(request, timeout=timeout, cafile=config.get(__name__, 'ca_file'))
+            raw_response = urlopen(request, timeout=timeout, cafile=config.get(__name__, 'ca_file'))
         elif config.has_option(__name__, 'ca_path'):
-            raw_response = urllib2.urlopen(request, timeout=timeout, capath=config.get(__name__, 'ca_path'))
+            raw_response = urlopen(request, timeout=timeout, capath=config.get(__name__, 'ca_path'))
         else:
-            raw_response = urllib2.urlopen(request, timeout=timeout)
+            raw_response = urlopen(request, timeout=timeout)
         # set next_cache timestamp
         next_cache['ts'] = time.time()
         # parse raw response as JSON
